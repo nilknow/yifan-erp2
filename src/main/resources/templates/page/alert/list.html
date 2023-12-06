@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link th:href="@{/bootstrap-5.3.2/css/bootstrap.css}" rel="stylesheet">
+</head>
+<body>
+<a href="/alert/add">添加物料</a>
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>内容</th>
+        <th>状态</th>
+        <th>邮件</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="alert : ${alerts}">
+        <td th:text="${alert.id}"></td>
+        <td th:text="${alert.content}"></td>
+        <td>
+            <select onchange="updateState(this)">
+                <option value="0" th:selected="${alert.state == 0}">未处理</option>
+                <option value="1" th:selected="${alert.state == 1}">处理中</option>
+                <option value="2" th:selected="${alert.state == 2}">已解决</option>
+            </select>
+        </td>
+        <td>
+            <span th:text="${alert.emailSent==0}?'邮件未发送':'邮件已发送'"></span>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<script th:src="@{/bootstrap-5.3.2/js/bootstrap.js}"></script>
+<script th:src="@{/jquery-3.7.1/jquery.min.js}"></script>
+<script>
+    function updateState(e) {
+        const stateColumn = e.closest("tr");
+        const idColumn = stateColumn.querySelector("td:first-child");
+        const url = '/alert/update/' + idColumn.textContent + '?state=' + e.value;
+        $.ajax({
+            type: 'POST',
+            url: url,
+            success: function(response) {
+                console.log('State updated successfully');
+            },
+            error: function(xhr, status, error) {
+                console.error('Error updating state:', error);
+            }
+        });
+    }
+</script>
+</body>
+</html>

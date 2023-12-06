@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link th:href="@{/bootstrap-5.3.2/css/bootstrap.css}" rel="stylesheet">
+</head>
+<body>
+<a href="/material/add">添加物料</a>
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>物料名</th>
+        <th>分类</th>
+        <th>库存数量</th>
+        <th>库存预警</th>
+        <th>修改</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="material : ${materials}">
+        <td th:text="${material.id}"></td>
+        <td th:text="${material.name}"></td>
+        <td th:text="${material.category}"></td>
+        <td th:text="${material.count}"></td>
+        <td th:text="${material.inventoryCountAlert}"></td>
+        <td><a th:href="@{/material/update(id=${material.id})}">修改</a></td>
+    </tr>
+    </tbody>
+</table>
+<script th:src="@{/bootstrap-5.3.2/js/bootstrap.js}"></script>
+</body>
+</html>
