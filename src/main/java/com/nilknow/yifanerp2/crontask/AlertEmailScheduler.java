@@ -22,6 +22,9 @@ public class AlertEmailScheduler {
     @Transactional
     public void checkAlertAndSend(){
         List<Alert> alerts = alertService.findNotSends();
+        if (alerts.isEmpty()) {
+            return;
+        }
         StringBuilder sb = new StringBuilder();
         for (Alert a : alerts) {
             sb.append(a.getContent()).append("\n");

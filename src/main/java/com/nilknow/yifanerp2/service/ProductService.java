@@ -41,10 +41,22 @@ public class ProductService {
 
     @Transactional
     public void add(Product p) {
-        productRepository.save(p);
+        try {
+            productRepository.save(p);
+        }catch (Exception e){
+            log.error("error",e);
+        }
     }
 
     public List<Product> findAll() {
         return productRepository.findAll();
+    }
+
+    public void saveAll(List<Product> cachedDataList) {
+        productRepository.saveAll(cachedDataList);
+    }
+
+    public void removeAll() {
+        productRepository.deleteAll();
     }
 }

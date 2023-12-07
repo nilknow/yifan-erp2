@@ -15,6 +15,7 @@ import lombok.Setter;
 public class ProductMaterialRel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private Long product_id;
     private Long material_id;
     private Long material_count;

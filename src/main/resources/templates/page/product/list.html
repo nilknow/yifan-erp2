@@ -10,6 +10,13 @@
 </head>
 <body>
 <a href="/product/add">添加产品</a>
+<form action="/product/excel/add" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" accept=".xlsx, .xls">
+    <input type="submit" value="批量添加产品">
+</form>
+<a href="/product/excel/template">下载批量添加产品模板</a>
+<a href="/product/excel/download">下载产品库存excel文档</a>
+<button id="remove-all-btn">重置（清空所有产品库存）</button>
 <table class="table table-hover">
     <thead>
     <tr>
@@ -27,5 +34,19 @@
     </tbody>
 </table>
 <script th:src="@{/bootstrap-5.3.2/js/bootstrap.js}"></script>
+<script>
+    document.getElementById("remove-all-btn").addEventListener("click",function(){
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/product/remove-all", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                location.reload()
+            }
+        };
+        xhr.send("");
+    })
+</script>
 </body>
 </html>
