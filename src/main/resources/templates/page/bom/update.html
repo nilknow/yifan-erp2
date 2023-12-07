@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>BOM管理</title>
+    <link th:href="@{/bootstrap-5.3.2/css/bootstrap.css}" rel="stylesheet">
+</head>
+<body>
+<h2><span th:text="${product.name}"></span></h2>
+
+<form th:action="@{/bom/material/add}" method="post">
+    <input type="hidden" name="productId" th:value="${product.id}" />
+    <select name="materialId">
+        <option th:each="material : ${allMaterials}" th:value="${material.id}" th:text="${material.name}"></option>
+    </select>
+    <input type="number" name="materialCount" required />
+    <button type="submit">添加物料</button>
+</form>
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>物料名</th>
+        <th>物料数量</th>
+        <th>删除</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="rel : ${rels}">
+        <td th:text="${rel.material.id}"></td>
+        <td th:text="${rel.material.name}"></td>
+        <td>
+            <form th:action="@{/bom/material/update-count}" method="post">
+                <input type="hidden" name="productId" th:value="${product.id}" />
+                <input type="hidden" name="materialId" th:value="${rel.material.id}">
+                <input type="number" name="materialCount" th:value="${rel.materialCount}" />
+                <button>更新</button>
+            </form>
+        </td>
+        <td>
+            <form th:action="@{/bom/material/remove}" method="post">
+                <input type="hidden" name="productId" th:value="${product.id}" />
+                <input type="hidden" name="materialId" th:value="${rel.material.id}">
+                <button>删除</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<script th:src="@{/bootstrap-5.3.2/js/bootstrap.js}"></script>
+<script th:src="@{/jquery-3.7.1/jquery.min.js}"></script>
+</body>
+</html>

@@ -57,7 +57,9 @@ create table public.product_material_rel
             references public.material,
     material_count bigint not null
 );
-
+alter table product_material_rel
+    add constraint product_material_rel_pk2
+        unique (product_id, material_id);
 
 CREATE OR REPLACE FUNCTION add_alert_row()
     RETURNS TRIGGER AS $$

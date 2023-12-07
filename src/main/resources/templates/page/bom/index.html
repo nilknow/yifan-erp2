@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link th:href="@{/bootstrap-5.3.2/css/bootstrap.css}" rel="stylesheet">
+</head>
+<body>
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>产品名</th>
+        <th>物料</th>
+        <th>修改物料</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="product : ${products}">
+        <td th:text="${product.id}"></td>
+        <td th:text="${product.name}"></td>
+        <td>
+            <select class="material-dropdown" th:attr="data-product-id=${product.id}">
+                <option value="">-- Select Material --</option>
+            </select>
+        </td>
+        <th>
+            <a th:href="@{/bom/update(id=${product.id})}">修改</a>
+        </th>
+    </tr>
+    </tbody>
+</table>
+<script th:src="@{/bootstrap-5.3.2/js/bootstrap.js}"></script>
+<script th:src="@{/jquery-3.7.1/jquery.min.js}"></script>
+<script>
+    $(document).ready(function() {
+        $('.material-dropdown').on('click', function() {
+            const productId = $(this).data('product-id');
+            const dropdown = $(this);
+
+            if (dropdown.children().length === 1) {
+                // Load materials via AJAX when the dropdown is clicked for the first time
+                $.ajax({
+                    url: '/bom/materials/' + productId,
+                    type: 'GET',
+                    success: function(data) {
+                        $.each(data, function(index, material) {
+                            dropdown.append($('<option>', {
+                                value: material.id,
+                                text: material.name
+                            }));
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(error);
+                    }
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>

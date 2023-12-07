@@ -2,6 +2,7 @@ package com.nilknow.yifanerp2.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nilknow.yifanerp2.entity.Material;
 import com.nilknow.yifanerp2.entity.Product;
 import com.nilknow.yifanerp2.entity.paging.Page;
 import com.nilknow.yifanerp2.entity.paging.Paged;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -58,5 +60,13 @@ public class ProductService {
 
     public void removeAll() {
         productRepository.deleteAll();
+    }
+
+    public List<Material> findMaterialsByProductId(Long productId){
+        return productRepository.findMaterialsByProductId(productId);
+    }
+
+    public Optional<Product> findById(Long id) {
+        return productRepository.findById(id);
     }
 }

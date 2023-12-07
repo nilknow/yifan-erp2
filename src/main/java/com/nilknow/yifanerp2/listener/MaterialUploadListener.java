@@ -37,7 +37,13 @@ public class MaterialUploadListener implements ReadListener<MaterialExcelTemplat
     }
 
     private void saveData() {
-        materialService.saveAll(cachedDataList.stream().map(x ->
-                new Material(null, x.getName(), x.getCategory(), x.getCount(), x.getInventoryCountAlert())).toList());
+        materialService.saveAll(cachedDataList.stream().map(x -> {
+            Material m = new Material();
+            m.setName(x.getName());
+            m.setCategory(x.getCategory());
+            m.setCount(x.getCount());
+            m.setInventoryCountAlert(x.getInventoryCountAlert());
+            return m;
+        }).toList());
     }
 }

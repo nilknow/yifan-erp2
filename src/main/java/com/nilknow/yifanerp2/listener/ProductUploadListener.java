@@ -37,6 +37,11 @@ public class ProductUploadListener implements ReadListener<ProductExcelTemplate>
     }
 
     private void saveData() {
-        productService.saveAll(cachedDataList.stream().map(x -> new Product(null, x.getName(), x.getCount())).toList());
+        productService.saveAll(cachedDataList.stream().map(x -> {
+            Product product = new Product();
+            product.setName(x.getName());
+            product.setCount(x.getCount());
+            return product;
+        }).toList());
     }
 }

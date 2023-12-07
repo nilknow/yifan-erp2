@@ -3,3 +3,8 @@ spring:
     url: jdbc:postgresql://localhost:5432/mydatabase
     username: myuser
     password: secret
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
