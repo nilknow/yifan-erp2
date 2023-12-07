@@ -4,6 +4,7 @@ import com.nilknow.yifanerp2.entity.Alert;
 import com.nilknow.yifanerp2.repository.AlertRepository;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,5 +33,18 @@ public class AlertService {
         Alert alert = opt.get();
         alert.setState(state);
         alertRepository.save(alert);
+    }
+
+    public List<Alert> findNotSends() {
+        Alert alert = new Alert();
+        alert.setEmailSent(0);
+        return alertRepository.findAll(Example.of(alert));
+    }
+
+    public void markSent(List<Alert> alerts) {
+        for (Alert a : alerts) {
+            a.setEmailSent(1);
+        }
+        alertRepository.saveAll(alerts);
     }
 }
