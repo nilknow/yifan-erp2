@@ -9,11 +9,12 @@ import com.nilknow.yifanerp2.entity.paging.Paged;
 import com.nilknow.yifanerp2.entity.paging.Paging;
 import com.nilknow.yifanerp2.repository.ProductRepository;
 import jakarta.annotation.Resource;
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,6 +24,8 @@ import java.util.stream.Collectors;
 public class ProductService {
     @Resource
     private ProductRepository productRepository;
+    @Resource
+    private ProductMaterialRelService productMaterialRelService;
 
     public Paged<Product> getProducts(int pageNumber, int size) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -68,5 +71,25 @@ public class ProductService {
 
     public Optional<Product> findById(Long id) {
         return productRepository.findById(id);
+    }
+
+    @Transactional
+    public List<Material> produce(Long id, Long count) {
+        Optional<Product> p = productRepository.findById(id);
+        if (p.isEmpty()) {
+            //todo error
+            return new ArrayList<>();
+        }
+        List<Material> notEnoughMaterials = productMaterialRelService.canProduce(id, count);
+        if (notEnoughMaterials.isEmpty()) {
+            produce(p.get(), count);
+            productMaterialRelService.produce(id,count);
+        }
+        return notEnoughMaterials;
+    }
+
+    private void produce(Product product, Long count) {
+        product.setCount(product.getCount() + count);
+        productRepository.save(product);
     }
 }

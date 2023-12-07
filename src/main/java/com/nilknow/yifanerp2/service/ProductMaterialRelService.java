@@ -11,6 +11,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,14 +29,14 @@ public class ProductMaterialRelService {
     }
 
     @Transactional
-    public void add(Long productId, Long  materialId, Long materialCount) {
+    public void add(Long productId, Long materialId, Long materialCount) {
         Optional<Product> product = productRepository.findById(productId);
         if (product.isEmpty()) {
             //todo throw error
             return;
         }
         Optional<Material> material = materialRepository.findById(materialId);
-        if(material.isEmpty()) {
+        if (material.isEmpty()) {
             //todo throw error
             return;
         }
@@ -55,7 +56,7 @@ public class ProductMaterialRelService {
             return;
         }
         Optional<Material> material = materialRepository.findById(materialId);
-        if(material.isEmpty()) {
+        if (material.isEmpty()) {
             //todo throw error
             return;
         }
@@ -79,7 +80,7 @@ public class ProductMaterialRelService {
             return;
         }
         Optional<Material> material = materialRepository.findById(materialId);
-        if(material.isEmpty()) {
+        if (material.isEmpty()) {
             //todo throw error
             return;
         }
@@ -95,5 +96,28 @@ public class ProductMaterialRelService {
         ProductMaterialRel newRel = rels.get(0);
         newRel.setMaterialCount(count);
         productMaterialRelRepository.save(newRel);
+    }
+
+    public List<Material> canProduce(Long productId, Long count) {
+        List<Material> countNotEnoughMaterials = new ArrayList<>();
+        List<ProductMaterialRel> rels = productMaterialRelRepository.findAllByProductId(productId);
+        for (ProductMaterialRel rel : rels) {
+            Long materialNeed = rel.getMaterialCount() * count;
+            Long materialHave = rel.getMaterial().getCount();
+            if (materialHave < materialNeed) {
+                countNotEnoughMaterials.add(rel.getMaterial());
+            }
+        }
+        return countNotEnoughMaterials;
+    }
+
+    @Transactional
+    public void produce(Long productId, Long count) {
+        List<ProductMaterialRel> rels = productMaterialRelRepository.findAllByProductId(productId);
+        for (ProductMaterialRel rel : rels) {
+            Long materialNeed = rel.getMaterialCount() * count;
+            Long materialHave = rel.getMaterial().getCount();
+            rel.getMaterial().setCount(materialHave - materialNeed);
+        }
     }
 }

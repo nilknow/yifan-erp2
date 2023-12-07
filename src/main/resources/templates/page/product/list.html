@@ -17,12 +17,14 @@
 <a href="/product/excel/template">下载批量添加产品模板</a>
 <a href="/product/excel/download">下载产品库存excel文档</a>
 <button id="remove-all-btn">重置（清空所有产品库存）</button>
+
 <table class="table table-hover">
     <thead>
     <tr>
         <th>ID</th>
         <th>产品名</th>
         <th>库存数量</th>
+        <th>生产</th>
     </tr>
     </thead>
     <tbody>
@@ -30,17 +32,24 @@
         <td th:text="${product.id}"></td>
         <td th:text="${product.name}"></td>
         <td th:text="${product.count}"></td>
+        <td>
+            <form th:action="@{/product/produce}" method="post">
+                <input type="hidden" name="id" th:value="${product.id}">
+                <input type="number" name="count" required>
+                <button type="submit">生产</button>
+            </form>
+        </td>
     </tr>
     </tbody>
 </table>
 <script th:src="@{/bootstrap-5.3.2/js/bootstrap.js}"></script>
 <script>
-    document.getElementById("remove-all-btn").addEventListener("click",function(){
+    document.getElementById("remove-all-btn").addEventListener("click", function () {
         let xhr = new XMLHttpRequest();
         xhr.open("POST", "/product/remove-all", true);
         xhr.setRequestHeader("Content-Type", "application/json");
 
-        xhr.onreadystatechange = function() {
+        xhr.onreadystatechange = function () {
             if (xhr.readyState === 4 && xhr.status === 200) {
                 location.reload()
             }

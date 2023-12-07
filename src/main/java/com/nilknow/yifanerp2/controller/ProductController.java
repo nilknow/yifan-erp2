@@ -2,6 +2,7 @@ package com.nilknow.yifanerp2.controller;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.util.MapUtils;
+import com.nilknow.yifanerp2.entity.Material;
 import com.nilknow.yifanerp2.entity.Product;
 import com.nilknow.yifanerp2.entity.excel.ProductExcelTemplate;
 import com.nilknow.yifanerp2.listener.ProductUploadListener;
@@ -10,10 +11,7 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -120,10 +118,21 @@ public class ProductController {
         return "redirect:list";
     }
 
+    @PostMapping("produce")
+    public String produce(@RequestParam("id") Long id, @RequestParam("count") Long count) {
+        List<Material> notEnoughMaterials = productService.produce(id, count);
+        if (!notEnoughMaterials.isEmpty()) {
+            return "/page/product/error/material-not-enough";
+        }
+        return "redirect:list";
+    }
+
+
     @GetMapping("/list")
     public String list(Model model) {
         List<Product> products = productService.findAll();
         model.addAttribute("products", products);
         return "page/product/list";
     }
+
 }

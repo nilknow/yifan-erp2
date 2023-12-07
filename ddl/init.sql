@@ -64,7 +64,7 @@ alter table product_material_rel
 CREATE OR REPLACE FUNCTION add_alert_row()
     RETURNS TRIGGER AS $$
 BEGIN
-    IF NEW.inventory_count_alert is not null and NEW.inventory_count_alert <= NEW.count THEN
+    IF NEW.inventory_count_alert is not null and NEW.inventory_count_alert >= NEW.count THEN
         INSERT INTO Alert (content) VALUES ('物料 '||NEW.name||' 库存不足，请添加库存');
     END IF;
     RETURN NEW;
