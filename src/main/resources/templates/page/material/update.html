@@ -8,6 +8,7 @@
     <title>添加产品</title>
 </head>
 <body>
+<div th:replace="~{common/common :: navbar}"></div>
 <form action="#" th:action="@{/material/do-update}" th:object="${material}" method="post">
     <fieldset>
         <input type="submit" id="submitButton" th:value="提交修改">

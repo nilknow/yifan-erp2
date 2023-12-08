@@ -98,8 +98,9 @@ public class ProductController {
             String fileName = URLEncoder.encode("产品库存", StandardCharsets.UTF_8).replaceAll("\\+", "%20");
             response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
             // 这里需要设置不关闭流
+            List<Product> products = productService.findAll();
             EasyExcel.write(response.getOutputStream(), Product.class).autoCloseStream(Boolean.FALSE).sheet("产品库存")
-                    .doWrite(productService.findAll());
+                    .doWrite(products);
         } catch (Exception e) {
             // 重置response
             response.reset();

@@ -1,5 +1,6 @@
 package com.nilknow.yifanerp2.entity;
 
+import com.alibaba.excel.annotation.ExcelIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,6 +22,7 @@ public class Material {
     private String category;
     private Long count;
     private Long inventoryCountAlert;
+    @ExcelIgnore
     @ManyToMany(mappedBy = "materials")
     private List<Product> products;
 }
