@@ -33,3 +33,21 @@ button a {
 .bg-white {
     background-color: white;
 }
+
+.top-tabs{
+    display: flex;
+    flex-direction: row;
+}
+
+.top-tab{
+    background-color: transparent;
+    border: none;
+    color: #555;
+    padding: 10px 20px;
+    text-align: left;
+    text-decoration: none;
+    display: block;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
