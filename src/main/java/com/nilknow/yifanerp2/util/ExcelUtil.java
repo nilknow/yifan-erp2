@@ -33,8 +33,9 @@ public class ExcelUtil {
             XSSFCell dataCell2 = row.createCell(1);
             dataCell2.setCellValue(product.getCount());
         }
-        sheet.autoSizeColumn(0);
-        sheet.autoSizeColumn(1);
+        // 512 is the unit of chinese character width
+        sheet.setColumnWidth(0,8*512); // 8 chinese characters width
+        sheet.setColumnWidth(1,3*512);
     }
 
     public static void createMaterialSheet(XSSFSheet sheet, List<Material> rows){
@@ -43,6 +44,8 @@ public class ExcelUtil {
         c1.setCellValue("名称");
         XSSFCell c2 = header.createCell(1);
         c2.setCellValue("数量");
+        XSSFCell c3 = header.createCell(2);
+        c3.setCellValue("库存预警数量");
         for (int i = 0; i < rows.size(); i++) {
             Material material = rows.get(i);
             XSSFRow row = sheet.createRow(i + 1);
@@ -50,9 +53,12 @@ public class ExcelUtil {
             cell1.setCellValue(material.getName());
             XSSFCell dataCell2 = row.createCell(1);
             dataCell2.setCellValue(material.getCount());
+            XSSFCell dataCell3 = row.createCell(1);
+            dataCell3.setCellValue(material.getInventoryCountAlert());
         }
-        sheet.autoSizeColumn(0);
-        sheet.autoSizeColumn(1);
+        sheet.setColumnWidth(0,8*512); // 8 chinese characters width
+        sheet.setColumnWidth(1,3*512);
+        sheet.setColumnWidth(2,7*512);
     }
 
     public static void exportProducts(OutputStream os, List<Product> products) {
@@ -75,8 +81,9 @@ public class ExcelUtil {
                     XSSFCell dataCell2 = row.createCell(1);
                     dataCell2.setCellValue(product.getCount());
                 }
-                sheet.autoSizeColumn(0);
-                sheet.autoSizeColumn(1);
+                // 512 is the unit of chinese character width
+                sheet.setColumnWidth(0,8*512); // 8 chinese characters width
+                sheet.setColumnWidth(1,3*512);
             }
 
             wb.write(os);
@@ -96,6 +103,8 @@ public class ExcelUtil {
                 c1.setCellValue("名称");
                 XSSFCell c2 = header.createCell(1);
                 c2.setCellValue("数量");
+                XSSFCell c3 = header.createCell(2);
+                c3.setCellValue("库存预警数量");
                 List<Material> subMaterial = entry.getValue();
                 for (int i = 0; i < subMaterial.size(); i++) {
                     Material material = subMaterial.get(i);
@@ -105,8 +114,9 @@ public class ExcelUtil {
                     XSSFCell dataCell2 = row.createCell(1);
                     dataCell2.setCellValue(material.getCount());
                 }
-                sheet.autoSizeColumn(0);
-                sheet.autoSizeColumn(1);
+                sheet.setColumnWidth(0,8*512); // 8 chinese characters width
+                sheet.setColumnWidth(1,3*512);
+                sheet.setColumnWidth(2,7*512);
             }
 
             wb.write(os);
