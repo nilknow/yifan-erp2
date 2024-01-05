@@ -1,22 +1,25 @@
 package com.nilknow.yifanerp2.controller;
 
-import com.alibaba.excel.EasyExcel;
-import com.alibaba.excel.util.MapUtils;
 import com.nilknow.yifanerp2.entity.Material;
 import com.nilknow.yifanerp2.entity.Product;
 import com.nilknow.yifanerp2.entity.excel.ProductExcelTemplate;
-import com.nilknow.yifanerp2.listener.ProductUploadListener;
 import com.nilknow.yifanerp2.service.ProductService;
+import com.nilknow.yifanerp2.util.ExcelUtil;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,8 +29,6 @@ public class ProductController {
     private boolean excelHandling = false;
     @Resource
     private ProductService productService;
-    @Resource
-    private ProductUploadListener uploadListener;
 
     @GetMapping("/add")
     public String add(Model model) {
@@ -42,17 +43,21 @@ public class ProductController {
     }
 
     @PostMapping("/excel/add")
-    public synchronized String excelAdd(MultipartFile file) throws IOException {
+    public synchronized String excelAdd(MultipartFile file) {
         if (excelHandling) {
-            return "redirect:/page/error";
+            return "/page/product/error/excel_style_not_correct";
         } else {
             excelHandling = true;
             try {
-                EasyExcel.read(file.getInputStream(), ProductExcelTemplate.class, uploadListener).sheet().doRead();
+                InputStream is = file.getInputStream();
+                List<Product> products = ExcelUtil.getProducts(is);
+                productService.saveAll(products);
+            } catch (Exception e) {
+                return "/page/product/error/excel_style_not_correct";
             } finally {
                 excelHandling = false;
             }
-            return "redirect:/product/list";
+            return "redirect:list";
         }
     }
 
@@ -61,28 +66,32 @@ public class ProductController {
      */
     @GetMapping("/excel/template")
     public void excelTemplate(HttpServletResponse response) throws IOException {
-        try {
+        String fileName = URLEncoder.encode("产品库存模板", StandardCharsets.UTF_8).replaceAll("\\+", "%20");
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            //get output stream
             response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             response.setCharacterEncoding("utf-8");
-            // todo update filename
-            String fileName = URLEncoder.encode("产品库存模板", StandardCharsets.UTF_8).replaceAll("\\+", "%20");
             response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
-            // 这里需要设置不关闭流
-            EasyExcel.write(response.getOutputStream(), ProductExcelTemplate.class)
-                    .autoCloseStream(Boolean.FALSE).sheet("产品库存模板")
-                    .doWrite(
-                            List.of(
-                                    new ProductExcelTemplate("产品1", 32L),
-                                    new ProductExcelTemplate("产品2", 21L),
-                                    new ProductExcelTemplate("产品3", 11L)
-                            )
-                    );
+            OutputStream os = response.getOutputStream();
+
+            List<ProductExcelTemplate> householdItemList = List.of(
+                    new ProductExcelTemplate("桌子", 32L),
+                    new ProductExcelTemplate("椅子", 21L));
+            List<ProductExcelTemplate> stationeryList = List.of(
+                    new ProductExcelTemplate("书包", 32L),
+                    new ProductExcelTemplate("铅笔", 21L));
+
+            XSSFSheet householdItemSheet = workbook.createSheet("家居用品");
+            XSSFSheet stationerySheet = workbook.createSheet("文具");
+            ExcelUtil.createProductSheet(householdItemSheet, householdItemList);
+            ExcelUtil.createProductSheet(stationerySheet, stationeryList);
+            workbook.write(os);
         } catch (Exception e) {
             // 重置response
             response.reset();
             response.setContentType("application/json");
             response.setCharacterEncoding("utf-8");
-            Map<String, String> map = MapUtils.newHashMap();
+            Map<String, String> map = new HashMap<>();
             map.put("status", "failure");
             map.put("message", "下载文件失败" + e.getMessage());
             response.getWriter().println(map.get("message"));
@@ -99,14 +108,13 @@ public class ProductController {
             response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
             // 这里需要设置不关闭流
             List<Product> products = productService.findAll();
-            EasyExcel.write(response.getOutputStream(), Product.class).autoCloseStream(Boolean.FALSE).sheet("产品库存")
-                    .doWrite(products);
+            ExcelUtil.exportProducts(response.getOutputStream(), products);
         } catch (Exception e) {
             // 重置response
             response.reset();
             response.setContentType("application/json");
             response.setCharacterEncoding("utf-8");
-            Map<String, String> map = MapUtils.newHashMap();
+            Map<String, String> map = new HashMap<>();
             map.put("status", "failure");
             map.put("message", "下载文件失败" + e.getMessage());
             response.getWriter().println(map.get("message"));

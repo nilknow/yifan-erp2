@@ -1,6 +1,5 @@
 package com.nilknow.yifanerp2.entity;
 
-import com.alibaba.excel.annotation.ExcelIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,7 +18,7 @@ public class Product {
     private Long id;
     private String name;
     private Long count;
-    @ExcelIgnore
+    private String category;
     @ManyToMany
     @JoinTable(
             name = "product_material_rel",

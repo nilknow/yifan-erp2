@@ -1,16 +1,14 @@
-create table product
+create table public.product
 (
-    id    bigserial
+    id       bigserial
         constraint product_pk
             primary key,
-    name  varchar(64)
-        constraint product_name_uk2
-            unique,
-    count bigint default 0 not null
+    name     varchar(64),
+    count    bigint default 0 not null,
+    category varchar(32)      not null,
+    constraint product_name_category_uk
+        unique (name, category)
 );
-
-alter table product
-    owner to myuser;
 
 create table material
 (
@@ -25,9 +23,6 @@ create table material
     category              varchar(64)
 );
 
-alter table material
-    owner to myuser;
-
 create table alert
 (
     id         bigserial,
@@ -41,9 +36,6 @@ comment on table alert is '预警表，包括库存预警';
 comment on column alert.state is '0: unread 1:working on it 2:solved';
 
 comment on column alert.email_sent is '0: not sent 1: sent';
-
-alter table alert
-    owner to myuser;
 
 create table product_material_rel
 (
@@ -61,9 +53,6 @@ create table product_material_rel
         unique (product_id, material_id)
 );
 
-alter table product_material_rel
-    owner to myuser;
-
 create table login_user
 (
     id       bigserial
@@ -75,9 +64,6 @@ create table login_user
     password char(68) not null
 );
 
-alter table login_user
-    owner to myuser;
-
 create table authority
 (
     id   bigserial
@@ -87,9 +73,6 @@ create table authority
         constraint authority_name_uk2
             unique
 );
-
-alter table authority
-    owner to myuser;
 
 create table login_user_authority_rel
 (
@@ -106,9 +89,6 @@ create table login_user_authority_rel
         unique (login_user_id, authority_id)
 );
 
-alter table login_user_authority_rel
-    owner to myuser;
-
 create function add_alert_row() returns trigger
     language plpgsql
 as
@@ -120,8 +100,6 @@ BEGIN
     RETURN NEW;
 END
 $$;
-
-alter function add_alert_row() owner to myuser;
 
 create trigger material_inventory_alert_trigger
     after update

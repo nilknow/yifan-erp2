@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/mydatabase
-    username: myuser
-    password: secret
+    url: jdbc:postgresql://nilknow.com:5432/postgres
+    username: postgres
+    password: jump666!
   jpa:
     properties:
       hibernate:

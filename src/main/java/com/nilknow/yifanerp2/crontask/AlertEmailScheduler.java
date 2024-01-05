@@ -5,7 +5,6 @@ import com.nilknow.yifanerp2.service.AlertService;
 import com.nilknow.yifanerp2.service.MailService;
 import jakarta.annotation.Resource;
 import jakarta.transaction.Transactional;
-import org.springframework.data.domain.Example;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
