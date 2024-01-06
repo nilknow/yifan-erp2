@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Material BOM Page</title>
+    <!-- Include your custom CSS -->
+    <style>
+        /* Add your custom styles here */
+    </style>
+</head>
+<body>
+<header>
+    <!-- Add your header content here -->
+</header>
+
+<main>
+    <section class="bom">
+        <h1>Bill of Materials</h1>
+        <ul id="bomTree">
+            <!-- Populate the tree dynamically with JavaScript -->
+        </ul>
+    </section>
+</main>
+
+<footer>
+    <!-- Add your footer content here -->
+</footer>
+
+<!-- Include your custom JavaScript -->
+<script>
+    // Sample BOM data (replace with your actual data)
+    const bomData = [
+        { item: 'Parent 1', children: [
+                { item: 'Child 1.1', children: [] },
+                { item: 'Child 1.2', children: [] }
+            ]},
+        { item: 'Parent 2', children: [
+                { item: 'Child 2.1', children: [] },
+                { item: 'Child 2.2', children: [
+                        { item: 'Grandchild 2.2.1', children: [] }
+                    ]}
+            ]}
+    ];
+
+    // Function to generate the BOM tree
+    function generateBOMTree(parentElement, data) {
+        const ul = document.createElement('ul');
+        parentElement.appendChild(ul);
+
+        data.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = item.item;
+            ul.appendChild(li);
+
+            if (item.children.length > 0) {
+                generateBOMTree(li, item.children);
+            }
+        });
+    }
+
+    // Call the generateBOMTree function with the BOM data
+    const bomTree = document.getElementById('bomTree');
+    generateBOMTree(bomTree, bomData);
+</script>
+</body>
+</html>

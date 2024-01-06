@@ -176,40 +176,43 @@ public class ExcelUtil {
         List<Material> materials = new ArrayList<>();
 
         try (Workbook workbook = new XSSFWorkbook(is)) {
-            Sheet sheet = workbook.getSheetAt(0);
+            int sheetCounts = workbook.getNumberOfSheets();
+            for (int i = 0; i < sheetCounts; i++) {
+                Sheet sheet = workbook.getSheetAt(0);
 
-            Iterator<Row> rowIterator = sheet.iterator();
+                Iterator<Row> rowIterator = sheet.iterator();
 
-            // validate header names
-            if (rowIterator.hasNext()) {
-                Row header = rowIterator.next();
+                // validate header names
+                if (rowIterator.hasNext()) {
+                    Row header = rowIterator.next();
 
-                Cell nameHeader = header.getCell(0);
-                Cell countHeader = header.getCell(1);
-                if (!"名称".equals(nameHeader.getStringCellValue())) {
-                    throw new Exception("first header name must be 名称");
+                    Cell nameHeader = header.getCell(0);
+                    Cell countHeader = header.getCell(1);
+                    if (!"名称".equals(nameHeader.getStringCellValue())) {
+                        throw new Exception("first header name must be 名称");
+                    }
+                    if (!"数量".equals(countHeader.getStringCellValue())) {
+                        throw new Exception("second header name must be 数量");
+                    }
                 }
-                if (!"数量".equals(countHeader.getStringCellValue())) {
-                    throw new Exception("second header name must be 数量");
+
+                // get all materials values
+                String category = sheet.getSheetName();
+                while (rowIterator.hasNext()) {
+                    Row row = rowIterator.next();
+
+                    Cell nameCell = row.getCell(0);
+                    Cell countCell = row.getCell(1);
+
+                    String name = nameCell.getStringCellValue();
+                    long count = (long) countCell.getNumericCellValue();
+
+                    Material material = new Material();
+                    material.setName(name);
+                    material.setCount(count);
+                    material.setCategory(category);
+                    materials.add(material);
                 }
-            }
-
-            // get all materials values
-            String category = sheet.getSheetName();
-            while (rowIterator.hasNext()) {
-                Row row = rowIterator.next();
-
-                Cell nameCell = row.getCell(0);
-                Cell countCell = row.getCell(1);
-
-                String name = nameCell.getStringCellValue();
-                long count = (long) countCell.getNumericCellValue();
-
-                Material material = new Material();
-                material.setName(name);
-                material.setCount(count);
-                material.setCategory(category);
-                materials.add(material);
             }
         } catch (IOException e) {
             e.printStackTrace();

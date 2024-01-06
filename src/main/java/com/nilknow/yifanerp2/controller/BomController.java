@@ -31,6 +31,11 @@ public class BomController {
         return "page/bom/index";
     }
 
+    @GetMapping("/bom/example")
+    public String example() {
+        return "page/bom/example";
+    }
+
     @GetMapping("/bom/{productId}")
     @ResponseBody
     public List<ProductMaterialRel> materials(@PathVariable("productId") Long productId, Model model) {

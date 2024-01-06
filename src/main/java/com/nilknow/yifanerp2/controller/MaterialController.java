@@ -83,6 +83,7 @@ public class MaterialController {
             ExcelUtil.createMaterialSheet(category2, List.of(
                     new Material("物料1", "物料品类2", 32L, 10L)
             ));
+            wb.write(response.getOutputStream());
         } catch (Exception e) {
             // 重置response
             response.reset();
