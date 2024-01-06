@@ -9,19 +9,13 @@
     <title>Document</title>
 </head>
 <body>
-<div th:replace="~{common/common :: navbar}"></div>
+<div>
+    <h1>Yifan ERP</h1>
+</div>
+<h3>产品管理</h3>
 <ol>
     <li>
-        <a href="/material/list">原材料采购</a>
-    </li>
-    <li>
         <a href="/product/list">生产计划</a>
-    </li>
-    <li>
-        <a href="/material/create">新增物料(开发中，暂时不可用)</a>
-    </li>
-    <li>
-        <a href="/material/list">物料入库</a>
     </li>
     <li>
         <a href="/product/create">新增产品(开发中，暂时不可用)</a>
@@ -37,6 +31,20 @@
     </li>
 </ol>
 <p>---------------------------------</p>
+<h3>物料管理</h3>
+<ol>
+    <li>
+        <a href="/material/list">原材料采购</a>
+    </li>
+    <li>
+        <a href="/material/create">新增物料(开发中，暂时不可用)</a>
+    </li>
+    <li>
+        <a href="/material/list">物料入库</a>
+    </li>
+</ol>
+<p>---------------------------------</p>
+<h3>其它功能</h3>
 <ol>
     <li>
         <a href="/alert/list">预警管理</a>
