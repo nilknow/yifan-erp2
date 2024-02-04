@@ -1,9 +1,13 @@
 package com.nilknow.yifanerp2.util;
 
+import com.nilknow.yifanerp2.entity.Category;
 import com.nilknow.yifanerp2.entity.Material;
 import com.nilknow.yifanerp2.entity.Product;
 import com.nilknow.yifanerp2.entity.excel.ProductExcelTemplate;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -12,10 +16,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ExcelUtil {
@@ -62,7 +63,7 @@ public class ExcelUtil {
     }
 
     public static void exportProducts(OutputStream os, List<Product> products) {
-        Map<String, List<Product>> productMap = products.stream().collect(Collectors.groupingBy(Product::getCategory));
+        Map<String, List<Product>> productMap = products.stream().collect(Collectors.groupingBy(x -> x.getCategory().getName()));
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             for (Map.Entry<String, List<Product>> entry : productMap.entrySet()) {
                 String category = entry.getKey();
@@ -125,7 +126,7 @@ public class ExcelUtil {
         }
     }
 
-    public static List<Product> getProducts(InputStream is) throws Exception {
+    public static List<Product> getProducts(InputStream is, Set<Category> categoryCache) throws Exception {
         List<Product> products = new ArrayList<>();
 
         try (Workbook workbook = new XSSFWorkbook(is)) {
@@ -148,7 +149,12 @@ public class ExcelUtil {
             }
 
             // get all products values
-            String category = sheet.getSheetName();
+            String categoryName = sheet.getSheetName();
+            Optional<Category> category = categoryCache.stream().filter(x -> x.getName().equals(categoryName)).findAny();
+            if (category.isEmpty()) {
+                //todo category not exist
+                return new ArrayList<>();
+            }
             while (rowIterator.hasNext()) {
                 Row row = rowIterator.next();
 
@@ -161,7 +167,7 @@ public class ExcelUtil {
                 Product product = new Product();
                 product.setName(name);
                 product.setCount(count);
-                product.setCategory(category);
+                product.setCategory(category.get());
                 products.add(product);
             }
         } catch (IOException e) {

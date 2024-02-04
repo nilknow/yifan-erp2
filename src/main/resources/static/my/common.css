@@ -51,3 +51,7 @@ button a {
     font-weight: bold;
     transition: background-color 0.3s;
 }
+
+.flex-row{
+    display: flex;
+}

@@ -5,9 +5,76 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>创建产品</title>
+    <link th:href="@{/my/common.css}" rel="stylesheet">
+    <style>
+        td {
+            padding: 15px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+    </style>
 </head>
 <body>
-Under development!!!
+<div th:replace="~{common/common :: navbar}"></div>
+<form action="#" th:action="@{/product/do/create}" th:object="${product}" method="post">
+    <fieldset>
+        <table>
+            <thead>
+            <tr>
+                <th>产品名</th>
+                <th>单位</th>
+                <th>分类</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><input th:field="*{name}" id="name" type="text"/></td>
+                <td><input th:field="*{unit}" id="unit"/></td>
+                <td>
+                    <div class="flex-row">
+                        <select>
+                            <option value="" disabled selected>请选择产品分类</option>
+                            <option th:each="category : ${categories}" th:text="${category}"></option>
+                        </select>
+                        <button type="button" id="popup-btn">添加新分类</button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <input type="submit" id="submit-btn" th:value="添加">
+    </fieldset>
+</form>
+
+<form action="#" id="popup" class="hidden" th:action="@{/category/create}" th:object="${category}" method="post">
+    <!-- Your form fields here -->
+    <input type="text" name="name" placeholder="分类名" th:field="*{name}">
+    <button>添加分类</button>
+</form>
+
+<script>
+    document.getElementById("popup-btn").addEventListener("click",
+        () => {
+            document.getElementById("popup").classList.remove("hidden");
+        });
+
+    document.getElementById("popup").addEventListener("submit",
+        () => {
+            location.reload();
+        });
+</script>
 </body>
 </html>

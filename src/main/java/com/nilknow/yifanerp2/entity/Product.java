@@ -18,7 +18,10 @@ public class Product {
     private Long id;
     private String name;
     private Long count;
-    private String category;
+    private String unit;
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
     @ManyToMany
     @JoinTable(
             name = "product_material_rel",

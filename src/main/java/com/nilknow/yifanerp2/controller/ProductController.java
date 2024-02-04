@@ -2,7 +2,11 @@ package com.nilknow.yifanerp2.controller;
 
 import com.nilknow.yifanerp2.entity.Material;
 import com.nilknow.yifanerp2.entity.Product;
+import com.nilknow.yifanerp2.entity.ProductPlan;
 import com.nilknow.yifanerp2.entity.excel.ProductExcelTemplate;
+import com.nilknow.yifanerp2.repository.CategoryRepository;
+import com.nilknow.yifanerp2.repository.ProductPlanRepository;
+import com.nilknow.yifanerp2.repository.ProductRepository;
 import com.nilknow.yifanerp2.service.ProductService;
 import com.nilknow.yifanerp2.util.ExcelUtil;
 import jakarta.annotation.Resource;
@@ -19,9 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("/product")
@@ -29,11 +31,43 @@ public class ProductController {
     private boolean excelHandling = false;
     @Resource
     private ProductService productService;
+    private final ProductRepository productRepository;
+    @Resource
+    private ProductPlanRepository productPlanRepository;
+    @Resource
+    private CategoryRepository categoryRepository;
+
+    public ProductController(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
 
     @GetMapping("/add")
     public String add(Model model) {
         model.addAttribute("product", new Product());
         return "page/product/add";
+    }
+
+    @PostMapping("/do/create")
+    public String create(@ModelAttribute Product product) {
+        productRepository.save(product);
+        return "page/product/list";
+    }
+
+    @GetMapping("/add/plan")
+    public String addPlan(Model model) {
+        model.addAttribute("productPlan", new ProductPlan());
+        return "page/product/add-plan";
+    }
+
+    @GetMapping("/do/add-plan")
+    public String doAddPlan(@ModelAttribute ProductPlan productPlan) {
+        Optional<Product> productOpt = productRepository.findByName(productPlan.getProduct().getName());
+        if (productOpt.isEmpty()) {
+            return "/page/product/error/no-such-product.html";
+        }
+        productPlan.setProduct(productOpt.get());
+        productPlanRepository.save(productPlan);
+        return "redirect:add-plan";
     }
 
     @PostMapping("/remove-all")
@@ -50,7 +84,7 @@ public class ProductController {
             excelHandling = true;
             try {
                 InputStream is = file.getInputStream();
-                List<Product> products = ExcelUtil.getProducts(is);
+                List<Product> products = ExcelUtil.getProducts(is, new HashSet<>(categoryRepository.findAll()));
                 productService.saveAll(products);
             } catch (Exception e) {
                 return "/page/product/error/excel_style_not_correct";
@@ -121,7 +155,7 @@ public class ProductController {
         }
     }
 
-    @PostMapping("/do-add")
+    @PostMapping("/do/add")
     public String doAdd(@ModelAttribute Product p) {
         productService.add(p);
         return "redirect:list";
@@ -142,6 +176,13 @@ public class ProductController {
         List<Product> products = productService.findAll();
         model.addAttribute("products", products);
         return "page/product/list";
+    }
+
+    @GetMapping("/plan")
+    public String plan(Model model) {
+        List<ProductPlan> productPlans = productPlanRepository.findAll();
+        model.addAttribute("productPlans", productPlans);
+        return "page/product/plan";
     }
 
 }
