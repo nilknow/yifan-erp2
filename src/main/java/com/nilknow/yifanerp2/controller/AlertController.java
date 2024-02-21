@@ -27,7 +27,7 @@ public class AlertController {
         model.addAttribute("email", new Email());
         String address = jdbcTemplate.queryForObject("select address from alert_email where id=?", new Object[]{1}, String.class).trim();
         model.addAttribute("currentEmail", address);
-        return "/page/alert/list";
+        return "page/alert/list";
     }
 
     @PostMapping("/update/{id}")
