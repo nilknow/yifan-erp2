@@ -5,14 +5,14 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>库存预警</title>
     <link th:href="@{/bootstrap-5.3.2/css/bootstrap.css}" rel="stylesheet">
     <link th:href="@{/my/common.css}" rel="stylesheet">
     <link th:href="@{/my/popup.css}" rel="stylesheet">
 </head>
 <body>
 <div th:replace="~{common/common :: navbar}"></div>
-<button href="/alert/add">添加物料</button>
+<button onclick="window.location.href='/material/page/add';">添加物料</button>
 <button id="change-email-popup-btn">修改邮箱</button>
 <span>预警邮件会发送到: <span th:text="${currentEmail}"></span></span>
 <table class="table table-hover">
@@ -44,7 +44,7 @@
 
 <form action="#" id="popup" class="hidden" th:action="@{/alert/change-email}" th:object="${email}" method="post">
     <h2>Change you alert email recipient</h2>
-    <input type="email" name="email" placeholder="please input your email address" th:field="*{address}" >
+    <input type="email" name="email" placeholder="please input your email address" th:field="*{address}">
     <button id="submit-btn" type="submit">确认</button>
     <button id="cancel-btn">cancel</button>
 </form>
@@ -59,10 +59,10 @@
         $.ajax({
             type: 'POST',
             url: url,
-            success: function(response) {
+            success: function (response) {
                 console.log('State updated successfully');
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 console.error('Error updating state:', error);
             }
         });

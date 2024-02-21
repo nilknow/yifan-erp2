@@ -30,6 +30,13 @@ public class MaterialController {
     @Resource
     private MaterialService materialService;
 
+    @PostMapping("/do-remove/{id}")
+    @ResponseBody
+    public String doRemove(@PathVariable("id") Long id) {
+        materialService.delete(id);
+        return "ok";
+    }
+
     @GetMapping("/add")
     public String add(Model model) {
         model.addAttribute("material", new Material());

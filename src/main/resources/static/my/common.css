@@ -1,9 +1,12 @@
-button {
+button, input {
     margin: 10px;
     border: none;
+    background-color: #555;
+    color: white;
+    border-radius: 20px;
 }
 
-button.warn{
+.warn{
     background: red;
     color: white;
 }
@@ -14,6 +17,22 @@ button a {
     background-color: transparent;
     border: none;
     outline: none;
+}
+
+a.button-like{
+    display: inline-block;
+    margin: 10px;
+    padding: 3px;
+    background-color: #555;
+    color: white;
+    text-decoration: none;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+td{
+    vertical-align: middle;
 }
 
 .center {

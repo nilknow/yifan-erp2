@@ -1,7 +1,6 @@
 package com.nilknow.yifanerp2.service;
 
 import com.nilknow.yifanerp2.entity.Material;
-import com.nilknow.yifanerp2.entity.Product;
 import com.nilknow.yifanerp2.repository.MaterialRepository;
 import jakarta.annotation.Resource;
 import jakarta.transaction.Transactional;
@@ -14,6 +13,7 @@ import java.util.Optional;
 public class MaterialService {
     @Resource
     private MaterialRepository materialRepository;
+
     public List<Material> findAll() {
         return materialRepository.findAll();
     }
@@ -37,5 +37,9 @@ public class MaterialService {
 
     public void removeAll() {
         materialRepository.deleteAll();
+    }
+
+    public void delete(Long id) {
+        materialRepository.deleteById(id);
     }
 }
