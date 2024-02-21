@@ -1,6 +1,11 @@
 button {
-    margin-left: 10px;
-    margin-right: 10px;
+    margin: 10px;
+    border: none;
+}
+
+button.warn{
+    background: red;
+    color: white;
 }
 
 button a {

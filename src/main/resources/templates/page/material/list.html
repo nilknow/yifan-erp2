@@ -7,17 +7,19 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <link th:href="@{/bootstrap-5.3.2/css/bootstrap.css}" rel="stylesheet">
+    <link th:href="@{/my/common.css}" rel="stylesheet">
+    <link th:href="@{/my/popup.css}" rel="stylesheet">
 </head>
 <body>
 <div th:replace="~{common/common :: navbar}"></div>
-<a href="/material/add">添加物料</a>
+<button onclick="window.location.href='/material/add';">添加物料</button>
 <form action="/material/excel/add" method="post" enctype="multipart/form-data">
     <input type="file" name="file" accept=".xlsx, .xls">
     <input type="submit" value="批量添加物料">
 </form>
-<a href="/material/excel/template">下载批量添加物料模板</a>
-<a href="/material/excel/download">下载物料库存excel文档</a>
-<button id="remove-all-btn">重置（清空所有物料库存）</button>
+<button onclick="window.location.href='/material/excel/template';">下载批量添加物料模板</button>
+<button onclick="window.location.href='/material/excel/download';">下载物料库存excel文档</button>
+<button id="remove-all-popup-btn" class="warn">重置（清空所有物料库存）</button>
 <table class="table table-hover">
     <thead>
     <tr>
@@ -40,6 +42,14 @@
     </tr>
     </tbody>
 </table>
+<form action="#" id="popup" class="hidden">
+    <h2>FBI WARNING!!!</h2>
+    You sure you want to clean all material data? You cannot undo it after cleaning.
+    <br>
+    <button id="remove-all-btn" class="warn">确认</button>
+    <button id="remove-all-cancel-btn">cancel</button>
+</form>
+
 <script th:src="@{/bootstrap-5.3.2/js/bootstrap.js}"></script>
 <script>
     document.getElementById("remove-all-btn").addEventListener("click",function(){
@@ -54,6 +64,22 @@
         };
         xhr.send("");
     })
+
+    // popup
+    document.getElementById("remove-all-popup-btn").addEventListener("click",
+        () => {
+            document.getElementById("popup").classList.remove("hidden");
+        });
+    document.getElementById("remove-all-btn").addEventListener("click",
+        () => {
+            document.getElementById("popup").classList.add("hidden");
+            location.reload();
+        });
+    document.getElementById("remove-all-cancel-btn").addEventListener("click",
+        () => {
+            document.getElementById("popup").classList.add("hidden");
+            location.reload();
+        });
 </script>
 </body>
 </html>
