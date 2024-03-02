@@ -1,0 +1,3 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://nilknow.com:5432/postgres?currentSchema=yifan_erp_test
