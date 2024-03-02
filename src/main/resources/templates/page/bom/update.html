@@ -3,6 +3,8 @@
 <head>
     <title>BOM管理</title>
     <link th:href="@{/bootstrap-5.3.2/css/bootstrap.css}" rel="stylesheet">
+    <link th:href="@{/my/common.css}" rel="stylesheet">
+    <link th:href="@{/my/popup.css}" rel="stylesheet">
 </head>
 <body>
 <div th:replace="~{common/common :: navbar}"></div>
@@ -10,6 +12,9 @@
 
 <form th:action="@{/bom/material/add}" method="post">
     <input type="hidden" name="productId" th:value="${product.id}" />
+    <select id="materialType">
+        <option th:each="category : ${MaterialCategories}" th:value="${category}" th:text="${category}"></option>
+    </select>
     <select name="materialId">
         <option th:each="material : ${allMaterials}" th:value="${material.id}" th:text="${material.name}"></option>
     </select>
@@ -20,8 +25,9 @@
     <thead>
     <tr>
         <th>ID</th>
+        <th>分类</th>
         <th>物料名</th>
-        <th>物料数量</th>
+        <th>数量</th>
         <th>删除</th>
     </tr>
     </thead>

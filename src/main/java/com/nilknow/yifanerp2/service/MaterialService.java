@@ -42,4 +42,8 @@ public class MaterialService {
     public void delete(Long id) {
         materialRepository.deleteById(id);
     }
+
+    public List<String> findCategories(){
+        return materialRepository.findDistinctCategories();
+    }
 }

@@ -52,6 +52,7 @@ public class BomController {
         }
         List<ProductMaterialRel> rels = productMaterialRelService.findAllByProductId(id);
         model.addAttribute("product", product.get());
+        model.addAttribute("MaterialCategories", materialService.findCategories());
         model.addAttribute("allMaterials", materialService.findAll());
         model.addAttribute("rels", rels);
         return "page/bom/update";
