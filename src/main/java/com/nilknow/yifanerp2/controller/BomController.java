@@ -1,6 +1,5 @@
 package com.nilknow.yifanerp2.controller;
 
-import com.nilknow.yifanerp2.entity.Material;
 import com.nilknow.yifanerp2.entity.Product;
 import com.nilknow.yifanerp2.entity.ProductMaterialRel;
 import com.nilknow.yifanerp2.service.MaterialService;
@@ -28,6 +27,9 @@ public class BomController {
     public String index(Model model) {
         List<Product> products = productService.findAll();
         model.addAttribute("products", products);
+        if (products.isEmpty()) {
+            model.addAttribute("prompt","您必须首先创建一个产品才能够进行bom管理");
+        }
         return "page/bom/index";
     }
 

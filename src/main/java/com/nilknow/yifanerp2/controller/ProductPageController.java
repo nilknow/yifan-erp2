@@ -20,7 +20,7 @@ public class ProductPageController {
     public String plan(Model model){
         model.addAttribute("product", new Product());
         model.addAttribute("category", new Category());
-        model.addAttribute("categories", categoryRepository.findAll().stream().map(Category::getName).toList());
+        model.addAttribute("categories", categoryRepository.findAll().stream().toList());
         return "page/product/create";
     }
 }

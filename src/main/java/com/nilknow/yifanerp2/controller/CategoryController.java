@@ -14,9 +14,9 @@ public class CategoryController {
     @Resource
     private CategoryRepository categoryRepository;
 
-    @PostMapping("/create")
-    public String create(@ModelAttribute Category category) {
+    @PostMapping("/do/create")
+    public String doCreate(@ModelAttribute Category category) {
         categoryRepository.save(category);
-        return "/page/product/create";
+        return "redirect:/product/page/create";
     }
 }

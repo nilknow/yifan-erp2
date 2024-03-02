@@ -3,8 +3,3 @@ spring:
     url: jdbc:postgresql://nilknow.com:5432/postgres
     username: postgres
     password: jump666!
-  jpa:
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true

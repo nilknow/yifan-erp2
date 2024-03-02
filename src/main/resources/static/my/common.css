@@ -1,12 +1,15 @@
 button, input {
     margin: 10px;
-    border: none;
-    background-color: #555;
-    color: white;
     border-radius: 20px;
 }
 
-.warn{
+button, input[type="file"], input[type="submit"] {
+    color: white;
+    background-color: #555;
+    border: none;
+}
+
+.warn {
     background: red;
     color: white;
 }
@@ -19,7 +22,7 @@ button a {
     outline: none;
 }
 
-a.button-like{
+a.button-like {
     display: inline-block;
     margin: 10px;
     padding: 3px;
@@ -31,15 +34,19 @@ a.button-like{
     cursor: pointer;
 }
 
-td{
+td {
     vertical-align: middle;
+}
+
+tr th{
+    text-align: center;
 }
 
 .center {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
 }
 
 .border-radius {
@@ -58,12 +65,12 @@ td{
     background-color: white;
 }
 
-.top-tabs{
+.top-tabs {
     display: flex;
     flex-direction: row;
 }
 
-.top-tab{
+.top-tab {
     background-color: transparent;
     border: none;
     color: #555;
@@ -76,6 +83,6 @@ td{
     transition: background-color 0.3s;
 }
 
-.flex-row{
+.flex-row {
     display: flex;
 }

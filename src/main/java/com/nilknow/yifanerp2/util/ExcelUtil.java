@@ -114,6 +114,8 @@ public class ExcelUtil {
                     cell1.setCellValue(material.getName());
                     XSSFCell dataCell2 = row.createCell(1);
                     dataCell2.setCellValue(material.getCount());
+                    XSSFCell dataCell3 = row.createCell(2);
+                    dataCell3.setCellValue(material.getInventoryCountAlert());
                 }
                 sheet.setColumnWidth(0,8*512); // 8 chinese characters width
                 sheet.setColumnWidth(1,3*512);

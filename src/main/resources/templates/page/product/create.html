@@ -6,26 +6,9 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>创建产品</title>
+    <link th:href="@{/bootstrap-5.3.2/css/bootstrap.css}" rel="stylesheet">
     <link th:href="@{/my/common.css}" rel="stylesheet">
-    <style>
-        td {
-            padding: 15px;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        #popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #fff;
-            padding: 20px;
-            border: 1px solid #ccc;
-        }
-    </style>
+    <link th:href="@{/my/popup.css}" rel="stylesheet">
 </head>
 <body>
 <div th:replace="~{common/common :: navbar}"></div>
@@ -36,6 +19,7 @@
             <tr>
                 <th>产品名</th>
                 <th>单位</th>
+                <th>数目</th>
                 <th>分类</th>
             </tr>
             </thead>
@@ -43,11 +27,12 @@
             <tr>
                 <td><input th:field="*{name}" id="name" type="text"/></td>
                 <td><input th:field="*{unit}" id="unit"/></td>
+                <td><input th:field="*{count}" id="count"/></td>
                 <td>
                     <div class="flex-row">
-                        <select>
+                        <select th:field="*{category.id}">
                             <option value="" disabled selected>请选择产品分类</option>
-                            <option th:each="category : ${categories}" th:text="${category}"></option>
+                            <option th:each="category : ${categories}"  th:value="${category.id}" th:text="${category.name}"></option>
                         </select>
                         <button type="button" id="popup-btn">添加新分类</button>
                     </div>
@@ -59,10 +44,10 @@
     </fieldset>
 </form>
 
-<form action="#" id="popup" class="hidden" th:action="@{/category/create}" th:object="${category}" method="post">
-    <!-- Your form fields here -->
+<form action="#" id="popup" class="popup hidden" th:action="@{/category/do/create}" th:object="${category}" method="post">
     <input type="text" name="name" placeholder="分类名" th:field="*{name}">
-    <button>添加分类</button>
+    <button type="button">添加分类</button>
+    <button type="reset">取消</button>
 </form>
 
 <script>
