@@ -20,24 +20,19 @@
             margin: 5px 0;
         }
 
-        .submit-btn {
-            background-color: #000;
+        button {
             width: 100%;
-            color: white;
-            border: none;
             padding: 10px 20px;
+            margin-left: 0;
             margin-top: 13px;
             text-align: center;
-            text-decoration: none;
-            display: inline-block;
             font-size: 16px;
             border-radius: 20px;
             transition-duration: 0.4s;
-            cursor: pointer;
         }
 
-        .submit-btn:hover {
-            background-color: #555;
+        input[type="submit"]{
+            margin-left: 0;
         }
     </style>
 </head>
@@ -59,7 +54,7 @@
             密码：
             <input class="radius-input" type="password" name="password"/>
         </div>
-        <input class="submit-btn" type="submit" value="登录"/>
+        <button type="submit">登录</button>
     </form>
 </div>
 </body>

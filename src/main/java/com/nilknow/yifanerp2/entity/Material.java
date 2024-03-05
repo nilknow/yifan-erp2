@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -21,6 +22,8 @@ public class Material {
     private String category;
     private Long count;
     private Long inventoryCountAlert;
+    @Temporal(TemporalType.TIMESTAMP)
+    public Date updateTimestamp;
     @ManyToMany(mappedBy = "materials")
     private List<Product> products;
 

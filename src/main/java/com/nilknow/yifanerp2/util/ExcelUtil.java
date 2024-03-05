@@ -186,7 +186,7 @@ public class ExcelUtil {
         try (Workbook workbook = new XSSFWorkbook(is)) {
             int sheetCounts = workbook.getNumberOfSheets();
             for (int i = 0; i < sheetCounts; i++) {
-                Sheet sheet = workbook.getSheetAt(0);
+                Sheet sheet = workbook.getSheetAt(i);
 
                 Iterator<Row> rowIterator = sheet.iterator();
 
@@ -211,14 +211,17 @@ public class ExcelUtil {
 
                     Cell nameCell = row.getCell(0);
                     Cell countCell = row.getCell(1);
+                    Cell inventoryCountAlertCell = row.getCell(2);
 
                     String name = nameCell.getStringCellValue();
                     long count = (long) countCell.getNumericCellValue();
+                    long inventoryCountAlert = (long) inventoryCountAlertCell.getNumericCellValue();
 
                     Material material = new Material();
                     material.setName(name);
                     material.setCount(count);
                     material.setCategory(category);
+                    material.setInventoryCountAlert(inventoryCountAlert);
                     materials.add(material);
                 }
             }

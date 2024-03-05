@@ -3,3 +3,5 @@ spring:
     url: jdbc:postgresql://nilknow.com:5432/postgres
     username: postgres
     password: jump666!
+    hikari:
+      max-lifetime: 60000

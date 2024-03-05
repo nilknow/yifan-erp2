@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link th:href="@{/my/common.css}" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{common/common :: navbar}"></div>
+<h1>YIFAN-ERP Release</h1>
+<h2>Release 3/5/2024</h2>
+<ul>
+    <li>
+        <span>better error prompt</span>
+        <br>
+        <img th:src="@{/img/release_better_error_prompt.png}">
+    </li>
+    <li>
+        <span>material search function</span>
+        <br>
+        <img th:src="@{/img/feature_material_search.jpg}">
+    </li>
+    <li>
+        <span>full update preview</span>
+        <br>
+        <img th:src="@{/img/feature_full_update_perview.png}">
+    </li>
+    <li>
+        <span>better UI for navigation bar</span>
+        <br>
+        <img th:src="@{/img/feature_better_navbar.png}">
+    </li>
+    <li>
+        <span>better UI for button</span>
+        <br>
+        <img th:src="@{/img/feature_better_button_ui.png}">
+    </li>
+</ul>
+</body>
+</html>

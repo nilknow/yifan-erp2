@@ -4,14 +4,18 @@ import com.nilknow.yifanerp2.entity.Material;
 import com.nilknow.yifanerp2.service.MaterialService;
 import com.nilknow.yifanerp2.util.ExcelUtil;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.EmptyFileException;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -29,6 +33,11 @@ public class MaterialController {
 
     @Resource
     private MaterialService materialService;
+
+    @ExceptionHandler(EmptyFileException.class)
+    public ModelAndView handleNullPointerException(Exception e) {
+        return new ModelAndView("/page/error-file-not-chosen");
+    }
 
     @PostMapping("/do-remove/{id}")
     @ResponseBody
@@ -57,7 +66,7 @@ public class MaterialController {
             excelHandling = true;
             try {
                 List<Material> materials = ExcelUtil.getMaterials(file.getInputStream());
-                materialService.saveAll(materials);
+                materialService.fullUpdate(materials);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             } finally {
@@ -65,6 +74,13 @@ public class MaterialController {
             }
             return "redirect:/material/list";
         }
+    }
+
+    @PostMapping("/excel/add/preview")
+    @ResponseBody
+    public Map<String, List<Material>> excelAddPreview(MultipartFile file) throws Exception {
+        List<Material> materials = ExcelUtil.getMaterials(file.getInputStream());
+        return materialService.fullUpdatePreview(materials);
     }
 
     /**
@@ -128,13 +144,13 @@ public class MaterialController {
 
     @GetMapping("/update")
     public String update(@RequestParam("id") Long id, Model model) {
-        Optional<Material> materialOpt=materialService.findById(id);
-        model.addAttribute("material",materialOpt.orElse(new Material()));
+        Optional<Material> materialOpt = materialService.findById(id);
+        model.addAttribute("material", materialOpt.orElse(new Material()));
         return "page/material/update";
     }
 
     @PostMapping("do-update")
-    public String doUpdate(@ModelAttribute Material material){
+    public String doUpdate(@ModelAttribute Material material) {
         if (materialService.findById(material.getId()).isEmpty()) {
             log.error("ID不正确，无法修改该物料");
             return "redirect:list";
@@ -150,8 +166,14 @@ public class MaterialController {
     }
 
     @GetMapping("/list")
-    public String list(Model model) {
-        List<Material> materials = materialService.findAll();
+    public String list(@RequestParam(name = "name", required = false) String name, HttpServletRequest request, Model model) {
+        List<Material> materials;
+        if (StringUtils.hasText(name)) {
+            materials = materialService.findAllByNameLike(name);
+        } else {
+            materials = materialService.findAll();
+        }
+        model.addAttribute("name", name);
         model.addAttribute("materials", materials);
         return "page/material/list";
     }

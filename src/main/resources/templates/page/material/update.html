@@ -11,7 +11,7 @@
 <div th:replace="~{common/common :: navbar}"></div>
 <form action="#" th:action="@{/material/do-update}" th:object="${material}" method="post">
     <fieldset>
-        <input type="submit" id="submitButton" th:value="提交修改">
+        <button type="submit" id="submitButton">提交修改</button>
         <table>
             <thead>
             <tr>

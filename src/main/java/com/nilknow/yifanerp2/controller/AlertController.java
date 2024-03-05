@@ -25,7 +25,7 @@ public class AlertController {
         List<Alert> alerts = alertService.findAll();
         model.addAttribute("alerts", alerts);
         model.addAttribute("email", new Email());
-        String address = jdbcTemplate.queryForObject("select address from alert_email where id=?", new Object[]{1}, String.class).trim();
+        String address = jdbcTemplate.queryForObject("select address from alert_email limit 1", String.class).trim();
         model.addAttribute("currentEmail", address);
         return "page/alert/list";
     }

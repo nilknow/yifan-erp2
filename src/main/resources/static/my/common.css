@@ -1,16 +1,38 @@
-button, input {
-    margin: 10px;
+button {
+    margin: 8px;
     border-radius: 20px;
+    font-size: 16px;
+    min-width: 52px;
+    background-color: #555;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 5px 10px;
+    text-align: center;
+    transition-duration: 0.4s;
+    vertical-align: middle;
 }
 
-button, input[type="file"], input[type="submit"] {
-    color: white;
-    background-color: #555;
-    border: none;
+button:hover{
+    /*background-color: #000;*/
+    filter: brightness(70%);
+}
+
+input{
+    margin: 10px;
+    border-radius: 20px;
+    font-size: 16px;
+    min-width: 70px;
+    padding: 5px 10px;
+    vertical-align: middle;
+}
+
+input{
+    border: 1px solid;
 }
 
 .warn {
-    background: red;
+    background: #f00;
     color: white;
 }
 
@@ -22,20 +44,13 @@ button a {
     outline: none;
 }
 
-a.button-like {
-    display: inline-block;
-    margin: 10px;
-    padding: 3px;
-    background-color: #555;
-    color: white;
-    text-decoration: none;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
+table{
+    width: 100%;
 }
 
 td {
     vertical-align: middle;
+    text-align: center;
 }
 
 tr th{
@@ -71,7 +86,7 @@ tr th{
 }
 
 .top-tab {
-    background-color: transparent;
+    /*background-color: transparent;*/
     border: none;
     color: #555;
     padding: 10px 20px;
@@ -81,6 +96,15 @@ tr th{
     cursor: pointer;
     font-weight: bold;
     transition: background-color 0.3s;
+}
+
+.top-tab:hover{
+    background-color: #555;
+    color: white;
+}
+
+.top-tab a:hover{
+    background-color: green;
 }
 
 .flex-row {
