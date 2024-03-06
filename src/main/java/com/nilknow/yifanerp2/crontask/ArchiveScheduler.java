@@ -12,6 +12,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
@@ -22,11 +24,13 @@ public class ArchiveScheduler {
 
     @Scheduled(cron = "0 0 0 * * *")
     public void archive() {
-        String fileName = "物料库存.xlsx"; // File name
+        LocalDate currentDate = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMddyy");
+        String now = currentDate.format(formatter);
+        String fileName = "物料库存_"+now+".xlsx"; // File name
         try (FileOutputStream os = new FileOutputStream(fileName)) {
             List<Material> materials = materialService.findAll();
             ExcelUtil.exportMaterials(os, materials);
-            System.out.println(">>>>archived"+new Date());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
