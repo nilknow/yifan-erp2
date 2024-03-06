@@ -31,6 +31,11 @@ input{
     border: 1px solid;
 }
 
+textarea{
+    margin: 10px;
+    border-radius: 4px;
+}
+
 .warn {
     background: #f00;
     color: white;

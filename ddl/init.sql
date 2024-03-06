@@ -89,6 +89,19 @@ create table login_user_authority_rel
         unique (login_user_id, authority_id)
 );
 
+create table bug
+(
+    id          bigserial
+        constraint bug_pk
+            primary key,
+    content     varchar(4000) default ''::character varying not null,
+    priority    char(4)       default '一般'::bpchar        not null,
+    email       varchar(40),
+    phone       varchar(20),
+    create_time timestamp                                   not null
+);
+
+
 create function add_alert_row() returns trigger
     language plpgsql
 as
