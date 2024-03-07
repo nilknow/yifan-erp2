@@ -3,6 +3,7 @@ package com.nilknow.yifanerp2.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -21,6 +22,7 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
+    private Date updateTimestamp;
     @ManyToMany
     @JoinTable(
             name = "product_material_rel",

@@ -2,58 +2,103 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>BOM管理</title>
-    <link th:href="@{/bootstrap-5.3.2/css/bootstrap.css}" rel="stylesheet">
     <link th:href="@{/my/common.css}" rel="stylesheet">
     <link th:href="@{/my/popup.css}" rel="stylesheet">
+    <style>
+        h2 {
+            margin: 10px;
+        }
+
+        #container {
+            margin: 10px;
+        }
+    </style>
 </head>
 <body>
 <div th:replace="~{common/common :: navbar}"></div>
-<h2><span th:text="${product.name}"></span></h2>
+<div id="container">
+    <h2><span th:text="${'产品：  '+product.name}"></span></h2>
+    <form th:action="@{/bom/material/add}" method="post">
+        <input type="hidden" name="productId" th:value="${product.id}"/>
+        <select id="materialType" onchange="listMaterialsByType(this)">
+            <option value="" disabled selected>请选择物料分类</option>
+            <option th:each="category : ${MaterialCategories}" th:value="${category}" th:text="${category}"></option>
+        </select>
+        <select name="materialId" id="childSelect">
+            <option value="" disabled selected>请选择物料</option>
+            <option th:each="material : ${allMaterials}" th:value="${material.id}" th:text="${material.name}"></option>
+        </select>
+        <input type="number" name="materialCount" required/>
+        <button type="submit">添加物料</button>
+    </form>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>分类</th>
+            <th>物料名</th>
+            <th>删除</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="rel : ${rels}">
+            <td th:text="${rel.material.id}"></td>
+            <td th:text="${rel.material.name}"></td>
+            <td>
+                <form th:action="@{/bom/material/update-count}" method="post">
+                    <input type="hidden" name="productId" th:value="${product.id}"/>
+                    <input type="hidden" name="materialId" th:value="${rel.material.id}">
+                    <input type="number" name="materialCount" th:value="${rel.materialCount}"/>
+                    <button>更新</button>
+                </form>
+            </td>
+            <td>
+                <form th:action="@{/bom/material/remove}" method="post">
+                    <input type="hidden" name="productId" th:value="${product.id}"/>
+                    <input type="hidden" name="materialId" th:value="${rel.material.id}">
+                    <button>删除</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script>
+    function listMaterialsByType(e) {
+        let childSelect = document.getElementById("childSelect");
+        childSelect.innerHTML = "";
 
-<form th:action="@{/bom/material/add}" method="post">
-    <input type="hidden" name="productId" th:value="${product.id}" />
-    <select id="materialType">
-        <option th:each="category : ${MaterialCategories}" th:value="${category}" th:text="${category}"></option>
-    </select>
-    <select name="materialId">
-        <option th:each="material : ${allMaterials}" th:value="${material.id}" th:text="${material.name}"></option>
-    </select>
-    <input type="number" name="materialCount" required />
-    <button type="submit">添加物料</button>
-</form>
-<table class="table table-hover">
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>分类</th>
-        <th>物料名</th>
-        <th>数量</th>
-        <th>删除</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="rel : ${rels}">
-        <td th:text="${rel.material.id}"></td>
-        <td th:text="${rel.material.name}"></td>
-        <td>
-            <form th:action="@{/bom/material/update-count}" method="post">
-                <input type="hidden" name="productId" th:value="${product.id}" />
-                <input type="hidden" name="materialId" th:value="${rel.material.id}">
-                <input type="number" name="materialCount" th:value="${rel.materialCount}" />
-                <button>更新</button>
-            </form>
-        </td>
-        <td>
-            <form th:action="@{/bom/material/remove}" method="post">
-                <input type="hidden" name="productId" th:value="${product.id}" />
-                <input type="hidden" name="materialId" th:value="${rel.material.id}">
-                <button>删除</button>
-            </form>
-        </td>
-    </tr>
-    </tbody>
-</table>
-<script th:src="@{/bootstrap-5.3.2/js/bootstrap.js}"></script>
-<script th:src="@{/jquery-3.7.1/jquery.min.js}"></script>
+        fetch("/material/materials-by-category?category=" + e.value, {
+            method: "GET",
+            body: null
+        })
+            .then(resp => {
+                if (!resp.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return resp.json()
+            })
+            .then((resp) => {
+                console.log(resp)
+                let option = document.createElement("option");
+                option.disabled = true
+                option.selected = true
+                option.value = null;
+                option.text = "请选择物料";
+                childSelect.add(option)
+
+                resp.forEach(material => {
+                    let option = document.createElement("option");
+                    option.text = material.name;
+                    option.value = material.id;
+                    childSelect.add(option)
+                })
+            })
+            .catch(error => {
+                // Handle errors
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+</script>
 </body>
 </html>

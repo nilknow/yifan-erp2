@@ -92,4 +92,8 @@ public class ProductService {
         product.setCount(product.getCount() + count);
         productRepository.save(product);
     }
+
+    public List<Product> findAllOrderByUpdateTimeDesc() {
+        return productRepository.findAllByOrderByUpdateTimestampDesc();
+    }
 }

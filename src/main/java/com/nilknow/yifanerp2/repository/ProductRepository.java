@@ -16,4 +16,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     List<Material> findMaterialsByProductId(@Param("productId") Long productId);
 
     Optional<Product> findByName(String name);
+
+    List<Product> findAllByOrderByUpdateTimestampDesc();
 }

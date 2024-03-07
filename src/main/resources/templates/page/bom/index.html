@@ -5,16 +5,19 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>BOM管理</title>
+    <link th:href="@{/my/common.css}" rel="stylesheet">
+    <link th:href="@{/my/popup.css}" rel="stylesheet">
 </head>
 <body>
 <div th:replace="~{common/common :: navbar}"></div>
+<br>
+<br>
 <table class="table table-hover">
     <thead>
     <tr>
         <th>ID</th>
         <th>产品名</th>
-        <th>物料</th>
         <th>修改物料</th>
     </tr>
     </thead>
@@ -22,13 +25,8 @@
     <tr th:each="product : ${products}">
         <td th:text="${product.id}"></td>
         <td th:text="${product.name}"></td>
-        <td>
-            <select class="material-dropdown" th:attr="data-product-id=${product.id}">
-                <option value="">-- Select Material --</option>
-            </select>
-        </td>
         <th>
-            <a th:href="@{/bom/update(id=${product.id})}">修改</a>
+            <button th:onclick="|window.location.href='/bom/update?id=${product.id}'|">修改</button>
         </th>
     </tr>
     </tbody>

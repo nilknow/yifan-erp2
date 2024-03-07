@@ -112,4 +112,8 @@ public class MaterialService {
     public List<Material> findAllByNameLike(String name) {
         return materialRepository.findAllByNameContainingIgnoreCase(name);
     }
+
+    public List<Material> findAllByCategory(String category) {
+        return materialRepository.findALlByCategory(category);
+    }
 }

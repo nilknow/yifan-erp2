@@ -18,7 +18,7 @@ button:hover{
     filter: brightness(70%);
 }
 
-input{
+input,select{
     margin: 10px;
     border-radius: 20px;
     font-size: 16px;

@@ -25,7 +25,7 @@ public class BomController {
 
     @GetMapping
     public String index(Model model) {
-        List<Product> products = productService.findAll();
+        List<Product> products = productService.findAllOrderByUpdateTimeDesc();
         model.addAttribute("products", products);
         if (products.isEmpty()) {
             model.addAttribute("prompt","您必须首先创建一个产品才能够进行bom管理");
@@ -42,6 +42,20 @@ public class BomController {
     @ResponseBody
     public List<ProductMaterialRel> materials(@PathVariable("productId") Long productId, Model model) {
         return productMaterialRelService.findAllByProductId(productId);
+    }
+
+    @GetMapping("/{productId}")
+    public String materialsDetail(Long productId, Model model) {
+        Optional<Product> product = productService.findById(productId);
+        if (product.isEmpty()) {
+            return "redirect:/page/bom/error/product-not-exist";
+        }
+        List<ProductMaterialRel> rels = productMaterialRelService.findAllByProductId(productId);
+        model.addAttribute("product", product.get());
+        model.addAttribute("MaterialCategories", materialService.findCategories());
+        model.addAttribute("allMaterials", materialService.findAll());
+        model.addAttribute("rels", rels);
+        return "page/bom/update";
     }
 
     @GetMapping("/update")

@@ -89,21 +89,6 @@
         xhr.send("");
     }
 
-    function postWithObj(url, obj) {
-        let xhr = new XMLHttpRequest();
-        xhr.open("POST", url, true);
-        xhr.setRequestHeader("Content-Type", "application/json");
-
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                location.reload();
-            }
-        };
-
-        const data = JSON.stringify(obj);
-        xhr.send(data);
-    }
-
     document.getElementById("remove-all-btn").addEventListener("click", function () {
         post("/material/remove-all")
     })

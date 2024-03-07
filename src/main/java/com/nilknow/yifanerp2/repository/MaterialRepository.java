@@ -25,4 +25,6 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
 
     @Query(nativeQuery = true, value = "select * from material where count<inventory_count_alert")
     List<Material> findAllWithInventoryIssue();
+
+    List<Material> findALlByCategory(String category);
 }
