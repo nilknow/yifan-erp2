@@ -17,7 +17,7 @@ public class AlertService {
     private AlertRepository alertRepository;
 
     public List<Alert> findAll() {
-        return alertRepository.findAll();
+        return alertRepository.findAllByOrderByIdDesc();
     }
 
     public void update(Alert alert){

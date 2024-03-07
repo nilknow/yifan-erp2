@@ -41,29 +41,29 @@
     </tbody>
 </table>
 
-<form action="#" id="popup" class="hidden" th:action="@{/alert/change-email}" th:object="${email}" method="post">
+<form action="#" id="popup" class="popup hidden" th:action="@{/alert/change-email}" th:object="${email}" method="post">
     <h2>Change you alert email recipient</h2>
     <input type="email" name="email" placeholder="please input your email address" th:field="*{address}">
     <button id="submit-btn" type="submit">确认</button>
     <button id="cancel-btn">cancel</button>
 </form>
 
-<script th:src="@{/jquery-3.7.1/jquery.min.js}"></script>
 <script>
     function updateState(e) {
         const stateColumn = e.closest("tr");
         const idColumn = stateColumn.querySelector("td:first-child");
         const url = '/alert/update/' + idColumn.textContent + '?state=' + e.value;
-        $.ajax({
-            type: 'POST',
-            url: url,
-            success: function (response) {
+        fetch(url, {
+            method: 'POST',
+            body: null
+        })
+            .then((resp) => {
                 console.log('State updated successfully');
-            },
-            error: function (xhr, status, error) {
+            })
+            .catch((error) => {
                 console.error('Error updating state:', error);
-            }
-        });
+
+            })
     }
 
     // popup

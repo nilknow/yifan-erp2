@@ -108,16 +108,16 @@ as
 $$
 BEGIN
     IF NEW.inventory_count_alert is not null and NEW.inventory_count_alert >= NEW.count THEN
-        INSERT INTO Alert (content) VALUES ('物料 '||NEW.name||' 库存不足，请添加库存');
+        INSERT INTO Alert (content) VALUES ('物料 ' || NEW.name || ' 库存不足，请添加库存');
     END IF;
     RETURN NEW;
 END
 $$;
 
-create trigger material_inventory_alert_trigger
-    after update
-        of inventory_count_alert
-    on material
-    for each row
-execute procedure add_alert_row();
+drop trigger material_inventory_alert_trigger on material;
 
+CREATE TRIGGER material_inventory_alert_trigger
+    AFTER UPDATE OF inventory_count_alert,count
+    ON material
+    FOR EACH ROW
+EXECUTE PROCEDURE add_alert_row();

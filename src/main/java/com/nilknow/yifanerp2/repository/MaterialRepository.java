@@ -22,4 +22,7 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
     void updateByNameAndCategory(Long count,Long inventoryCountAlert,String name,String category);
 
     List<Material> findAllByOrderByUpdateTimestampDesc();
+
+    @Query(nativeQuery = true, value = "select * from material where count<inventory_count_alert")
+    List<Material> findAllWithInventoryIssue();
 }

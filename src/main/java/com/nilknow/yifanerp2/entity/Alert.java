@@ -22,9 +22,9 @@ public class Alert {
     /**
      * 0:未处理 1:处理中 2:已处理
      */
-    private Integer state;
+    private Integer state=0;
     /**
      * 0:未发送 1:已发送
      */
-    private Integer emailSent;
+    private Integer emailSent=0;
 }
