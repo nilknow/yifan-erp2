@@ -110,10 +110,10 @@ public class MaterialService {
     }
 
     public List<Material> findAllByNameLike(String name) {
-        return materialRepository.findAllByNameContainingIgnoreCase(name);
+        return materialRepository.findAllByNameContainingIgnoreCaseOrderByUpdateTimestampDesc(name);
     }
 
     public List<Material> findAllByCategory(String category) {
-        return materialRepository.findALlByCategory(category);
+        return materialRepository.findAllByCategory(category);
     }
 }

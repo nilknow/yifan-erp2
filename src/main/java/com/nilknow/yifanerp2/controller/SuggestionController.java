@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
 
-@RequestMapping("/suggestion/")
+@RequestMapping("/suggestion")
 @RestController
 public class SuggestionController {
     @Resource
     private SuggestionRepository suggestionRepository;
 
-    @PostMapping
+    @PostMapping("/submit")
     public String submit(String email,String phone,String content){
         Suggestion suggestion = new Suggestion();
         suggestion.setEmail(email);

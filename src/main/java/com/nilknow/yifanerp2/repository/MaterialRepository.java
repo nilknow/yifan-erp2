@@ -14,7 +14,7 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
     @Query(nativeQuery = true, value = "select distinct category from material")
     List<String> findDistinctCategories();
 
-    List<Material> findAllByNameContainingIgnoreCase(@NotBlank String name);
+    List<Material> findAllByNameContainingIgnoreCaseOrderByUpdateTimestampDesc(@NotBlank String name);
 
     @Transactional
     @Modifying
@@ -23,8 +23,5 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
 
     List<Material> findAllByOrderByUpdateTimestampDesc();
 
-    @Query(nativeQuery = true, value = "select * from material where count<inventory_count_alert")
-    List<Material> findAllWithInventoryIssue();
-
-    List<Material> findALlByCategory(String category);
+    List<Material> findAllByCategory(String category);
 }

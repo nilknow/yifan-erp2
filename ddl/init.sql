@@ -121,3 +121,16 @@ CREATE TRIGGER material_inventory_alert_trigger
     ON material
     FOR EACH ROW
 EXECUTE PROCEDURE add_alert_row();
+
+CREATE OR REPLACE FUNCTION update_material_timestamp()
+    RETURNS TRIGGER AS $$
+BEGIN
+    NEW.update_timestamp := NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER material_update_trigger
+    BEFORE INSERT OR UPDATE ON material
+    FOR EACH ROW
+EXECUTE procedure update_material_timestamp();

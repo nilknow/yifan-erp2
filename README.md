@@ -10,3 +10,6 @@
 * Material: BOM中的物料
 * Material Type
 * Unit: 物料或者产品的单位
+
+## development keyword
+* pg_stat_statements

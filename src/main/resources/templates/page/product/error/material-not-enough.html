@@ -6,9 +6,16 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <link th:href="@{/my/common.css}" rel="stylesheet">
+    <style>
+        span{
+            margin: 20px;
+        }
+    </style>
 </head>
 <body>
 <div th:replace="~{common/common :: navbar}"></div>
-物料不够进行生产
+<br>
+<span>物料不够进行生产</span>
 </body>
 </html>

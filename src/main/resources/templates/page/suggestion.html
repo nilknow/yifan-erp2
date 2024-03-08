@@ -12,11 +12,15 @@
             height: 400px;
             width: 600px;
         }
+        .border-container {
+            border: 1px solid;
+            margin: 10px;
+        }
     </style>
 </head>
 <body>
 <div th:replace="~{common/common :: navbar}"></div>
-<form method="POST" enctype="multipart/form-data" action="/bug-report/submit">
+<form method="POST" enctype="multipart/form-data" action="/suggestion/submit">
     <input type="text" name="email" placeholder="你的电子邮箱">
     <input type="text" name="phone" placeholder="你的手机号">
     <input type="hidden" name="priority" value="一般">
@@ -26,7 +30,19 @@
     <button type="submit">提交</button>
     <button type="reset">重填</button>
 </form>
-<div th:each="suggestion : ${suggestions}">
+<div class="border-container" th:each="suggestion : ${suggestions}">
+    <span th:text="${suggestion.createTime}"></span>
+    <span th:text="${suggestion.content}"></span>
 </div>
+<script>
+    let form = document.getElementById("form");
+    form.addEventListener("submit", e => {
+        e.preventDefault()
+        fetch("/suggestion/submit", {
+            method: "POST",
+            body: new FormData(e.target)
+        }).then(()=>location.reload())
+    })
+</script>
 </body>
 </html>
