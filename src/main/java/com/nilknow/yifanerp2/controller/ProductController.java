@@ -70,6 +70,35 @@ public class ProductController {
         return "redirect:add-plan";
     }
 
+    @PostMapping("/do/add")
+    public String doAdd(@ModelAttribute Product p) {
+        productService.add(p);
+        return "redirect:list";
+    }
+
+    @PostMapping("produce")
+    public String produce(@RequestParam("id") Long id, @RequestParam("count") Long count) {
+        List<Material> notEnoughMaterials = productService.produce(id, count);
+        if (!notEnoughMaterials.isEmpty()) {
+            return "/page/product/error/material-not-enough";
+        }
+        return "redirect:list";
+    }
+
+    @PostMapping("/out")
+    public String out(@RequestParam(value = "id", required = true) Long id, @RequestParam(value = "count", required = true) Long count) {
+        if (count <= 0) {
+            return "redirect:list";
+        }
+        boolean canOut = productService.checkOut(id, count);
+        if (!canOut) {
+            return "/page/product/error/product-count-not-enough";
+        } else {
+            productService.out(id, count);
+        }
+        return "redirect:list";
+    }
+
     @PostMapping("/remove-all")
     public String removeAll() {
         productService.removeAll();
@@ -153,21 +182,6 @@ public class ProductController {
             map.put("message", "下载文件失败" + e.getMessage());
             response.getWriter().println(map.get("message"));
         }
-    }
-
-    @PostMapping("/do/add")
-    public String doAdd(@ModelAttribute Product p) {
-        productService.add(p);
-        return "redirect:list";
-    }
-
-    @PostMapping("produce")
-    public String produce(@RequestParam("id") Long id, @RequestParam("count") Long count) {
-        List<Material> notEnoughMaterials = productService.produce(id, count);
-        if (!notEnoughMaterials.isEmpty()) {
-            return "/page/product/error/material-not-enough";
-        }
-        return "redirect:list";
     }
 
 

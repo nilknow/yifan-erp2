@@ -27,6 +27,7 @@
         <th>产品名</th>
         <th>库存数量</th>
         <th>生产</th>
+        <th>出库</th>
         <th>BOM</th>
     </tr>
     </thead>
@@ -40,6 +41,13 @@
                 <input type="hidden" name="id" th:value="${product.id}">
                 <input type="number" name="count" required>
                 <button type="submit">生产</button>
+            </form>
+        </td>
+        <td>
+            <form th:action="@{/product/out}" method="post">
+                <input type="hidden" name="id" th:value="${product.id}">
+                <input type="number" name="count" required>
+                <button type="submit">出库</button>
             </form>
         </td>
         <td>

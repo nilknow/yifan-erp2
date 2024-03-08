@@ -96,4 +96,27 @@ public class ProductService {
     public List<Product> findAllOrderByUpdateTimeDesc() {
         return productRepository.findAllByOrderByUpdateTimestampDesc();
     }
+
+    public boolean checkOut(Long id, Long count) {
+        Optional<Product> productOpt = productRepository.findById(id);
+        if (productOpt.isEmpty()) {
+            return false;
+        }
+        Product product = productOpt.get();
+        return product.getCount() != null && product.getCount() >= count;
+    }
+
+    public void out(Long id, Long count) {
+        if (count <= 0) {
+            return;
+        }
+        Optional<Product> productOpt = productRepository.findById(id);
+        if (productOpt.isEmpty()) {
+            return;
+        }
+        Product product = productOpt.get();
+        product.setCount(product.getCount()-count);
+        productRepository.save(product);
+    }
+
 }
