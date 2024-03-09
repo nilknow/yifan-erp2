@@ -65,8 +65,8 @@ public class ProductService {
         productRepository.deleteAll();
     }
 
-    public List<Material> findMaterialsByProductId(Long productId){
-        return productRepository.findMaterialsByProductId(productId);
+    public void remove(Long productId) {
+        productRepository.deleteById(productId);
     }
 
     public Optional<Product> findById(Long id) {

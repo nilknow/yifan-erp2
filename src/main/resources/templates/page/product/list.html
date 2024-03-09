@@ -11,7 +11,7 @@
 </head>
 <body>
 <div th:replace="~{common/common :: navbar}"></div>
-<button onclick="window.location.href='/product/add'">添加产品</button>
+<button onclick="window.location.href='/product/page/create'">添加产品</button>
 <form action="/product/excel/add" method="post" enctype="multipart/form-data">
     <input type="file" name="file" accept=".xlsx, .xls">
     <button type="submit">全量更新产品</button>
@@ -29,6 +29,7 @@
         <th>生产</th>
         <th>出库</th>
         <th>BOM</th>
+        <th>删除</th>
     </tr>
     </thead>
     <tbody>
@@ -54,6 +55,12 @@
             <form method="get" action="/bom/product" enctype="multipart/form-data">
                 <input type="hidden" name="productId" th:value="${product.id}">
                 <button type="submit">查看</button>
+            </form>
+        </td>
+        <td>
+            <form th:action="@{/product/remove}" method="post">
+                <input type="hidden" name="productId" th:value="${product.id}">
+                <button type="submit" class="warn">删除</button>
             </form>
         </td>
     </tr>

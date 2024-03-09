@@ -11,7 +11,7 @@
 </head>
 <body>
 <div th:replace="~{common/common :: navbar}"></div>
-<form action="#" th:action="@{/product/do/create}" th:object="${product}" method="post">
+<form th:action="@{/product/do/create}" th:object="${product}" method="post">
     <fieldset>
         <table>
             <thead>
@@ -24,9 +24,9 @@
             </thead>
             <tbody>
             <tr>
-                <td><input th:field="*{name}" id="name" type="text"/></td>
-                <td><input th:field="*{unit}" id="unit"/></td>
-                <td><input th:field="*{count}" id="count"/></td>
+                <td><input th:field="*{name}" id="name" type="text" required /></td>
+                <td><input th:field="*{unit}" id="unit" type="text" required/></td>
+                <td><input th:field="*{count}" id="count" type="number" required/></td>
                 <td>
                     <div class="flex-row">
                         <select th:field="*{category.id}">

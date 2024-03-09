@@ -49,8 +49,9 @@ public class ProductController {
 
     @PostMapping("/do/create")
     public String create(@ModelAttribute Product product) {
+        product.setUpdateTimestamp(new Date());
         productRepository.save(product);
-        return "page/product/list";
+        return "redirect:/product/list";
     }
 
     @GetMapping("/add/plan")
@@ -95,6 +96,14 @@ public class ProductController {
             return "/page/product/error/product-count-not-enough";
         } else {
             productService.out(id, count);
+        }
+        return "redirect:list";
+    }
+
+    @PostMapping("/remove")
+    public String remove(@RequestParam Long productId) {
+        if (productId != null && productId > 0) {
+            productService.remove(productId);
         }
         return "redirect:list";
     }

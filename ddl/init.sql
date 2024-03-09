@@ -134,3 +134,17 @@ CREATE TRIGGER material_update_trigger
     BEFORE INSERT OR UPDATE ON material
     FOR EACH ROW
 EXECUTE procedure update_material_timestamp();
+
+create table suggestion
+(
+    id          bigserial
+        constraint suggestion_pk
+            primary key,
+    content     varchar(4000) default ''::character varying not null,
+    email       char(40),
+    phone       char(20),
+    create_time timestamp     default now()                 not null
+);
+
+alter table suggestion
+    owner to postgres;
