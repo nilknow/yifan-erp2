@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.TenantId;
 
 @Entity
 @Getter
@@ -27,4 +28,6 @@ public class Alert {
      * 0:未发送 1:已发送
      */
     private Integer emailSent=0;
+    @TenantId
+    private Long companyId;
 }

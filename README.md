@@ -13,3 +13,7 @@
 
 ## development keyword
 * pg_stat_statements
+
+## local deployment(windows)
+1. update hosts file to map a domain you like (like "test.com") to localhost
+2. config nginx

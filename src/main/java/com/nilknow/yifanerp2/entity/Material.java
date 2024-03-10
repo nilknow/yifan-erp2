@@ -2,6 +2,7 @@ package com.nilknow.yifanerp2.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.TenantId;
 
 import java.util.Date;
 import java.util.List;
@@ -24,6 +25,8 @@ public class Material {
     public Date updateTimestamp;
     @ManyToMany(mappedBy = "materials")
     private List<Product> products;
+    @TenantId
+    private Long companyId;
 
     public Material(String name, String category, Long count, Long inventoryCountAlert) {
         this.name = name;

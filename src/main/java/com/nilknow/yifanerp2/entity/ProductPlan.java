@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.TenantId;
 
 
 @Getter
@@ -21,4 +22,6 @@ public class ProductPlan {
     private Product product;
     private Long count;
     private String unit;
+    @TenantId
+    private Long companyId;
 }

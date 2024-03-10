@@ -2,6 +2,7 @@ package com.nilknow.yifanerp2.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.TenantId;
 
 import java.util.Date;
 
@@ -25,4 +26,6 @@ public class Bug {
     private String content;
     @Column(nullable = false)
     private Date createTime;
+    @TenantId
+    private Long companyId;
 }

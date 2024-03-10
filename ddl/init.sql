@@ -64,6 +64,17 @@ create table login_user
     password char(68) not null
 );
 
+ALTER TABLE login_user
+    ADD COLUMN update_time TIMESTAMP DEFAULT now();
+
+ALTER TABLE login_user
+    ADD COLUMN company_id bigint ;
+
+alter table login_user
+    add constraint fk_company_id
+    foreign key (company_id)
+    references company(id);
+
 create table authority
 (
     id   bigserial
@@ -123,7 +134,8 @@ CREATE TRIGGER material_inventory_alert_trigger
 EXECUTE PROCEDURE add_alert_row();
 
 CREATE OR REPLACE FUNCTION update_material_timestamp()
-    RETURNS TRIGGER AS $$
+    RETURNS TRIGGER AS
+$$
 BEGIN
     NEW.update_timestamp := NOW();
     RETURN NEW;
@@ -131,7 +143,8 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER material_update_trigger
-    BEFORE INSERT OR UPDATE ON material
+    BEFORE INSERT OR UPDATE
+    ON material
     FOR EACH ROW
 EXECUTE procedure update_material_timestamp();
 
@@ -146,5 +159,13 @@ create table suggestion
     create_time timestamp     default now()                 not null
 );
 
-alter table suggestion
-    owner to postgres;
+create table company
+(
+    id          bigserial primary key,
+    name        varchar(100) unique not null,
+    update_time timestamp
+);
+
+alter table material
+    ADD CONSTRAINT material_name_category_uk UNIQUE (name, category, company_id)
+        DEFERRABLE;

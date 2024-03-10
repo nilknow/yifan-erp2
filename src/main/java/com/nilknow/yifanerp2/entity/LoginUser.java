@@ -3,6 +3,7 @@ package com.nilknow.yifanerp2.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -24,4 +25,8 @@ public class LoginUser {
             inverseJoinColumns = @JoinColumn(name = "authority_id")
     )
     private List<Authority> authorities;
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private Company company;
+    private Date update_time;
 }

@@ -2,6 +2,7 @@ package com.nilknow.yifanerp2.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.TenantId;
 
 import java.util.Date;
 import java.util.List;
@@ -30,4 +31,6 @@ public class Product {
             inverseJoinColumns = @JoinColumn(name = "material_id")
     )
     private List<Material> materials;
+    @TenantId
+    private Long companyId;
 }
