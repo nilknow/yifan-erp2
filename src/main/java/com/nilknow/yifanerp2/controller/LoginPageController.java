@@ -16,4 +16,9 @@ public class LoginPageController {
     public String fail(){
         return "page/login-fail";
     }
+
+    @GetMapping("/fail-because-of-company")
+    public String failBecauseOfCompany(){
+        return "page/login-fail-because-of-company";
+    }
 }

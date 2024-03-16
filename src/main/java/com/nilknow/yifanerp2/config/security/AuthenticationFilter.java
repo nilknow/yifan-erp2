@@ -12,6 +12,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -36,11 +37,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        if (isLoginPageRequest(request)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-        if (isLoginFailPageRequest(request)) {
+        if (isLoginRelatedPageRequest(request)) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -78,6 +75,10 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         String companyId = request.getHeader("Company-ID");
+        if (!StringUtils.hasText(companyId)) {
+            redirectToLoginFailBecauseOfCompanyPage(response);
+            return;
+        }
         boolean isAuthenticated = authenticate(username, password, companyId);
         if (isAuthenticated) {
             signForRequest(request, response, username, companyId);
@@ -109,12 +110,8 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         return "POST".equals(request.getMethod()) && "/logout".equals(request.getRequestURI());
     }
 
-    private boolean isLoginPageRequest(HttpServletRequest request) {
-        return "GET".equals(request.getMethod()) && "/login".equals(request.getRequestURI());
-    }
-
-    private boolean isLoginFailPageRequest(HttpServletRequest request) {
-        return "GET".equals(request.getMethod()) && "/login/fail".equals(request.getRequestURI());
+    private boolean isLoginRelatedPageRequest(HttpServletRequest request) {
+        return "GET".equals(request.getMethod()) && request.getRequestURI().startsWith("/login");
     }
 
     private boolean authenticate(String username, String password, String companyId) {
@@ -143,5 +140,9 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
     private void redirectToLoginFailPage(HttpServletResponse response) throws IOException {
         response.sendRedirect("/login/fail");
+    }
+
+    private void redirectToLoginFailBecauseOfCompanyPage(HttpServletResponse response) throws IOException {
+        response.sendRedirect("/login/fail-because-of-company");
     }
 }

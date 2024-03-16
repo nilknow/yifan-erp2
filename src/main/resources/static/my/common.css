@@ -50,15 +50,17 @@ button a {
 }
 
 table{
+    border-collapse: collapse;
     width: 100%;
 }
 
 td {
     vertical-align: middle;
-    text-align: center;
 }
 
-tr th{
+th, td, tr {
+    border: 1px solid #ddd;
+    padding: 8px;
     text-align: center;
 }
 
@@ -114,4 +116,30 @@ tr th{
 
 .flex-row {
     display: flex;
+}
+
+.arrow-box{
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.arrow-down, .arrow-up{
+    width: 0;
+    height: 0;
+}
+
+.arrow-up {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 10px solid black;
+}
+
+.arrow-between{
+    padding: 2px;
+}
+
+.arrow-down {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 10px solid black;
 }

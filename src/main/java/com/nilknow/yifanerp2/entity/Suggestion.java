@@ -26,4 +26,10 @@ public class Suggestion {
     private Date createTime;
     @TenantId
     private Long companyId;
+    /**
+     * 0.pending
+     * 1.solved
+     * 2.solving
+     */
+    private Integer solved;
 }
