@@ -118,20 +118,28 @@ th, td, tr {
     display: flex;
 }
 
-.arrow-up {
+.arrow-box{
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.arrow-down, .arrow-up{
     width: 0;
     height: 0;
+}
+
+.arrow-up {
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
     border-bottom: 10px solid black;
-    display: inline-block;
+}
+
+.arrow-between{
+    padding: 2px;
 }
 
 .arrow-down {
-    width: 0;
-    height: 0;
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
     border-top: 10px solid black;
-    display: inline-block;
 }

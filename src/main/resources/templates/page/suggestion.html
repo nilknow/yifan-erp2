@@ -33,8 +33,8 @@
 <body>
 <div th:replace="~{common/common :: navbar}"></div>
 <form method="POST" enctype="multipart/form-data" action="/suggestion/submit">
-    <input type="text" name="email" placeholder="你的电子邮箱">
-    <input type="text" name="phone" placeholder="你的手机号">
+    <input type="text" name="email" placeholder="你的电子邮箱（选填）">
+    <input type="text" name="phone" placeholder="你的手机号（选填）">
     <input type="hidden" name="priority" value="一般">
     <br>
     <textarea name="content" placeholder="希望添加的功能详情"></textarea>
