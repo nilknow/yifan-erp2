@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://nilknow.com:5432/postgres?currentSchema=yifan_erp_test
+    url: jdbc:postgresql://nilknow.com:5432/erp_test?currentSchema=public
   jpa:
     properties:
       hibernate:
