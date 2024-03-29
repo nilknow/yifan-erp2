@@ -1,4 +1,4 @@
-import TopNavBar from "@/app/lib/index/TopNavBar";
+import TopNavBar from "@/app/lib/TopNavBar";
 
 export default function Layout({children}: { children: React.ReactNode }) {
   return (

@@ -50,7 +50,7 @@ export function LoginForm() {
           name="password"/>
       </div>
       <button
-        className={"hover:bg-neutral-800 bg-black w-full py-2 px-4 mt-5 text-center text-white font-medium rounded-full transition duration-300"}
+        className={"hover:bg-neutral-800 bg-black w-full py-2 px-4 mt-5 text-center text-white font-medium rounded-full transition duration-100"}
         type="submit">
         登录
       </button>
