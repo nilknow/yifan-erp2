@@ -41,6 +41,10 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+        if (isLoginApiRequest(request)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         if (isLogoutRequest(request)) {
             unsignForRequest(request);
             redirectToLoginPage(response);
@@ -112,6 +116,10 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
     private boolean isLoginRelatedPageRequest(HttpServletRequest request) {
         return "GET".equals(request.getMethod()) && request.getRequestURI().startsWith("/login");
+    }
+
+    private boolean isLoginApiRequest(HttpServletRequest request) {
+        return "POST".equals(request.getMethod()) && request.getRequestURI().startsWith("/api/login");
     }
 
     private boolean authenticate(String username, String password, String companyId) {
