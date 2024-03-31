@@ -3,9 +3,9 @@ import NavBox from "@/app/lib/index/NavBox";
 export default function Home() {
   return (
     <main>
-      <div>
+      <a href={"/"}>
         <img src={"/66_long.png"} className={"w-8 h-8 m-5"}/>
-      </div>
+      </a>
       <NavBox title={"产品管理"} links={[
         {path: "/product/page/create", label: "添加产品"},
         {path: "/product/plan", label: "生产计划（开发中，暂时不可用）"},
@@ -15,10 +15,10 @@ export default function Home() {
         {path: "/bom", label: "BOM管理"}
       ]}></NavBox>
       <NavBox title={"物料管理"} links={[
-        {path: "/material", label: "原材料采购"},
-        {path: "/material", label: "新增物料"},
-        {path: "/material", label: "物料入库"},
-        {path: "/bom", label: "BOM管理"}
+        {path: "/material", label: "查看"},
+        {path: "/material/buy", label: "原材料采购（开发中）"},
+        {path: "/material/create", label: "创建物料"},
+        {path: "/material/add", label: "物料入库"},
       ]}></NavBox>
       <NavBox title={"BOM管理"} links={[
         {path: "/bom", label: "BOM管理"}

@@ -4,13 +4,14 @@ import com.nilknow.yifanerp2.service.LoginUserService;
 import com.nilknow.yifanerp2.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.Resource;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -22,6 +23,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 @Component
+@Slf4j
 public class AuthenticationFilter extends OncePerRequestFilter {
     private static final String LOGIN_PAGE_URL = "/login";
     @Resource
@@ -46,15 +48,17 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         if (isLogoutRequest(request)) {
-            unsignForRequest(request);
-            redirectToLoginPage(response);
+            unsignForRequest(request, response);
+//            redirectToLoginPage(response);
+            return;
         }
 
         if (!isLoginRequest(request)) {
             String jwtToken = extractJwtToken(request);
             if (jwtToken == null) {
-                System.out.println("redirect to login page when jwt in empty >>>>>>>>>>>>>>>>>>>>>");
+                log.info("redirect to login page when jwt in empty >>>>>>>>>>>>>>>>>>>>>");
                 redirectToLoginPage(response);
+                return;
             } else {
                 try {
                     Claims claims = JwtUtil.getClaimsFromToken(jwtToken);
@@ -63,8 +67,10 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                 } catch (SignatureException signatureException) {
                     // it means the signature is expired (because server restart)
                     redirectToLoginPage(response);
+                    return;
                 } catch (ExpiredJwtException expiredJwtException) {
                     redirectToLoginPage(response);
+                    return;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -101,9 +107,13 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         response.setStatus(HttpServletResponse.SC_ACCEPTED);
     }
 
-    private void unsignForRequest(HttpServletRequest request) {
+    private void unsignForRequest(HttpServletRequest request, HttpServletResponse response) {
         MutableHttpServletRequest req = new MutableHttpServletRequest(request);
-        req.putHeader("Authorization", null);
+        Cookie cookie = new Cookie("Authorization", URLEncoder.encode("", StandardCharsets.UTF_8));
+        cookie.setMaxAge(60 * 60); // 1 hour
+        cookie.setPath("/");
+        response.addCookie(cookie);
+        response.setStatus(HttpServletResponse.SC_ACCEPTED);
     }
 
     private boolean isLoginRequest(HttpServletRequest request) {
@@ -111,7 +121,8 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     }
 
     private boolean isLogoutRequest(HttpServletRequest request) {
-        return "POST".equals(request.getMethod()) && "/logout".equals(request.getRequestURI());
+        return "POST".equals(request.getMethod()) &&
+                ("/logout".equals(request.getRequestURI()) || "/api/logout".equals(request.getRequestURI()));
     }
 
     private boolean isLoginRelatedPageRequest(HttpServletRequest request) {

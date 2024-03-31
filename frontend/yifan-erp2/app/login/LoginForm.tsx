@@ -1,15 +1,21 @@
 'use client'
+// import {FormEvent} from "react";
+// import {useRouter} from "next/navigation";
+
 import {FormEvent} from "react";
 import {useRouter} from "next/navigation";
 
 export function LoginForm() {
-  const router=useRouter();
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    const formData = new FormData(e.currentTarget)
+  const router = useRouter();
+
+  async function onSubmitHandler(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+
+    const formData = new FormData(event.currentTarget)
     const username = formData.get('username')
     const password = formData.get('password')
 
+    console.log("username: " + username)
     const response = await fetch('/api/login', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -19,9 +25,6 @@ export function LoginForm() {
     if (response.ok) {
       response.text().then((respText) => {
           if (respText) {
-            localStorage.setItem('isLoggedIn', 'true');
-            localStorage.setItem('Authorization', respText)
-            console.log('logged in!!')
             router.push('/');
           }
         }
@@ -32,7 +35,9 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form
+      onSubmit={onSubmitHandler}
+    >
       <div>
         <div className={"my-1.5"}>用户名：</div>
         <input
@@ -51,7 +56,8 @@ export function LoginForm() {
       </div>
       <button
         className={"hover:bg-neutral-800 bg-black w-full py-2 px-4 mt-5 text-center text-white font-medium rounded-full transition duration-100"}
-        type="submit">
+        type="submit"
+      >
         登录
       </button>
     </form>

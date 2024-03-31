@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class JwtUtil {
     private static final SecretKey SECRET_KEY = Jwts.SIG.HS256.key().build();
-    private static final long EXPIRATION_TIME = 24 * 60 * 60 * 100;
+    private static final long EXPIRATION_TIME = 60 * 60 * 1000;
 
     public static String generateToken(String userId, Long companyId) {
         Date now = new Date();
@@ -29,14 +29,5 @@ public class JwtUtil {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
-    }
-
-    public static boolean validateToken(String authToken) {
-        try {
-            Jwts.parser().verifyWith(SECRET_KEY).build().parseSignedClaims(authToken);
-            return true;
-        } catch (JwtException e) {
-            return false;
-        }
     }
 }

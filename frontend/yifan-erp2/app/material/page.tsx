@@ -1,4 +1,5 @@
 import LinkButton from "@/app/lib/LinkButton";
+import Form from "@/app/lib/material/Form";
 
 export default function Page() {
   return (
@@ -13,6 +14,7 @@ export default function Page() {
       <button id="remove-all-popup-btn" className="warn">重置（清空所有物料库存）</button>
       <button className={"px-4 py-1.5 text-white bg-neutral-500 rounded-full shadow-md hover:bg-neutral-700 transition duration-100"}>temp</button>
       <br/>
+      <Form></Form>
     </div>
   )
 }
