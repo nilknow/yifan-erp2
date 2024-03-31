@@ -30,7 +30,7 @@ export default function Home() {
         {path: "/documentation/page", label: "产品文档"},
         {path: "/release/page", label: "更新记录"},
         {path: "/suggestion/page", label: "更新建议"},
-        {path: "/bug-report/page", label: "点这里可以提交bug！！！"}
+        {path: "/bug", label: "点这里可以提交bug！！！"}
       ]}></NavBox>
     </main>
   );

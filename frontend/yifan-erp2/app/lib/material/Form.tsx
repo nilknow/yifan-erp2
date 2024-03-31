@@ -8,7 +8,8 @@ import {
   TableRow,
   TableCell, Button, Tooltip
 } from "@nextui-org/react";
-import {DeleteIcon, EditIcon} from "@nextui-org/shared-icons";
+import {DeleteIcon, EditIcon, SearchIcon} from "@nextui-org/shared-icons";
+import {Input} from "@nextui-org/input";
 
 interface Material {
   id: string;
@@ -29,32 +30,83 @@ export default function Form() {
       })
   }, [])
 
+  async function search(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+    const name = formData.get('name')
+    if (name === null) {
+      return
+    }
+    const response = await fetch(`/api/material/list?name=${name}`)
+    const data = await response.json()
+    setSortedMaterials(data)
+  }
+
+  async function keyUpSearch(e: React.KeyboardEvent<HTMLInputElement>) {
+    e.preventDefault()
+
+    let name = e.currentTarget.value;
+    const response = await fetch(`/api/material/list?name=${name}`);
+    const data = await response.json()
+    setSortedMaterials(data)
+  }
+
   return (
-    <>
+    <div className={"mx-4"}>
       <div>
-        <form action="/material/list" method="get" encType="multipart/form-data">
-          <input type="text" name="name" placeholder="输入物料名称"/>
-          <button type="submit">搜索</button>
+        <form onSubmit={search}>
+          <Input
+            type="text" name="name" size={"sm"}
+            onKeyUp={keyUpSearch}
+            isClearable
+            radius="lg"
+            classNames={{
+              label: "text-black/50 dark:text-white/90",
+              input: [
+                "bg-transparent",
+                "text-black/90 dark:text-white/90",
+                "placeholder:text-default-700/50 dark:placeholder:text-white/60",
+              ],
+              innerWrapper: "bg-transparent",
+              inputWrapper: [
+                "shadow-xl",
+                "bg-default-200/50",
+                "dark:bg-default/60",
+                "backdrop-blur-xl",
+                "backdrop-saturate-200",
+                "hover:bg-default-200/70",
+                "dark:hover:bg-default/70",
+                "group-data-[focused=true]:bg-default-200/50",
+                "dark:group-data-[focused=true]:bg-default/60",
+                "!cursor-text",
+              ],
+            }}
+            placeholder="输入物料名称..."
+            startContent={
+              <SearchIcon
+                className="text-black/50 mb-0.5 dark:text-white/90 text-slate-400 pointer-events-none flex-shrink-0"/>
+            }
+          />
         </form>
       </div>
       <br/>
       <Table removeWrapper isStriped aria-label="material list table">
         <TableHeader>
-          <TableColumn>编号
+          <TableColumn allowsSorting>编号
             <div className="arrow-box">
               <div className="arrow-up"></div>
               <div className="arrow-between"></div>
               <div className="arrow-down"></div>
             </div>
           </TableColumn>
-          <TableColumn>物料名
+          <TableColumn allowsSorting>物料名
             <div className="arrow-box">
               <div className="arrow-up"></div>
               <div className="arrow-between"></div>
               <div className="arrow-down"></div>
             </div>
           </TableColumn>
-          <TableColumn>分类
+          <TableColumn allowsSorting>分类
             <div className="arrow-box">
               <div className="arrow-up"></div>
               <div className="arrow-between"></div>
@@ -115,6 +167,6 @@ export default function Form() {
         <button id="remove-one-btn" className="warn">确认</button>
         <button id="remove-one-cancel-btn">取消</button>
       </form>
-    </>
+    </div>
   )
 }

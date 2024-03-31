@@ -12,7 +12,6 @@ export default function Page() {
       {/*<LinkButton urlLink={"/material/excel/template"} text={'下载全量更新物料模板'}></LinkButton>*/}
       {/*<LinkButton urlLink={"/material/excel/download"} text={'下载物料库存excel文档'}></LinkButton>*/}
       {/*<button id="remove-all-popup-btn" className="warn">重置（清空所有物料库存）</button>*/}
-      <br/>
       <Form></Form>
     </div>
   )
