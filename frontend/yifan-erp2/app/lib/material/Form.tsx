@@ -1,5 +1,14 @@
 'use client'
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableColumn,
+  TableRow,
+  TableCell, Button, Tooltip
+} from "@nextui-org/react";
+import {DeleteIcon, EditIcon} from "@nextui-org/shared-icons";
 
 interface Material {
   id: string;
@@ -12,25 +21,13 @@ interface Material {
 
 export default function Form() {
   const [sortedMaterials, setSortedMaterials] = useState<Material[]>([]);
-  useEffect(()=>{
+  useEffect(() => {
     fetch('/api/material/list')
-      .then((res)=>res.json())
-      .then((data)=>{
+      .then((res) => res.json())
+      .then((data) => {
         setSortedMaterials(data)
       })
-  },[])
-
-  const handleSort = (field:string) => {
-    const sorted = [...sortedMaterials].sort((a, b) => {
-      // @ts-ignore
-      if (a[field] < b[field]) return -1;
-      // @ts-ignore
-      if (a[field] > b[field]) return 1;
-      return 0;
-    });
-
-    setSortedMaterials(sorted);
-  };
+  }, [])
 
   return (
     <>
@@ -40,51 +37,62 @@ export default function Form() {
           <button type="submit">搜索</button>
         </form>
       </div>
-      <table id="table" className="table table-hover">
-        <thead>
-        <tr>
-          <th className="sortable" onClick={()=>handleSort('serialNum')}>编号
+      <br/>
+      <Table removeWrapper isStriped aria-label="material list table">
+        <TableHeader>
+          <TableColumn>编号
             <div className="arrow-box">
               <div className="arrow-up"></div>
               <div className="arrow-between"></div>
               <div className="arrow-down"></div>
             </div>
-          </th>
-          <th className="sortable" onClick={()=>handleSort('name')}>物料名
+          </TableColumn>
+          <TableColumn>物料名
             <div className="arrow-box">
               <div className="arrow-up"></div>
               <div className="arrow-between"></div>
               <div className="arrow-down"></div>
             </div>
-          </th>
-          <th className="sortable" onClick={()=>handleSort('category')}>分类
+          </TableColumn>
+          <TableColumn>分类
             <div className="arrow-box">
               <div className="arrow-up"></div>
               <div className="arrow-between"></div>
               <div className="arrow-down"></div>
             </div>
-          </th>
-          <th>库存数量</th>
-          <th>库存预警</th>
-          <th>修改</th>
-        </tr>
-        </thead>
-        <tbody>
-        {sortedMaterials.map((material) => (
-          <tr key={material.serialNum}>
-            <td>{material.serialNum}</td>
-            <td>{material.name}</td>
-            <td>{material.category}</td>
-            <td>{material.count}</td>
-            <td>{material.inventoryCountAlert}</td>
-            {/*<td>*/}
-            {/*  <button th:onclick="|window.location.href='/material/update?id=${material.id}'|">修改</button>*/}
-            {/*  <button className="warn" th:materialId="${material.id}" onClick="removeOnePopup(this)">删除</button>*/}
-            {/*</td>*/}
-          </tr>
-        ))}
-        </tbody>
-      </table>
+          </TableColumn>
+          <TableColumn>库存数量</TableColumn>
+          <TableColumn>库存预警</TableColumn>
+          <TableColumn>修改</TableColumn>
+        </TableHeader>
+        <TableBody
+          // emptyContent={"请添加物料，目前还没有任何物料"}
+        >
+          {sortedMaterials.map((material) => (
+            <TableRow key={material.id}>
+              <TableCell>{material.id}</TableCell>
+              <TableCell>{material.name}</TableCell>
+              <TableCell>{material.category}</TableCell>
+              <TableCell>{material.count}</TableCell>
+              <TableCell>{material.inventoryCountAlert}</TableCell>
+              <TableCell>
+                <div className="relative flex items-center gap-2">
+                  <Tooltip content="修改物料">
+                    <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                      <EditIcon/>
+                    </span>
+                  </Tooltip>
+                  <Tooltip color={"danger"} content="删除物料">
+                    <span className="text-lg text-danger cursor-pointer active:opacity-50">
+                      <DeleteIcon/>
+                    </span>
+                  </Tooltip>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
       <form action="#" id="full-update-popup" className="popup hidden">
         <div id="to-add-table"></div>
         <div id="to-delete-table"></div>
