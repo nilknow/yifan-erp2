@@ -12,7 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "product")
-@ToString
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,4 +32,17 @@ public class Product {
     private List<Material> materials;
     @TenantId
     private Long companyId;
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", count=" + count +
+                ", unit='" + unit + '\'' +
+                ", category=" + category +
+                ", updateTimestamp=" + updateTimestamp +
+                ", companyId=" + companyId +
+                '}';
+    }
 }

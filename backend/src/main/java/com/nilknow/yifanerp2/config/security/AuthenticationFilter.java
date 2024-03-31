@@ -66,7 +66,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                     filterChain.doFilter(request, response);
                 } catch (SignatureException signatureException) {
                     // it means the signature is expired (because server restart)
-                    redirectToLoginPage(response);
+                    unsignForRequest(request, response);
                     return;
                 } catch (ExpiredJwtException expiredJwtException) {
                     redirectToLoginPage(response);

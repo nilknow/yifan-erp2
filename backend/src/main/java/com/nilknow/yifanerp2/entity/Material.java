@@ -12,7 +12,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class Material {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,8 +22,6 @@ public class Material {
     private Long inventoryCountAlert;
     @Temporal(TemporalType.TIMESTAMP)
     public Date updateTimestamp;
-    @ManyToMany(mappedBy = "materials")
-    private List<Product> products;
     @TenantId
     private Long companyId;
 
@@ -33,5 +30,18 @@ public class Material {
         this.category = category;
         this.count = count;
         this.inventoryCountAlert = inventoryCountAlert;
+    }
+
+    @Override
+    public String toString() {
+        return "Material{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", category='" + category + '\'' +
+                ", count=" + count +
+                ", inventoryCountAlert=" + inventoryCountAlert +
+                ", updateTimestamp=" + updateTimestamp +
+                ", companyId=" + companyId +
+                '}';
     }
 }
