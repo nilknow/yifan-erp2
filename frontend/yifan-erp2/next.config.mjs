@@ -4,7 +4,10 @@ const nextConfig = {
     //     CURRENT_ENV: 'local',
     //     BACKEND_URL: ''
     // },
-    // distDir: 'dist',
+    //todo uncomment when build
+    // output: "export",
+    distDir: 'dist',
+    trailingSlash: true,
     // async rewrites() {
     //     return this.env.CURRENT_ENV === 'local'
     //         ?

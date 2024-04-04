@@ -1,9 +1,11 @@
 package com.nilknow.yifanerp2.controller;
 
+import com.nilknow.yifanerp2.dto.ProductDto;
 import com.nilknow.yifanerp2.entity.Material;
 import com.nilknow.yifanerp2.entity.Product;
 import com.nilknow.yifanerp2.entity.ProductPlan;
 import com.nilknow.yifanerp2.entity.excel.ProductExcelTemplate;
+import com.nilknow.yifanerp2.exception.ResException;
 import com.nilknow.yifanerp2.repository.CategoryRepository;
 import com.nilknow.yifanerp2.repository.ProductPlanRepository;
 import com.nilknow.yifanerp2.repository.ProductRepository;
@@ -15,6 +17,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,8 +28,8 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-@Controller
-@RequestMapping("/product")
+@RestController
+@RequestMapping("/api/product")
 public class ProductController {
     private boolean excelHandling = false;
     @Resource
@@ -47,11 +50,10 @@ public class ProductController {
         return "page/product/add";
     }
 
-    @PostMapping("/do/create")
-    public String create(@ModelAttribute Product product) {
-        product.setUpdateTimestamp(new Date());
-        productRepository.save(product);
-        return "redirect:/product/list";
+    @PostMapping
+    public Res<List<Product>> create(@RequestBody ProductDto product) throws ResException {
+        productService.create(product);
+        return new Res<List<Product>>().success(productService.findAll());
     }
 
     @GetMapping("/add/plan")
@@ -193,12 +195,14 @@ public class ProductController {
         }
     }
 
-
     @GetMapping("/list")
-    public String list(Model model) {
-        List<Product> products = productService.findAll();
-        model.addAttribute("products", products);
-        return "page/product/list";
+    public Res<List<Product>> list(@RequestParam(required = false) String name) {
+        if (StringUtils.hasText(name)) {
+            return new Res<List<Product>>()
+                    .success(productService.findAllByNameContainingIgnoreCaseOrderByUpdateTimestampDesc(name));
+        } else {
+            return new Res<List<Product>>().success(productService.findAll());
+        }
     }
 
     @GetMapping("/plan")

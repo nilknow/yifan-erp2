@@ -1,5 +1,6 @@
 package com.nilknow.yifanerp2.repository;
 
+import com.nilknow.yifanerp2.entity.Category;
 import com.nilknow.yifanerp2.entity.Material;
 import com.nilknow.yifanerp2.entity.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,4 +19,9 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     Optional<Product> findByName(String name);
 
     List<Product> findAllByOrderByUpdateTimestampDesc();
+    List<Product> findAllByNameContainingIgnoreCaseOrderByUpdateTimestampDesc(String name);
+
+    List<Product> findAllBySerialNum(String serialNum);
+
+    List<Product> findAllByNameAndCategory(String name, Category category);
 }

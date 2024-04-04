@@ -9,6 +9,9 @@ import org.hibernate.annotations.TenantId;
 
 import java.util.Objects;
 
+/**
+ * ProductCategory
+ */
 @Entity
 @Getter
 @Setter

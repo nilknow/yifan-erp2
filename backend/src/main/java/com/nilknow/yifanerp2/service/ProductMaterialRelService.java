@@ -3,6 +3,7 @@ package com.nilknow.yifanerp2.service;
 import com.nilknow.yifanerp2.entity.Material;
 import com.nilknow.yifanerp2.entity.Product;
 import com.nilknow.yifanerp2.entity.ProductMaterialRel;
+import com.nilknow.yifanerp2.exception.ResException;
 import com.nilknow.yifanerp2.repository.MaterialRepository;
 import com.nilknow.yifanerp2.repository.ProductMaterialRelRepository;
 import com.nilknow.yifanerp2.repository.ProductRepository;
@@ -10,12 +11,14 @@ import jakarta.annotation.Resource;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class ProductMaterialRelService {
     @Resource
     private ProductMaterialRelRepository productMaterialRelRepository;
@@ -28,17 +31,18 @@ public class ProductMaterialRelService {
         return productMaterialRelRepository.findAllByProductId(productId);
     }
 
-    @Transactional
-    public void add(Long productId, Long materialId, Long materialCount) {
+    public List<ProductMaterialRel> add(Long productId, Long materialId, Long materialCount) throws Exception {
         Optional<Product> product = productRepository.findById(productId);
         if (product.isEmpty()) {
-            //todo throw error
-            return;
+            throw new ResException("产品不存在，无法修改BOM");
         }
         Optional<Material> material = materialRepository.findById(materialId);
         if (material.isEmpty()) {
-            //todo throw error
-            return;
+            throw new ResException("您要添加的物料不存在");
+        }
+        List<ProductMaterialRel> rels = productMaterialRelRepository.findAllByProductIdAndMaterialId(productId, materialId);
+        if (!CollectionUtils.isEmpty(rels)) {
+            throw new ResException("您要添加的物料已经存在，请直接修改或者删除");
         }
 
         ProductMaterialRel productMaterialRel = new ProductMaterialRel();
@@ -46,6 +50,7 @@ public class ProductMaterialRelService {
         productMaterialRel.setMaterial(material.get());
         productMaterialRel.setMaterialCount(materialCount);
         productMaterialRelRepository.save(productMaterialRel);
+        return productMaterialRelRepository.findAllByProductId(productId);
     }
 
     @Transactional
@@ -119,5 +124,9 @@ public class ProductMaterialRelService {
             Long materialHave = rel.getMaterial().getCount();
             rel.getMaterial().setCount(materialHave - materialNeed);
         }
+    }
+
+    public void deleteByProductId(Long productId) {
+        productMaterialRelRepository.deleteByProductId(productId);
     }
 }

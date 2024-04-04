@@ -16,6 +16,7 @@ public class Material {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String serialNum;
     private String name;
     private String category;
     private Long count;
@@ -25,7 +26,8 @@ public class Material {
     @TenantId
     private Long companyId;
 
-    public Material(String name, String category, Long count, Long inventoryCountAlert) {
+    public Material(String serialNum, String name, String category, Long count, Long inventoryCountAlert) {
+        this.serialNum = serialNum;
         this.name = name;
         this.category = category;
         this.count = count;

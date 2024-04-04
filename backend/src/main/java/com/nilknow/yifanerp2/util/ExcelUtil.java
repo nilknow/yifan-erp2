@@ -4,6 +4,7 @@ import com.nilknow.yifanerp2.entity.Category;
 import com.nilknow.yifanerp2.entity.Material;
 import com.nilknow.yifanerp2.entity.Product;
 import com.nilknow.yifanerp2.entity.excel.ProductExcelTemplate;
+import com.nilknow.yifanerp2.exception.ResException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -143,10 +144,10 @@ public class ExcelUtil {
                 Cell nameHeader = header.getCell(0);
                 Cell countHeader = header.getCell(1);
                 if (!"名称".equals(nameHeader.getStringCellValue())) {
-                    throw new Exception("first header name must be 名称");
+                    throw new ResException("first header name must be 名称");
                 }
                 if (!"数量".equals(countHeader.getStringCellValue())) {
-                    throw new Exception("second header name must be 数量");
+                    throw new ResException("second header name must be 数量");
                 }
             }
 
@@ -197,10 +198,10 @@ public class ExcelUtil {
                     Cell nameHeader = header.getCell(0);
                     Cell countHeader = header.getCell(1);
                     if (!"名称".equals(nameHeader.getStringCellValue())) {
-                        throw new Exception("first header name must be 名称");
+                        throw new ResException("first header name must be 名称");
                     }
                     if (!"数量".equals(countHeader.getStringCellValue())) {
-                        throw new Exception("second header name must be 数量");
+                        throw new ResException("second header name must be 数量");
                     }
                 }
 

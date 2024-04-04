@@ -24,6 +24,7 @@ public class Bug {
     private String priority;
     @Column(nullable = false)
     private String content;
+    private String feedback;
     @Column(nullable = false)
     private Date createTime;
     @TenantId

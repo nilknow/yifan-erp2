@@ -6,15 +6,17 @@ import com.nilknow.yifanerp2.service.MaterialService;
 import com.nilknow.yifanerp2.service.ProductMaterialRelService;
 import com.nilknow.yifanerp2.service.ProductService;
 import jakarta.annotation.Resource;
-import org.springframework.stereotype.Controller;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
-@Controller
-@RequestMapping("/bom")
+@RestController
+@RequestMapping("/api/bom")
 public class BomController {
     @Resource
     private ProductService productService;
@@ -28,9 +30,17 @@ public class BomController {
         List<Product> products = productService.findAllOrderByUpdateTimeDesc();
         model.addAttribute("products", products);
         if (products.isEmpty()) {
-            model.addAttribute("prompt","您必须首先创建一个产品才能够进行bom管理");
+            model.addAttribute("prompt", "您必须首先创建一个产品才能够进行bom管理");
         }
         return "page/bom/index";
+    }
+
+    @GetMapping("/list")
+    public List<Product> list(String name) {
+        if (StringUtils.hasText(name)) {
+            return productService.findAllByNameContainingIgnoreCaseOrderByUpdateTimestampDesc(name);
+        }
+        return productService.findAllOrderByUpdateTimeDesc();
     }
 
     @GetMapping("/bom/example")
@@ -41,6 +51,32 @@ public class BomController {
     @GetMapping("/bom/{productId}")
     @ResponseBody
     public List<ProductMaterialRel> materials(@PathVariable("productId") Long productId, Model model) {
+        return productMaterialRelService.findAllByProductId(productId);
+    }
+
+    @PostMapping("/add")
+    @ResponseBody
+    public Res<List<ProductMaterialRel>> add(@NotNull @RequestBody ProductMaterialRelDto dto) {
+        try {
+            productMaterialRelService.add(dto.getProductId(), dto.getMaterialId(), dto.getMaterialCount());
+        } catch (Exception e) {
+            return new Res<List<ProductMaterialRel>>()
+                    .fail(e.getMessage());
+        }
+        return new Res<List<ProductMaterialRel>>()
+                .success(productMaterialRelService.findAllByProductId(dto.getProductId()));
+    }
+
+    @Data
+    public static class ProductMaterialRelDto {
+        private Long productId;
+        private Long materialId;
+        private Long materialCount;
+    }
+
+    @GetMapping("/info")
+    @ResponseBody
+    public List<ProductMaterialRel> info(@NotNull Long productId) {
         return productMaterialRelService.findAllByProductId(productId);
     }
 
@@ -75,7 +111,7 @@ public class BomController {
     @PostMapping("/material/add")
     public String add(@RequestParam("productId") Long productId,
                       @RequestParam("materialId") Long materialId,
-                      @RequestParam("materialCount") Long materialCount) {
+                      @RequestParam("materialCount") Long materialCount) throws Exception {
         productMaterialRelService.add(productId, materialId, materialCount);
         return "redirect:/bom/update?id=" + productId;
     }
@@ -93,6 +129,13 @@ public class BomController {
                          @RequestParam("materialCount") Long materialCount) {
         productMaterialRelService.updateCount(productId, materialId, materialCount);
         return "redirect:/bom/update?id=" + productId;
+    }
+
+    @DeleteMapping("/delete")
+    public Res<List<Product>> delete(@RequestParam("productId") Long productId) {
+        productMaterialRelService.deleteByProductId(productId);
+        return new Res<List<Product>>()
+                .success(productService.findAllOrderByUpdateTimeDesc());
     }
 
 }

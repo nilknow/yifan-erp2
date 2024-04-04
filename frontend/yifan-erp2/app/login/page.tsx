@@ -1,4 +1,4 @@
-import {LoginForm} from "@/app/login/LoginForm";
+import {LoginForm} from "@/app/lib/login/LoginForm";
 
 export default function Page() {
   return (

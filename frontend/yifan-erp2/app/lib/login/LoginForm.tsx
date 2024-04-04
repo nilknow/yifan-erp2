@@ -1,6 +1,4 @@
 'use client'
-// import {FormEvent} from "react";
-// import {useRouter} from "next/navigation";
 
 import {FormEvent} from "react";
 import {useRouter} from "next/navigation";
@@ -15,7 +13,6 @@ export function LoginForm() {
     const username = formData.get('username')
     const password = formData.get('password')
 
-    console.log("username: " + username)
     const response = await fetch('/api/login', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},

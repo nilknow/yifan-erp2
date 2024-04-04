@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Map;
 
 
 public interface MaterialRepository extends JpaRepository<Material, Long> {
@@ -24,4 +25,12 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
     List<Material> findAllByOrderByUpdateTimestampDesc();
 
     List<Material> findAllByCategory(String category);
+
+    List<Material> findAllBySerialNum(String serialNum);
+
+    List<Material> findAllByNameAndCategory(String name, String category);
+
+    boolean existsBySerialNum(String serialNum);
+
+    boolean existsByNameAndCategory(String name, String category);
 }

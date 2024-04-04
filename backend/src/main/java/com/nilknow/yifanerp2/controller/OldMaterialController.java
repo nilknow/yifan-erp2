@@ -1,6 +1,7 @@
 package com.nilknow.yifanerp2.controller;
 
 import com.nilknow.yifanerp2.entity.Material;
+import com.nilknow.yifanerp2.exception.ResException;
 import com.nilknow.yifanerp2.service.MaterialService;
 import com.nilknow.yifanerp2.util.ExcelUtil;
 import jakarta.annotation.Resource;
@@ -40,7 +41,7 @@ public class OldMaterialController {
     }
 
     @PostMapping("/do-add")
-    public String doAll(@ModelAttribute Material material) {
+    public String doAll(@ModelAttribute Material material) throws ResException {
         materialService.add(material);
         return "redirect:list";
     }
@@ -115,13 +116,13 @@ public class OldMaterialController {
             XSSFSheet category1 = wb.createSheet("物料分类1");
             XSSFSheet category2 = wb.createSheet("物料分类2");
             ExcelUtil.createMaterialSheet(category1, List.of(
-                    new Material("物料1", "物料品类1", 32L, 10L),
-                    new Material("物料2", "物料品类1", 21L, 10L),
-                    new Material("物料3", "物料品类1", 11L, 10L),
-                    new Material("物料4", "物料品类1", 111L, 10L)
+                    new Material("NO_1","物料1", "物料品类1", 32L, 10L),
+                    new Material("NO_2","物料2", "物料品类1", 21L, 10L),
+                    new Material("NO_3","物料3", "物料品类1", 11L, 10L),
+                    new Material("NO_4","物料4", "物料品类1", 111L, 10L)
             ));
             ExcelUtil.createMaterialSheet(category2, List.of(
-                    new Material("物料1", "物料品类2", 32L, 10L)
+                    new Material("NO_A_1","物料1", "物料品类2", 32L, 10L)
             ));
             wb.write(response.getOutputStream());
         } catch (Exception e) {

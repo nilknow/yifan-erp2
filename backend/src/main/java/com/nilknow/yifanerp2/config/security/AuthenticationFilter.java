@@ -52,33 +52,30 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 //            redirectToLoginPage(response);
             return;
         }
-
-        if (!isLoginRequest(request)) {
-            String jwtToken = extractJwtToken(request);
-            if (jwtToken == null) {
-                log.info("redirect to login page when jwt in empty >>>>>>>>>>>>>>>>>>>>>");
-                redirectToLoginPage(response);
-                return;
-            } else {
-                try {
-                    Claims claims = JwtUtil.getClaimsFromToken(jwtToken);
-                    TenantContextHolder.set(claims.get("companyId", Long.class));
-                    filterChain.doFilter(request, response);
-                } catch (SignatureException signatureException) {
-                    // it means the signature is expired (because server restart)
-                    unsignForRequest(request, response);
-                    return;
-                } catch (ExpiredJwtException expiredJwtException) {
-                    redirectToLoginPage(response);
-                    return;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+        if (isLoginRequest(request)) {
+            login(request, response);
             return;
         }
 
-        login(request, response);
+        String jwtToken = extractJwtToken(request);
+        if (jwtToken == null) {
+            log.info("redirect to login page when jwt in empty >>>>>>>>>>>>>>>>>>>>>");
+            redirectToLoginPage(response);
+        } else {
+            try {
+                Claims claims = JwtUtil.getClaimsFromToken(jwtToken);
+                TenantContextHolder.set(claims.get("companyId", Long.class));
+                filterChain.doFilter(request, response);
+            } catch (SignatureException signatureException) {
+                // it means the signature is expired (because server restart)
+                unsignForRequest(request, response);
+            } catch (ExpiredJwtException expiredJwtException) {
+                redirectToLoginPage(response);
+            } catch (Exception e) {
+                e.printStackTrace();
+                filterChain.doFilter(request, response);
+            }
+        }
     }
 
     private void login(HttpServletRequest request, HttpServletResponse response) throws IOException {
