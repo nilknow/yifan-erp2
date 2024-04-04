@@ -11,11 +11,12 @@ import {
 import {DeleteIcon, EditIcon, SearchIcon} from "@nextui-org/shared-icons";
 import {Input} from "@nextui-org/input";
 import Material from "@/app/dto/material";
-import DeleteModalDeleteIcon from "@/app/lib/material/DeleteModalDeleteIcon";
-import ModifyModalEditIcon from "@/app/lib/material/ModifyModalButton";
-import AddModalButton from "@/app/lib/material/AddModalButton";
+import DeleteModalDeleteIcon from "@/app/lib/material/deleteModalDeleteIcon";
+import ModifyModalEditIcon from "@/app/lib/material/modifyModalButton";
+import AddModalButton from "@/app/lib/material/addModalButton";
 import Res from "@/app/dto/res";
 import Product from "@/app/dto/product";
+import BatchAddModalButton from "@/app/lib/material/batchAddModalButton";
 
 export default function MaterialTable() {
   const [sortedMaterials, setSortedMaterials] = useState<Material[]>([]);
@@ -99,6 +100,7 @@ export default function MaterialTable() {
             />
             <div className="flex gap-3">
               <AddModalButton></AddModalButton>
+              <BatchAddModalButton></BatchAddModalButton>
             </div>
           </div>
         </form>

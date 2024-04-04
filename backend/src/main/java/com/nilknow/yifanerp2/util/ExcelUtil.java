@@ -42,24 +42,29 @@ public class ExcelUtil {
 
     public static void createMaterialSheet(XSSFSheet sheet, List<Material> rows){
         XSSFRow header = sheet.createRow(0);
-        XSSFCell c1 = header.createCell(0);
+        XSSFCell c0 = header.createCell(0);
+        c0.setCellValue("编号");
+        XSSFCell c1 = header.createCell(1);
         c1.setCellValue("名称");
-        XSSFCell c2 = header.createCell(1);
+        XSSFCell c2 = header.createCell(2);
         c2.setCellValue("数量");
-        XSSFCell c3 = header.createCell(2);
+        XSSFCell c3 = header.createCell(3);
         c3.setCellValue("库存预警数量");
         for (int i = 0; i < rows.size(); i++) {
             Material material = rows.get(i);
             XSSFRow row = sheet.createRow(i + 1);
-            XSSFCell cell1 = row.createCell(0);
+            XSSFCell cell0 = row.createCell(0);
+            cell0.setCellValue(material.getSerialNum());
+            XSSFCell cell1 = row.createCell(1);
             cell1.setCellValue(material.getName());
-            XSSFCell dataCell2 = row.createCell(1);
+            XSSFCell dataCell2 = row.createCell(2);
             dataCell2.setCellValue(material.getCount());
-            XSSFCell dataCell3 = row.createCell(2);
+            XSSFCell dataCell3 = row.createCell(3);
             dataCell3.setCellValue(material.getInventoryCountAlert());
         }
         sheet.setColumnWidth(0,8*512); // 8 chinese characters width
-        sheet.setColumnWidth(1,3*512);
+        sheet.setColumnWidth(1,8*512);
+        sheet.setColumnWidth(2,3*512);
         sheet.setColumnWidth(2,7*512);
     }
 

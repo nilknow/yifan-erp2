@@ -122,7 +122,7 @@ export default function AddModalButton() {
                   <Button color="default" variant="light" onPress={onClose}>
                     取消
                   </Button>
-                  <Button type="submit" color="default" onPress={onClose} endContent={<PlusFilledIcon/>}>
+                  <Button type="submit" color="default" onPress={onClose}>
                     添加
                   </Button>
                 </ModalFooter>
