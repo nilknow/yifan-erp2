@@ -3,13 +3,12 @@ package com.nilknow.yifanerp2.controller;
 import com.nilknow.yifanerp2.entity.Suggestion;
 import com.nilknow.yifanerp2.repository.SuggestionRepository;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 
-@RequestMapping("/suggestion")
+@RequestMapping("/api/suggestion")
 @RestController
 public class SuggestionController {
     @Resource
@@ -28,5 +27,18 @@ public class SuggestionController {
         } else {
             return "failed";
         }
+    }
+
+    @PostMapping
+    public Res<Suggestion> add(@RequestBody Suggestion suggestion){
+        suggestion.setCreateTime(new Date());
+        suggestionRepository.save(suggestion);
+        return new Res<Suggestion>().success(suggestion);
+    }
+
+    @GetMapping("/list")
+    public Res<List<Suggestion>> list() {
+        return new Res<List<Suggestion>>()
+                .success(suggestionRepository.findAllByOrderByCreateTimeDesc());
     }
 }

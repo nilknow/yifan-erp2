@@ -29,9 +29,9 @@ export default function Home() {
         {path: "/alert/list", label: "预警管理"}
       ]}></NavBox>
       <NavBox title={"66进销存"} links={[
-        {path: "/documentation/page", label: "产品文档"},
-        {path: "/release/page", label: "更新记录"},
-        {path: "/suggestion/page", label: "更新建议"},
+        // {path: "/documentation", label: "产品文档"},
+        // {path: "/release", label: "更新记录"},
+        {path: "/suggestion", label: "更新建议"},
         {path: "/bug", label: "点这里可以提交bug！！！"}
       ]}></NavBox>
     </main>

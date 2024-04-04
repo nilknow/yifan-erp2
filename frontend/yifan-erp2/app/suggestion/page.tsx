@@ -2,15 +2,20 @@
 import {Input, Textarea} from "@nextui-org/input";
 import {Button, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from "@nextui-org/react";
 import {FormEvent, useEffect, useState} from "react";
-import Bug from "@/app/dto/bug";
+import Suggestion from "@/app/dto/suggestion";
+import Res from "@/app/dto/res";
 
 export default function Page() {
-  const [sortedBugs, setSortedBugs] = useState<Bug[]>([]);
+  const [sortedSuggestions, setSortedSuggestions] = useState<Suggestion[]>([]);
   useEffect(() => {
-    fetch('/api/bug/list')
+    fetch('/api/suggestion/list')
       .then((res) => res.json())
-      .then((data) => {
-        setSortedBugs(data)
+      .then((data:Res<Suggestion[]>) => {
+        if("success"===data.successCode){
+          setSortedSuggestions(data.body)
+        }else{
+          alert(data.msg)
+        }
       })
   }, [])
 
@@ -20,25 +25,29 @@ export default function Page() {
       email: e.currentTarget.email.value,
       phone: e.currentTarget.phone.value,
       content: e.currentTarget.content.value,
-      priority: e.currentTarget.priority.value,
+      solved: e.currentTarget.solved.value,
     };
 
-    const response = await fetch('/api/bug/add', {
+    const response = await fetch('/api/suggestion', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(formData)
     });
-    const data = await response.json();
-    setSortedBugs(data);
+    const data:Res<Suggestion> = await response.json();
+    if("success"===data.successCode) {
+      window.location.reload()
+    }else{
+      alert(data.msg)
+    }
   }
 
   return (
     <div className={"mx-4"}>
-      <form onSubmit={onSubmitHandler} className={"min-w-96 w-1/2"}>
+      <form onSubmit={onSubmitHandler} className={"min-w-96 w-1/2"} aria-label={"Suggestion Form"}>
         <div className={"flex gap-4"}>
           <Input type="text" size={"sm"} label={"email"} name={"email"} placeholder={"你的电子邮箱（选填）"}></Input>
           <Input type="text" size={"sm"} label={"phone"} name={"phone"} placeholder={"你的手机号（选填）"}></Input>
-          <input type="hidden" required name="priority" value="一般"/>
+          <input type="hidden" required name="solved" defaultValue={"0"}/>
         </div>
         <Textarea
           className={"mt-2"}
@@ -46,7 +55,7 @@ export default function Page() {
           label={"bug details"}
           name="content"
           required
-          placeholder={"bug详情描述（必填）"}
+          placeholder={"更新建议描述（必填）"}
         />
         <div className={"mt-2 flex gap-4"}>
           <Button type={"submit"}>提交</Button>
@@ -60,12 +69,12 @@ export default function Page() {
             <TableColumn>content</TableColumn>
             <TableColumn>feedback</TableColumn>
           </TableHeader>
-          <TableBody emptyContent={"目前没有任何bug反馈，您可以通过本页面表单进行提交"}>
-            {sortedBugs.map((bug) => (
-              <TableRow key={bug.id}>
-                <TableCell>{bug.createTime.toString()}</TableCell>
-                <TableCell>{bug.content}</TableCell>
-                <TableCell>{bug.feedback}</TableCell>
+          <TableBody emptyContent={"目前没有任何更新建议，您可以通过本页面表单进行提交"}>
+            {sortedSuggestions.map((suggestion) => (
+              <TableRow key={suggestion.id}>
+                <TableCell>{suggestion.createTime.toString()}</TableCell>
+                <TableCell>{suggestion.content}</TableCell>
+                <TableCell>{suggestion.feedback}</TableCell>
               </TableRow>
             ))}
           </TableBody>

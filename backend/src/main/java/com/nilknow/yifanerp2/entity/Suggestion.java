@@ -24,6 +24,7 @@ public class Suggestion {
     private String content;
     @Column(nullable = false)
     private Date createTime;
+    private String feedback;
     @TenantId
     private Long companyId;
     /**

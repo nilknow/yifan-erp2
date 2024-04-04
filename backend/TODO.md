@@ -4,6 +4,7 @@
 ```sql
 
 alter table bug add column feedback varchar(36);
+alter table suggestion add column feedback varchar(36);
 
 alter table material add column serial_num varchar(36);
 update material set serial_num=id;

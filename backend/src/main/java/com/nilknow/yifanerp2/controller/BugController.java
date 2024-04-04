@@ -15,14 +15,15 @@ public class BugController {
     private BugRepository bugRepository;
 
     @PostMapping("/add")
-    public List<Bug> add(@RequestBody Bug bug) {
+    public Res<List<Bug>> add(@RequestBody Bug bug) {
         bug.setCreateTime(new Date());
         bugRepository.save(bug);
-        return list();
+        return new Res<List<Bug>>().success(list().getBody());
     }
 
     @GetMapping("/list")
-    public List<Bug> list() {
-        return bugRepository.findAllByOrderByCreateTimeDesc();
+    public Res<List<Bug>> list() {
+        return new Res<List<Bug>>()
+                .success(bugRepository.findAllByOrderByCreateTimeDesc());
     }
 }
