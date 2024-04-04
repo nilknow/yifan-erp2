@@ -6,9 +6,11 @@ import Res from "@/app/dto/res";
 import {Input} from "@nextui-org/input";
 import {SearchIcon} from "@nextui-org/shared-icons";
 import AddModalButton from "@/app/lib/product/addModalButton";
+import ModifyModalEditIcon from "@/app/lib/product/modifyModalButton";
+import DeleteModalDeleteIcon from "@/app/lib/product/deleteModalDeleteIcon";
 
 
-export default function ProductList() {
+export default function ManagableProductList() {
   const [products, setProducts] = React.useState<Product[]>([]);
   useEffect(() => {
     fetch('/api/product/list')
@@ -88,6 +90,9 @@ export default function ProductList() {
                   className="text-black/50 mb-0.5 dark:text-white/90 text-slate-400 pointer-events-none flex-shrink-0"/>
               }
             />
+            <div className="flex gap-3">
+              <AddModalButton></AddModalButton>
+            </div>
           </div>
         </form>
       </div>
@@ -100,6 +105,7 @@ export default function ProductList() {
           <TableColumn>产品分类</TableColumn>
           <TableColumn>产品库存</TableColumn>
           <TableColumn>产品单位</TableColumn>
+          <TableColumn>管理</TableColumn>
         </TableHeader>
         <TableBody>
           {products.map(product => (
@@ -110,6 +116,20 @@ export default function ProductList() {
               <TableCell>{product.category.name}</TableCell>
               <TableCell>{product.count}</TableCell>
               <TableCell>{product.unit}</TableCell>
+              <TableCell>
+                <div className="relative flex items-center gap-2">
+                  <Tooltip content="修改产品">
+                    <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                      <ModifyModalEditIcon  {...product}/>
+                    </span>
+                  </Tooltip>
+                  <Tooltip color={"danger"} content="删除产品">
+                    <span className="text-lg text-danger cursor-pointer active:opacity-50">
+                      <DeleteModalDeleteIcon {...product}/>
+                    </span>
+                  </Tooltip>
+                </div>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

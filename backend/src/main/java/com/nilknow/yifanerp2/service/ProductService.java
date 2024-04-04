@@ -176,4 +176,63 @@ public class ProductService {
         p.setName(product.getName());
         productRepository.save(p);
     }
+
+    @Transactional
+    public void delete(Long productId) {
+        productRepository.deleteById(productId);
+    }
+
+    @Transactional
+    public Product update(ProductDto dto) throws ResException {
+        if(dto.getId() == null){
+            throw new ResException("product id must not be null");
+        }
+        if (dto.getSerialNum() == null) {
+            throw new ResException("product serial number must not be null");
+        }
+        if(dto.getName() == null){
+            throw new ResException("product name must not be null");
+        }
+        if (dto.getCategoryName() == null) {
+            throw new ResException("product category name must not be null");
+        }
+        if (dto.getUnit() == null) {
+            throw new ResException("product unit must not be null");
+        }
+
+        Product p = productRepository.findById(dto.getId())
+                .orElseThrow(() -> new ResException("product not found"));
+        if (!dto.getSerialNum().equals(p.getSerialNum())) {
+            List<Product> allBySerialNum = productRepository.findAllBySerialNum(dto.getSerialNum());
+            if (!CollectionUtils.isEmpty(allBySerialNum)) {
+                throw new ResException("product with same serial number already exists");
+            }
+        }
+        List<Category> categories = categoryRepository.findAllByName(dto.getCategoryName());
+        Category category;
+        if(CollectionUtils.isEmpty(categories)){
+            category = new Category(null, dto.getCategoryName(), null);
+            categoryRepository.save(category);
+        }else {
+            category = categories.get(0);
+        }
+        if((!dto.getName().equals(p.getName())
+        || (!dto.getCategoryName().equals(p.getCategory().getName())))){
+            List<Product> productsSameName = productRepository
+                    .findAllByNameAndCategory(dto.getName(), category);
+            if (!CollectionUtils.isEmpty(productsSameName)) {
+                throw new ResException("product with same name and category already exists");
+            }
+        }
+
+        p.setName(dto.getName());
+        p.setUpdateTimestamp(new Date());
+        p.setCategory(category);
+        p.setDescription(dto.getDescription());
+        p.setUnit(dto.getUnit());
+        p.setSerialNum(dto.getSerialNum());
+        p.setCount(dto.getCount());
+        productRepository.save(p);
+        return p;
+    }
 }

@@ -6,6 +6,7 @@ import com.nilknow.yifanerp2.repository.MaterialRepository;
 import jakarta.annotation.Resource;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
@@ -143,13 +144,38 @@ public class MaterialService {
     }
 
     public void update(Material material) throws Exception {
-        sameSerialNumCheck(material);
-        sameNameAndCategoryCheck(material);
+        if (material.getId() == null) {
+            throw new ResException("id shouldn't be null");
+        }
+        if (!StringUtils.hasText(material.getSerialNum())) {
+            throw new ResException("serialNum shouldn't be empty");
+        }
+        if (!StringUtils.hasText(material.getName())) {
+            throw new ResException("name shouldn't be empty");
+        }
+        if (!StringUtils.hasText(material.getCategory())) {
+            throw new ResException("category shouldn't be empty");
+        }
+
+        Optional<Material> realMaterialOpt = materialRepository.findById(material.getId());
+        if (realMaterialOpt.isEmpty()) {
+            throw new ResException("cannot find the material you want to update");
+        }
+        Material savedMaterial = realMaterialOpt.get();
+
+        sameSerialNumCheck(material, savedMaterial);
+        sameNameAndCategoryCheck(material, savedMaterial);
         materialRepository.save(material);
     }
 
-    private void sameSerialNumCheck(Material material) throws Exception {
+    private void sameSerialNumCheck(Material material, Material savedMaterial) throws Exception {
+        if (material.getSerialNum().equals(savedMaterial.getSerialNum())) {
+            return;
+        }
         List<Material> materials = materialRepository.findAllBySerialNum(material.getSerialNum());
+        if (CollectionUtils.isEmpty(materials)) {
+            return;
+        }
         if (materials.size() > 1) {
             throw new ResException("已经有重复的物料编号且数据库中有雷同数据");
         }
@@ -158,8 +184,14 @@ public class MaterialService {
         }
     }
 
-    private void sameNameAndCategoryCheck(Material material) throws Exception {
+    private void sameNameAndCategoryCheck(Material material, Material savedMaterial) throws Exception {
+        if (material.getName().equals(savedMaterial.getName())&&material.getCount().equals(savedMaterial.getCount())&&material.getCategory().equals(savedMaterial.getCategory())) {
+            return;
+        }
         List<Material> materials = materialRepository.findAllByNameAndCategory(material.getName(), material.getCategory());
+        if (CollectionUtils.isEmpty(materials)) {
+            return;
+        }
         if (materials.size() > 1) {
             throw new ResException("分类下已经有重复的物料名且数据库中有雷同数据");
         }

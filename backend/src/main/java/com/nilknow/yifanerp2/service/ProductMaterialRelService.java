@@ -129,4 +129,8 @@ public class ProductMaterialRelService {
     public void deleteByProductId(Long productId) {
         productMaterialRelRepository.deleteByProductId(productId);
     }
+
+    public void deleteById(Long relId) {
+        productMaterialRelRepository.deleteById(relId);
+    }
 }

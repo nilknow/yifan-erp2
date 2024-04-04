@@ -7,11 +7,12 @@ export default function Home() {
         <img src={"/66_long.png"} className={"w-8 h-8 m-5"}/>
       </a>
       <NavBox title={"产品管理"} links={[
-        {path: "/product/create", label: "添加产品"},
-        {path: "/product/plan", label: "生产计划（开发中，暂时不可用）"},
-        {path: "/product/list", label: "产品管理"},
-        {path: "/product/list", label: "产品出库"},
-        {path: "/product/list", label: "产品售后"},
+        {path: "/product", label: "查看"},
+        // {path: "/product/create", label: "添加产品"},
+        // {path: "/product/plan", label: "生产计划（开发中，暂时不可用）"},
+        {path: "/product/management", label: "产品管理"},
+        // {path: "/product/list", label: "产品出库"},
+        // {path: "/product/list", label: "产品售后"},
         {path: "/bom", label: "BOM管理"}
       ]}></NavBox>
       <NavBox title={"物料管理"} links={[

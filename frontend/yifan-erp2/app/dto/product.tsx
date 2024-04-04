@@ -3,10 +3,11 @@ import Category from "@/app/dto/category";
 
 export default interface Product {
   id: string,
-  serialNum:string,
+  serialNum: string,
   name: string,
   materials: Material[],
   category: Category,
   description: string,
   unit: string,
+  count: number,
 }

@@ -56,6 +56,18 @@ public class ProductController {
         return new Res<List<Product>>().success(productService.findAll());
     }
 
+    @DeleteMapping("/{productId}")
+    public Res<String> create(@PathVariable Long productId) {
+        productService.delete(productId);
+        return new Res<String>().success("success");
+    }
+
+    @PutMapping
+    public Res<Product> update(@RequestBody ProductDto productDto) throws Exception{
+        Product product=productService.update(productDto);
+        return new Res<Product>().success(product);
+    }
+
     @GetMapping("/add/plan")
     public String addPlan(Model model) {
         model.addAttribute("productPlan", new ProductPlan());

@@ -138,4 +138,9 @@ public class BomController {
                 .success(productService.findAllOrderByUpdateTimeDesc());
     }
 
+    @DeleteMapping("/rel")
+    public Res<String> relDelete(@RequestParam("id") Long relId) {
+        productMaterialRelService.deleteById(relId);
+        return new Res<String>().success("success");
+    }
 }

@@ -1,12 +1,10 @@
 import React from "react";
-import CreateProductFrom from "@/app/lib/product/create/CreateProductForm";
-import ProductList from "@/app/lib/product/productList";
+import ManagableProductList from "@/app/lib/product/managableProductList";
 
 export default function Page() {
-
   return (
     <div>
-      <ProductList></ProductList>
+      <ManagableProductList></ManagableProductList>
     </div>
   )
 }

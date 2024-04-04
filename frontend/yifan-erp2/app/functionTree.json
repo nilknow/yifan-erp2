@@ -1,0 +1,7 @@
+{
+  "product": {
+    "create": {
+      "management": false
+    }
+  }
+}
