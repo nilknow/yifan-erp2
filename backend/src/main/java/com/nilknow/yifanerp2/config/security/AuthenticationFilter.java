@@ -1,5 +1,6 @@
 package com.nilknow.yifanerp2.config.security;
 
+import com.nilknow.yifanerp2.entity.LoginUser;
 import com.nilknow.yifanerp2.service.LoginUserService;
 import com.nilknow.yifanerp2.util.JwtUtil;
 import io.jsonwebtoken.Claims;
@@ -65,6 +66,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             try {
                 Claims claims = JwtUtil.getClaimsFromToken(jwtToken);
                 TenantContextHolder.set(claims.get("companyId", Long.class));
+                UserIdHolder.set(Long.valueOf(claims.getSubject()));
                 filterChain.doFilter(request, response);
             } catch (SignatureException signatureException) {
                 // it means the signature is expired (because server restart)
@@ -86,18 +88,18 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             redirectToLoginFailBecauseOfCompanyPage(response);
             return;
         }
-        boolean isAuthenticated = authenticate(username, password, companyId);
-        if (isAuthenticated) {
-            signForRequest(request, response, username, companyId);
+        Optional<LoginUser> user = authenticate(username, password, companyId);
+        if (user.isPresent()) {
+            signForRequest(request, response, user.get().getId(), companyId);
             response.sendRedirect("/");
         } else {
             redirectToLoginFailPage(response);
         }
     }
 
-    private void signForRequest(HttpServletRequest request, HttpServletResponse response, String username, String companyId) {
+    private void signForRequest(HttpServletRequest request, HttpServletResponse response, Long userId, String companyId) {
         MutableHttpServletRequest req = new MutableHttpServletRequest(request);
-        String jwtToken = JwtUtil.generateToken(username, Long.valueOf(companyId));
+        String jwtToken = JwtUtil.generateToken(String.valueOf(userId), Long.valueOf(companyId));
         String wholeToken = "Bearer " + jwtToken;
         req.putHeader("Authorization", wholeToken);
         response.addCookie(new Cookie("Authorization", URLEncoder.encode(wholeToken, StandardCharsets.UTF_8)));
@@ -130,7 +132,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         return "POST".equals(request.getMethod()) && request.getRequestURI().startsWith("/api/login");
     }
 
-    private boolean authenticate(String username, String password, String companyId) {
+    private Optional<LoginUser> authenticate(String username, String password, String companyId) {
         return loginUserService.authenticate(username, password, Long.valueOf(companyId));
     }
 

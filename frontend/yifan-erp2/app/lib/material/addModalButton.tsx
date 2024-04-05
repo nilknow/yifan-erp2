@@ -43,7 +43,7 @@ export default function AddModalButton() {
     let count = formData.get("count");
     let inventoryCountAlert = formData.get("inventoryCountAlert");
 
-    fetch('/api/material', {
+    fetch('/api/material?source=button', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

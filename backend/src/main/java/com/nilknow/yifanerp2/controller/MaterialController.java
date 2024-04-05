@@ -1,7 +1,11 @@
 package com.nilknow.yifanerp2.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.nilknow.yifanerp2.dto.ActionLogDto;
+import com.nilknow.yifanerp2.entity.ActionLog;
 import com.nilknow.yifanerp2.entity.Material;
+import com.nilknow.yifanerp2.exception.ResException;
+import com.nilknow.yifanerp2.service.ActionLogService;
 import com.nilknow.yifanerp2.service.MaterialService;
 import com.nilknow.yifanerp2.util.ExcelUtil;
 import jakarta.annotation.Resource;
@@ -26,6 +30,8 @@ public class MaterialController {
 
     @Resource
     private MaterialService materialService;
+    @Resource
+    private ActionLogService actionLogService;
 
     @GetMapping("/list")
     public Res<List<Material>> list(String name) throws JsonProcessingException {
@@ -50,13 +56,13 @@ public class MaterialController {
             XSSFSheet category1 = wb.createSheet("物料分类1");
             XSSFSheet category2 = wb.createSheet("物料分类2");
             ExcelUtil.createMaterialSheet(category1, List.of(
-                    new Material("NO_1","物料1", "物料品类1", 32L, 10L),
-                    new Material("NO_2","物料2", "物料品类1", 21L, 10L),
-                    new Material("NO_3","物料3", "物料品类1", 11L, 10L),
-                    new Material("NO_4","物料4", "物料品类1", 111L, 10L)
+                    new Material("NO_1", "物料1", "物料品类1", 32L, 10L),
+                    new Material("NO_2", "物料2", "物料品类1", 21L, 10L),
+                    new Material("NO_3", "物料3", "物料品类1", 11L, 10L),
+                    new Material("NO_4", "物料4", "物料品类1", 111L, 10L)
             ));
             ExcelUtil.createMaterialSheet(category2, List.of(
-                    new Material("NO_A_1","物料1", "物料品类2", 32L, 10L)
+                    new Material("NO_A_1", "物料1", "物料品类2", 32L, 10L)
             ));
             wb.write(response.getOutputStream());
         } catch (Exception e) {
@@ -72,20 +78,22 @@ public class MaterialController {
     }
 
     @PutMapping
-    public Res<Material> update(@RequestBody Material material) throws Exception {
-        materialService.update(material);
+    public Res<Material> update(@RequestBody Material material, @RequestParam String source) throws Exception {
+        materialService.update(material, source);
         return new Res<Material>().success(material);
     }
 
-    @DeleteMapping("/{materialId}")
-    public Res<String> deleteMaterial(@PathVariable Long materialId) {
-        materialService.delete(materialId);
+    @DeleteMapping
+    public Res<String> deleteMaterial(@RequestParam Long materialId,
+                                      @RequestParam String source)
+            throws JsonProcessingException, ResException {
+        materialService.delete(materialId, source);
         return new Res<String>().success("success");
     }
 
     @PostMapping
-    public Res<Material> add(@RequestBody Material material) throws Exception {
-        materialService.add(material);
+    public Res<Material> add(@RequestBody Material material, @RequestParam String source) throws Exception {
+        materialService.add(material, source);
         return new Res<Material>().success(material);
     }
 
@@ -105,5 +113,20 @@ public class MaterialController {
             }
             return new Res<String>().success("success");
         }
+    }
+
+    @GetMapping("/action_log/list")
+    public Res<List<ActionLogDto>> actionLogList() {
+        List<ActionLog> actionLogs = actionLogService.listByTableName("material");
+        List<ActionLogDto> dtoList = actionLogs.stream().map(x -> new ActionLogDto()
+                .setId(x.getId())
+                .setBatchId(x.getBatchId())
+                .setTimestamp(x.getTimestamp())
+                .setEventType(x.getEventType())
+                .setUsername(x.getUser().getUsername())
+                .setAdditionalInfo(x.getAdditionalInfo())
+                .setDescription(x.getDescription())
+        ).toList();
+        return new Res<List<ActionLogDto>>().success(dtoList);
     }
 }

@@ -1,10 +1,10 @@
-import LinkButton from "@/app/lib/LinkButton";
-import MaterialList from "@/app/lib/material/MaterialTable";
+import React from "react";
+import MaterialTable from "@/app/lib/material/materialTable";
 
 export default function Page() {
   return (
     <div>
-      <MaterialList></MaterialList>
+      <MaterialTable></MaterialTable>
     </div>
   )
 }

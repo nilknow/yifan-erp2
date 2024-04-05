@@ -1,5 +1,6 @@
 package com.nilknow.yifanerp2.controller;
 
+import com.nilknow.yifanerp2.entity.LoginUser;
 import com.nilknow.yifanerp2.service.LoginUserService;
 import com.nilknow.yifanerp2.util.JwtUtil;
 import jakarta.annotation.Resource;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 @RequestMapping("/api/login")
 @RestController
@@ -28,9 +30,9 @@ public class LoginController {
         String username = loginDTO.getUsername();
         String password = loginDTO.getPassword();
         //todo parameter validation
-        boolean authenticate = loginUserService.authenticate(username, password, Long.valueOf(companyId));
-        if (authenticate) {
-            String token = jwtToken(username, companyId);
+        Optional<LoginUser> user = loginUserService.authenticate(username, password, Long.valueOf(companyId));
+        if (user.isPresent()) {
+            String token = jwtToken(String.valueOf(user.get().getId()), companyId);
             // Create a new cookie with the updated value
             Cookie cookie = new Cookie("Authorization", URLEncoder.encode(token, StandardCharsets.UTF_8));
             cookie.setMaxAge(60 * 60 ); // 1 hour

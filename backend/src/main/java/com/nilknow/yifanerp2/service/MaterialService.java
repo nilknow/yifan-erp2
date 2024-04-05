@@ -1,7 +1,12 @@
 package com.nilknow.yifanerp2.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nilknow.yifanerp2.config.security.UserIdHolder;
+import com.nilknow.yifanerp2.entity.ActionLog;
 import com.nilknow.yifanerp2.entity.Material;
 import com.nilknow.yifanerp2.exception.ResException;
+import com.nilknow.yifanerp2.repository.LoginUserRepository;
 import com.nilknow.yifanerp2.repository.MaterialRepository;
 import jakarta.annotation.Resource;
 import jakarta.transaction.Transactional;
@@ -18,14 +23,20 @@ public class MaterialService {
     private static final String TO_DELETE_KEY = "toDelete";
     private static final String TO_UPDATE_KEY = "toUpdate";
     @Resource
+    private ObjectMapper objectMapper;
+    @Resource
     private MaterialRepository materialRepository;
+    @Resource
+    private ActionLogService actionLogService;
+    @Resource
+    private LoginUserRepository loginUserRepository;
 
     public List<Material> findAll() {
         return materialRepository.findAllByOrderByUpdateTimestampDesc();
     }
 
     @Transactional
-    public void add(Material material) throws ResException {
+    public void add(Material material, String source) throws ResException, JsonProcessingException {
         if (!StringUtils.hasText(material.getSerialNum())) {
             throw new ResException("serialNum shouldn't be empty");
         }
@@ -35,21 +46,47 @@ public class MaterialService {
         if (!StringUtils.hasText(material.getCategory())) {
             throw new ResException("category shouldn't be empty");
         }
-        if(material.getCount() == null) {
+        if (material.getCount() == null) {
             throw new ResException("count shouldn't be null");
         }
-        if(material.getInventoryCountAlert() == null) {
+        if (material.getInventoryCountAlert() == null) {
             throw new ResException("inventoryCountAlert shouldn't be null");
         }
-        boolean sameSerialNum=materialRepository.existsBySerialNum(material.getSerialNum());
+        boolean sameSerialNum = materialRepository.existsBySerialNum(material.getSerialNum());
         if (sameSerialNum) {
             throw new ResException("serialNum already exists");
         }
-        boolean sameNameSameCategory=materialRepository.existsByNameAndCategory(material.getName(), material.getCategory());
+        boolean sameNameSameCategory = materialRepository.existsByNameAndCategory(material.getName(), material.getCategory());
         if (sameNameSameCategory) {
             throw new ResException("same name already exists in this category");
         }
+
+        ActionLog actionLog = new ActionLog();
+        HashMap<String, Material> logMap = new HashMap<>();
+        if (actionLog.getId() == null) {
+            actionLog.setEventType("add");
+            actionLog.setAdditionalInfo(objectMapper.writeValueAsString(material));
+            actionLog.setDescription("添加新的物料" + material.getName() + " " + material.getCount() + " " + material.getCategory());
+        } else {
+            actionLog.setEventType("update");
+            logMap.put("old", objectMapper.readValue(objectMapper.writeValueAsString(material), Material.class));
+            actionLog.setDescription("修改旧物料" + material.getName() + " " + material.getCount() + " " + material.getCategory());
+        }
         materialRepository.save(material);
+        if (actionLog.getId() != null) {
+            logMap.put("new", material);
+            actionLog.setAdditionalInfo(objectMapper.writeValueAsString(logMap));
+            actionLog.setDescription(actionLog.getDescription()
+                    + " 为 " + material.getName() + " " + material.getCount() + " " + material.getCategory());
+        }
+
+        actionLog.setSource(source);
+        actionLog.setUser(loginUserRepository.findById(UserIdHolder.get()).get());
+        actionLog.setTableName("material");
+        actionLog.setTimestamp(new Date());
+        actionLog.setBatchId(UUID.randomUUID());
+
+        actionLogService.save(actionLog);
     }
 
     public Optional<Material> findById(Long id) {
@@ -127,8 +164,23 @@ public class MaterialService {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(Long id,String source) throws JsonProcessingException, ResException {
+        Optional<Material> toDelete = materialRepository.findById(id);
+        if (toDelete.isEmpty()) {
+            throw new ResException("The material you want to delete doesn't really exist");
+        }
         materialRepository.deleteById(id);
+
+        ActionLog actionLog=new ActionLog();
+        actionLog.setEventType("delete");
+        actionLog.setAdditionalInfo(objectMapper.writeValueAsString(toDelete.get()));
+        actionLog.setDescription("删除物料");
+        actionLog.setSource(source);
+        actionLog.setUser(loginUserRepository.findById(UserIdHolder.get()).get());
+        actionLog.setTableName("material");
+        actionLog.setTimestamp(new Date());
+        actionLog.setBatchId(UUID.randomUUID());
+        actionLogService.save(actionLog);
     }
 
     public List<String> findCategories() {
@@ -143,7 +195,7 @@ public class MaterialService {
         return materialRepository.findAllByCategory(category);
     }
 
-    public void update(Material material) throws Exception {
+    public void update(Material material, String source) throws Exception {
         if (material.getId() == null) {
             throw new ResException("id shouldn't be null");
         }
@@ -162,10 +214,35 @@ public class MaterialService {
             throw new ResException("cannot find the material you want to update");
         }
         Material savedMaterial = realMaterialOpt.get();
-
         sameSerialNumCheck(material, savedMaterial);
         sameNameAndCategoryCheck(material, savedMaterial);
+
+        ActionLog actionLog = new ActionLog();
+        HashMap<String, Material> logMap = new HashMap<>();
+        actionLog.setEventType("update");
+        logMap.put("old", objectMapper.readValue(objectMapper.writeValueAsString(savedMaterial), Material.class));
+        actionLog.setDescription("修改旧物料 "
+                + savedMaterial.getSerialNum() + " "
+                + savedMaterial.getSerialNum() + " "
+                + savedMaterial.getName() + " "
+                + savedMaterial.getCount() + " "
+                + savedMaterial.getCategory());
+
         materialRepository.save(material);
+        logMap.put("new", material);
+        actionLog.setDescription(actionLog.getDescription() + " 为 "
+                + savedMaterial.getSerialNum() + " "
+                + material.getSerialNum() + " "
+                + material.getName() + " "
+                + material.getCount() + " "
+                + material.getCategory());
+        actionLog.setAdditionalInfo(objectMapper.writeValueAsString(logMap));
+        actionLog.setSource(source);
+        actionLog.setUser(loginUserRepository.findById(UserIdHolder.get()).get());
+        actionLog.setTableName("material");
+        actionLog.setTimestamp(new Date());
+        actionLog.setBatchId(UUID.randomUUID());
+        actionLogService.save(actionLog);
     }
 
     private void sameSerialNumCheck(Material material, Material savedMaterial) throws Exception {
@@ -185,7 +262,7 @@ public class MaterialService {
     }
 
     private void sameNameAndCategoryCheck(Material material, Material savedMaterial) throws Exception {
-        if (material.getName().equals(savedMaterial.getName())&&material.getCount().equals(savedMaterial.getCount())&&material.getCategory().equals(savedMaterial.getCategory())) {
+        if (material.getName().equals(savedMaterial.getName()) && material.getCount().equals(savedMaterial.getCount()) && material.getCategory().equals(savedMaterial.getCategory())) {
             return;
         }
         List<Material> materials = materialRepository.findAllByNameAndCategory(material.getName(), material.getCategory());

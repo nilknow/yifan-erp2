@@ -17,7 +17,7 @@ export default function ModifyModalEditIcon(material: Material) {
     const count = formData.get('count')
     const inventoryCountAlert = formData.get('inventoryCountAlert')
 
-    fetch(`/api/material`, {
+    fetch(`/api/material?source=button`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

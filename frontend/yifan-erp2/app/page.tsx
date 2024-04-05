@@ -1,10 +1,11 @@
 import NavBox from "@/app/lib/index/NavBox";
+import {Image} from "@nextui-org/react";
 
 export default function Home() {
   return (
     <main>
       <a href={"/"}>
-        <img src={"/66_long.png"} className={"w-8 h-8 m-5"}/>
+        <img src={"/66_long.png"} className={"w-8 h-8 m-5"} loading={"eager"}/>
       </a>
       <NavBox title={"产品管理"} links={[
         {path: "/product", label: "查看"},
@@ -21,6 +22,7 @@ export default function Home() {
         // {path: "/material/buy", label: "原材料采购（开发中）"},
         // {path: "/material/create", label: "创建物料"},
         {path: "/material/add", label: "物料入库"},
+        {path: "/material/history", label: "历史记录"},
       ]}></NavBox>
       <NavBox title={"BOM管理"} links={[
         {path: "/bom", label: "BOM管理"}

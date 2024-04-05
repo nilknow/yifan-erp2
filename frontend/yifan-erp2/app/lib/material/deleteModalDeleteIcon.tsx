@@ -9,7 +9,7 @@ export default function DeleteModalDeleteIcon(material: Material) {
   function remove(e: React.FormEvent<HTMLFormElement>, materialId: number) {
     e.preventDefault()
 
-    fetch(`/api/material/${materialId}`, {
+    fetch(`/api/material?materialId=${materialId}&source=button`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json"

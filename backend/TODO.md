@@ -17,4 +17,23 @@ alter table product add column serial_num varchar(36);
 update product set serial_num=id;
 alter table product add constraint uk_product_serial_num unique (serial_num);
 
+alter table material add column create_user bigint;
+alter table material add column update_user bigint;
+
+alter table material
+    add constraint material_create_user_fk foreign key (create_user) references login_user(id);
+alter table material
+    add constraint material_update_user_fk foreign key (update_user) references login_user(id);
+
+create table action_log (
+    id bigserial primary key,
+    batch_id uuid,
+    event_type VARCHAR(36) NOT NULL,
+    timestamp TIMESTAMP NOT NULL,
+    user_id bigint references login_user(id),
+    table_name VARCHAR(36) NOT NULL,
+    source varchar(36) not null,
+    description varchar(256) not null,
+    additional_info JSONB
+);
 ```

@@ -1,5 +1,6 @@
 package com.nilknow.yifanerp2.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nilknow.yifanerp2.entity.Material;
 import com.nilknow.yifanerp2.exception.ResException;
 import com.nilknow.yifanerp2.service.MaterialService;
@@ -41,8 +42,9 @@ public class OldMaterialController {
     }
 
     @PostMapping("/do-add")
-    public String doAll(@ModelAttribute Material material) throws ResException {
-        materialService.add(material);
+    public String doAll(@ModelAttribute Material material,@RequestParam(defaultValue = "old") String source)
+            throws ResException, JsonProcessingException {
+        materialService.add(material, source);
         return "redirect:list";
     }
 
@@ -55,8 +57,8 @@ public class OldMaterialController {
 
     @PostMapping("/do-remove/{id}")
     @ResponseBody
-    public String doRemove(@PathVariable("id") Long id) {
-        materialService.delete(id);
+    public String doRemove(@PathVariable("id") Long id) throws JsonProcessingException, ResException {
+        materialService.delete(id,"old");
         return "ok";
     }
 

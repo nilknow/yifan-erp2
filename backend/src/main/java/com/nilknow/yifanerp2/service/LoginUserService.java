@@ -17,11 +17,15 @@ public class LoginUserService {
     private BCryptPasswordEncoder passwordEncoder;
 
 
-    public boolean authenticate(@NotBlank String username, @NotBlank String password, Long companyId) {
+    public Optional<LoginUser> authenticate(@NotBlank String username, @NotBlank String password, Long companyId) {
         Optional<LoginUser> userOpt = loginUserRepository.findByUsernameAndCompanyId(username, companyId);
         if (userOpt.isEmpty()) {
-            return false;
+            return userOpt;
         }
-        return passwordEncoder.matches(password, userOpt.get().getPassword().substring(8));
+        if (passwordEncoder.matches(password, userOpt.get().getPassword().substring(8))) {
+            return userOpt;
+        } else {
+            return Optional.empty();
+        }
     }
 }
