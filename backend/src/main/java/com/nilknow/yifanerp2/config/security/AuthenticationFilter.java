@@ -18,6 +18,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -50,7 +51,6 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         }
         if (isLogoutRequest(request)) {
             unsignForRequest(request, response);
-//            redirectToLoginPage(response);
             return;
         }
         if (isLoginRequest(request)) {
@@ -69,7 +69,6 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                 UserIdHolder.set(Long.valueOf(claims.getSubject()));
                 filterChain.doFilter(request, response);
             } catch (SignatureException signatureException) {
-                // it means the signature is expired (because server restart)
                 unsignForRequest(request, response);
             } catch (ExpiredJwtException expiredJwtException) {
                 redirectToLoginPage(response);
@@ -112,7 +111,13 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         cookie.setMaxAge(60 * 60); // 1 hour
         cookie.setPath("/");
         response.addCookie(cookie);
-        response.setStatus(HttpServletResponse.SC_ACCEPTED);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        try (PrintWriter writer = response.getWriter()) {
+            writer.write("Unauthorized");
+            writer.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private boolean isLoginRequest(HttpServletRequest request) {

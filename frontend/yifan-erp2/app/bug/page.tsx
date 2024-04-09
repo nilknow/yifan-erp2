@@ -3,11 +3,12 @@ import {Input, Textarea} from "@nextui-org/input";
 import {Button, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from "@nextui-org/react";
 import {FormEvent, useEffect, useState} from "react";
 import Bug from "@/app/dto/bug";
+import myFetch from "@/app/myFetch";
 
 export default function Page() {
   const [sortedBugs, setSortedBugs] = useState<Bug[]>([]);
   useEffect(() => {
-    fetch('/api/bug/list')
+    myFetch('/api/bug/list')
       .then((res) => res.json())
       .then((data) => {
         setSortedBugs(data)
@@ -23,7 +24,7 @@ export default function Page() {
       priority: e.currentTarget.priority.value,
     };
 
-    const response = await fetch('/api/bug/add', {
+    const response = await myFetch('/api/bug/add', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(formData)

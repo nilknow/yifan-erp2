@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -15,6 +16,7 @@ import java.util.UUID;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Accessors(chain = true)
 @Table(name="action_log")
 public class ActionLog {
     @Id
@@ -40,7 +42,6 @@ public class ActionLog {
     private String source;
 
     @Column(columnDefinition = "jsonb")
-//    @Convert(converter = JsonbConverter.class)
     @JdbcTypeCode(SqlTypes.JSON)
     private String additionalInfo;
 

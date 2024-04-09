@@ -36,4 +36,6 @@ create table action_log (
     description varchar(256) not null,
     additional_info JSONB
 );
+
+alter table alert_email add column company_id bigint references company(id);
 ```

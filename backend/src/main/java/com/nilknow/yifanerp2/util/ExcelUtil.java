@@ -36,11 +36,11 @@ public class ExcelUtil {
             dataCell2.setCellValue(product.getCount());
         }
         // 512 is the unit of chinese character width
-        sheet.setColumnWidth(0,8*512); // 8 chinese characters width
-        sheet.setColumnWidth(1,3*512);
+        sheet.setColumnWidth(0, 8 * 512); // 8 chinese characters width
+        sheet.setColumnWidth(1, 3 * 512);
     }
 
-    public static void createMaterialSheet(XSSFSheet sheet, List<Material> rows){
+    public static void createMaterialSheet(XSSFSheet sheet, List<Material> rows) {
         XSSFRow header = sheet.createRow(0);
         XSSFCell c0 = header.createCell(0);
         c0.setCellValue("编号");
@@ -62,10 +62,10 @@ public class ExcelUtil {
             XSSFCell dataCell3 = row.createCell(3);
             dataCell3.setCellValue(material.getInventoryCountAlert());
         }
-        sheet.setColumnWidth(0,8*512); // 8 chinese characters width
-        sheet.setColumnWidth(1,8*512);
-        sheet.setColumnWidth(2,3*512);
-        sheet.setColumnWidth(2,7*512);
+        sheet.setColumnWidth(0, 8 * 512); // 8 chinese characters width
+        sheet.setColumnWidth(1, 8 * 512);
+        sheet.setColumnWidth(2, 3 * 512);
+        sheet.setColumnWidth(2, 7 * 512);
     }
 
     public static void exportProducts(OutputStream os, List<Product> products) {
@@ -89,8 +89,8 @@ public class ExcelUtil {
                     dataCell2.setCellValue(product.getCount());
                 }
                 // 512 is the unit of chinese character width
-                sheet.setColumnWidth(0,8*512); // 8 chinese characters width
-                sheet.setColumnWidth(1,3*512);
+                sheet.setColumnWidth(0, 8 * 512); // 8 chinese characters width
+                sheet.setColumnWidth(1, 3 * 512);
             }
 
             wb.write(os);
@@ -106,26 +106,31 @@ public class ExcelUtil {
                 String category = entry.getKey();
                 XSSFSheet sheet = wb.createSheet(category);
                 XSSFRow header = sheet.createRow(0);
-                XSSFCell c1 = header.createCell(0);
+                XSSFCell c0 = header.createCell(0);
+                c0.setCellValue("编号");
+                XSSFCell c1 = header.createCell(1);
                 c1.setCellValue("名称");
-                XSSFCell c2 = header.createCell(1);
+                XSSFCell c2 = header.createCell(2);
                 c2.setCellValue("数量");
-                XSSFCell c3 = header.createCell(2);
+                XSSFCell c3 = header.createCell(3);
                 c3.setCellValue("库存预警数量");
                 List<Material> subMaterial = entry.getValue();
                 for (int i = 0; i < subMaterial.size(); i++) {
                     Material material = subMaterial.get(i);
                     XSSFRow row = sheet.createRow(i + 1);
-                    XSSFCell cell1 = row.createCell(0);
+                    XSSFCell cell0 = row.createCell(0);
+                    cell0.setCellValue(material.getSerialNum());
+                    XSSFCell cell1 = row.createCell(1);
                     cell1.setCellValue(material.getName());
-                    XSSFCell dataCell2 = row.createCell(1);
+                    XSSFCell dataCell2 = row.createCell(2);
                     dataCell2.setCellValue(material.getCount());
-                    XSSFCell dataCell3 = row.createCell(2);
+                    XSSFCell dataCell3 = row.createCell(3);
                     dataCell3.setCellValue(material.getInventoryCountAlert());
                 }
-                sheet.setColumnWidth(0,8*512); // 8 chinese characters width
-                sheet.setColumnWidth(1,3*512);
-                sheet.setColumnWidth(2,7*512);
+                sheet.setColumnWidth(0, 8 * 512); // 8 chinese characters width
+                sheet.setColumnWidth(1, 8 * 512);
+                sheet.setColumnWidth(2, 3 * 512);
+                sheet.setColumnWidth(3, 7 * 512);
             }
 
             wb.write(os);
@@ -200,13 +205,21 @@ public class ExcelUtil {
                 if (rowIterator.hasNext()) {
                     Row header = rowIterator.next();
 
-                    Cell nameHeader = header.getCell(0);
-                    Cell countHeader = header.getCell(1);
+                    Cell serialNumHeader = header.getCell(0);
+                    Cell nameHeader = header.getCell(1);
+                    Cell countHeader = header.getCell(2);
+                    Cell alertHeader = header.getCell(3);
+                    if (!"编号".equals(serialNumHeader.getStringCellValue())) {
+                        throw new ResException("表格第一个表头名称应该为\"编号\"");
+                    }
                     if (!"名称".equals(nameHeader.getStringCellValue())) {
-                        throw new ResException("first header name must be 名称");
+                        throw new ResException("表格第二个表头名称应该为\"名称\"");
                     }
                     if (!"数量".equals(countHeader.getStringCellValue())) {
-                        throw new ResException("second header name must be 数量");
+                        throw new ResException("表格第三个表头名称应该为\"数量\"");
+                    }
+                    if (!"库存预警数量".equals(alertHeader.getStringCellValue())) {
+                        throw new ResException("表格第四个表头名称应该为\"库存预警数量\"");
                     }
                 }
 
@@ -215,15 +228,18 @@ public class ExcelUtil {
                 while (rowIterator.hasNext()) {
                     Row row = rowIterator.next();
 
-                    Cell nameCell = row.getCell(0);
-                    Cell countCell = row.getCell(1);
-                    Cell inventoryCountAlertCell = row.getCell(2);
+                    Cell serialNumCell = row.getCell(0);
+                    Cell nameCell = row.getCell(1);
+                    Cell countCell = row.getCell(2);
+                    Cell inventoryCountAlertCell = row.getCell(3);
 
+                    String serialNum = serialNumCell.getStringCellValue();
                     String name = nameCell.getStringCellValue();
                     long count = (long) countCell.getNumericCellValue();
                     long inventoryCountAlert = (long) inventoryCountAlertCell.getNumericCellValue();
 
                     Material material = new Material();
+                    material.setSerialNum(serialNum);
                     material.setName(name);
                     material.setCount(count);
                     material.setCategory(category);
@@ -232,8 +248,7 @@ public class ExcelUtil {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            // Handle any exceptions that may occur during the operation
+            throw new ResException("读取表格时发生错误，请联系仓库管理员");
         }
 
         return materials;

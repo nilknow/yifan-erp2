@@ -15,6 +15,7 @@ import {DeleteIcon, EditIcon, EyeIcon, SearchIcon} from "@nextui-org/shared-icon
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
 import Product from "@/app/dto/product";
+import myFetch from "@/app/myFetch";
 
 export default function Page() {
   let router = useRouter();
@@ -27,7 +28,7 @@ export default function Page() {
     if (name === null) {
       return
     }
-    const response = await fetch(`/api/bom/list?name=${name}`)
+    const response = await myFetch(`/api/bom/list?name=${name}`)
     const data = await response.json()
     setSortedProducts(data)
   }
@@ -36,14 +37,14 @@ export default function Page() {
     e.preventDefault()
 
     let name = e.currentTarget.value;
-    const response = await fetch(`/api/bom/list?name=${name}`);
+    const response = await myFetch(`/api/bom/list?name=${name}`);
     const data = await response.json()
     setSortedProducts(data)
   }
 
   const [sortedProducts, setSortedProducts] = useState<Product[]>([]);
   useEffect(() => {
-    fetch('/api/bom/list')
+    myFetch('/api/bom/list')
       .then((res) => res.json())
       .then((data) => {
         setSortedProducts(data)
@@ -53,7 +54,7 @@ export default function Page() {
   async function deleteBom(e: React.MouseEvent<SVGSVGElement>,productId:string) {
     //todo replace productId
     e.preventDefault()
-    const response = await fetch(`/api/bom/delete?productId=${productId}`, {
+    const response = await myFetch(`/api/bom/delete?productId=${productId}`, {
       method: 'DELETE',
     })
     if (response.status === 200) {
@@ -91,7 +92,7 @@ export default function Page() {
                 "!cursor-text",
               ],
             }}
-            placeholder="输入产品名称..."
+            placeholder="输入成品名称..."
             startContent={
               <SearchIcon
                 className="text-black/50 mb-0.5 dark:text-white/90 text-slate-400 pointer-events-none flex-shrink-0"/>
@@ -103,7 +104,7 @@ export default function Page() {
       <Table isStriped>
         <TableHeader>
           <TableColumn>BOM编号</TableColumn>
-          <TableColumn>产品名</TableColumn>
+          <TableColumn>成品名</TableColumn>
           <TableColumn>修改</TableColumn>
         </TableHeader>
         <TableBody>

@@ -152,7 +152,7 @@ public class ProductController {
      */
     @GetMapping("/excel/template")
     public void excelTemplate(HttpServletResponse response) throws IOException {
-        String fileName = URLEncoder.encode("产品库存模板", StandardCharsets.UTF_8).replaceAll("\\+", "%20");
+        String fileName = URLEncoder.encode("成品库存模板", StandardCharsets.UTF_8).replaceAll("\\+", "%20");
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             //get output stream
             response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
@@ -190,7 +190,7 @@ public class ProductController {
             response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             response.setCharacterEncoding("utf-8");
             // todo update filename
-            String fileName = URLEncoder.encode("产品库存", StandardCharsets.UTF_8).replaceAll("\\+", "%20");
+            String fileName = URLEncoder.encode("成品库存", StandardCharsets.UTF_8).replaceAll("\\+", "%20");
             response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
             // 这里需要设置不关闭流
             List<Product> products = productService.findAll();

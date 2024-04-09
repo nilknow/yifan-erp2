@@ -13,12 +13,13 @@ import {
 import React, {useEffect} from "react";
 import Category from "@/app/dto/category";
 import Res from "@/app/dto/res";
+import myFetch from "@/app/myFetch";
 
 export default function CreateProductFrom() {
   const modal = useDisclosure();
   const [categories, setCategories] = React.useState<string[]>([]);
   useEffect(() => {
-    fetch('/api/product_category/list')
+    myFetch('/api/product_category/list')
       .then((res) => res.json())
       .then((data: Res<Category[]>) => {
         if ("success" === data.successCode) {
@@ -38,7 +39,7 @@ export default function CreateProductFrom() {
     let unit = formData.get("unit");
     // let image = formData.get("image");
 
-    await fetch('/api/product/create', {
+    await myFetch('/api/product/create', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -50,40 +51,40 @@ export default function CreateProductFrom() {
   return (
     <div className={"mx-4"}>
       <form onSubmit={createProductHandler}>
-        <Input label={"产品编号"}
+        <Input label={"成品编号"}
                name={"serialNum"}
                required={true}
-               placeholder={"请输入产品编号（必须唯一）"}>
+               placeholder={"请输入成品编号（必须唯一）"}>
         </Input>
-        <Input label={"产品名称"}
+        <Input label={"成品名称"}
                name={"name"}
                required={true}
-               placeholder={"请输入产品名称"}>
+               placeholder={"请输入成品名称"}>
         </Input>
-        <Input label={"产品描述"}
+        <Input label={"成品描述"}
                name={"description"}
                required={false}
-               placeholder={"请输入产品描述"}>
+               placeholder={"请输入成品描述"}>
         </Input>
-        {/*<Input label={"产品图片"}*/}
+        {/*<Input label={"成品图片"}*/}
         {/*       name={"image"}*/}
         {/*       required={false}*/}
-        {/*       placeholder={"请输入产品图片"}>*/}
+        {/*       placeholder={"请输入成品图片"}>*/}
         {/*</Input>*/}
         <Autocomplete
           type="text"
-          placeholder={"请选择或输入产品分类"}
-          label={"产品分类"}
+          placeholder={"请选择或输入成品分类"}
+          label={"成品分类"}
           name={"category"}
           required={true}>
           {categories.map((item, index) => (
             <SelectItem key={index}>{item}</SelectItem>
           ))}
         </Autocomplete>
-        <Input label={"产品单位"}
+        <Input label={"成品单位"}
                name={"unit"}
                required={true}
-               placeholder={"请输入产品单位"}
+               placeholder={"请输入成品单位"}
                defaultValue={"个"}>
         </Input>
 

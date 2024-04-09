@@ -1,6 +1,7 @@
 package com.nilknow.yifanerp2.service;
 
 import com.nilknow.yifanerp2.entity.Alert;
+import com.nilknow.yifanerp2.exception.ResException;
 import com.nilknow.yifanerp2.repository.AlertRepository;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -20,17 +21,19 @@ public class AlertService {
         return alertRepository.findAllByOrderByIdDesc();
     }
 
-    public void update(Alert alert){
+    public void update(Alert alert) {
         alertRepository.save(alert);
     }
 
-    public void updateState(Long id, Integer state) {
+    public void updateState(Long companyId, Long id, Integer state) throws ResException {
         Optional<Alert> opt = alertRepository.findById(id);
         if (opt.isEmpty()) {
-            log.error("{} not exist",id);
-            return;
+            throw new ResException(id + " not exist");
         }
         Alert alert = opt.get();
+        if (!alert.getCompanyId().equals(companyId)) {
+            throw new ResException("You cannot change alert info in other company");
+        }
         alert.setState(state);
         alertRepository.save(alert);
     }

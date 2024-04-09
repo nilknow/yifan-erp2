@@ -85,24 +85,6 @@ public class OldMaterialController {
         return "redirect:list";
     }
 
-    @PostMapping("/excel/add")
-    public synchronized String excelAdd(MultipartFile file) {
-        if (excelHandling) {
-            return "redirect:/page/error";
-        } else {
-            excelHandling = true;
-            try {
-                List<Material> materials = ExcelUtil.getMaterials(file.getInputStream());
-                materialService.fullUpdate(materials);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            } finally {
-                excelHandling = false;
-            }
-            return "redirect:/material/list";
-        }
-    }
-
     /**
      * 下载excel模板
      */

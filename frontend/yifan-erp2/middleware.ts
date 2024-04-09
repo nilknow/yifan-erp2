@@ -9,11 +9,11 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  if (validationFail(req)) {
-    return NextResponse.redirect(new URL(`/login`, req.url));
+  if (validate(req)) {
+    return NextResponse.next();
   }
 
-  return NextResponse.next();
+  return NextResponse.redirect(new URL(`/login`, req.url));
 }
 
 function canPassValidation(req: NextRequest): boolean {
@@ -27,20 +27,20 @@ function canPassValidation(req: NextRequest): boolean {
   }
 }
 
-function validationFail(req: NextRequest): boolean {
+function validate(req: NextRequest): boolean {
   const token = req.cookies.get('Authorization')?.value;
   if (!token) {
-    return true
+    return false
   }
   try {
     const decoded = jwtDecode(token);
     if (decoded.exp && decoded.exp * 1000 < Date.now()) {
-      return true;
+      return false;
     }
   } catch (error) {
-    return true;
+    return false;
   }
-  return false
+  return true
 }
 
 export const config = {

@@ -23,4 +23,8 @@ public class ActionLogService {
     public List<ActionLog> listByTableName(String tableName){
         return actionLogRepository.findAllByTableNameOrderByIdDesc(tableName);
     }
+
+    public void saveAll(List<ActionLog> actionLogs) {
+        actionLogRepository.saveAll(actionLogs);
+    }
 }

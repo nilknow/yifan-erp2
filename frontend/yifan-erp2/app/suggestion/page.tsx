@@ -4,11 +4,12 @@ import {Button, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow}
 import {FormEvent, useEffect, useState} from "react";
 import Suggestion from "@/app/dto/suggestion";
 import Res from "@/app/dto/res";
+import myFetch from "@/app/myFetch";
 
 export default function Page() {
   const [sortedSuggestions, setSortedSuggestions] = useState<Suggestion[]>([]);
   useEffect(() => {
-    fetch('/api/suggestion/list')
+    myFetch('/api/suggestion/list')
       .then((res) => res.json())
       .then((data:Res<Suggestion[]>) => {
         if("success"===data.successCode){
@@ -28,7 +29,7 @@ export default function Page() {
       solved: e.currentTarget.solved.value,
     };
 
-    const response = await fetch('/api/suggestion', {
+    const response = await myFetch('/api/suggestion', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(formData)

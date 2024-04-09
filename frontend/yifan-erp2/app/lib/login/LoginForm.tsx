@@ -2,6 +2,7 @@
 
 import {FormEvent} from "react";
 import {useRouter} from "next/navigation";
+import myFetch from "@/app/myFetch";
 
 export function LoginForm() {
   const router = useRouter();
@@ -13,7 +14,7 @@ export function LoginForm() {
     const username = formData.get('username')
     const password = formData.get('password')
 
-    const response = await fetch('/api/login', {
+    const response = await myFetch('/api/login', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({username: username, password: password}),

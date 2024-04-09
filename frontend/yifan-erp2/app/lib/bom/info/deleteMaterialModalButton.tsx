@@ -4,6 +4,7 @@ import {Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDis
 import Material from "@/app/dto/material";
 import Product from "@/app/dto/product";
 import ProductMaterialRel from "@/app/dto/productMaterialRel";
+import myFetch from "@/app/myFetch";
 
 export default function DeleteModalDeleteIcon(rel: ProductMaterialRel) {
   const deleteModal = useDisclosure();
@@ -11,7 +12,7 @@ export default function DeleteModalDeleteIcon(rel: ProductMaterialRel) {
   function remove(e: React.FormEvent<HTMLFormElement>, relId: number) {
     e.preventDefault()
 
-    fetch(`/api/bom/rel?id=${relId}`, {
+    myFetch(`/api/bom/rel?id=${relId}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json"
@@ -31,7 +32,7 @@ export default function DeleteModalDeleteIcon(rel: ProductMaterialRel) {
   return (
     <>
       <DeleteIcon onClick={deleteModal.onOpen}/>
-      <Modal isOpen={deleteModal.isOpen} onOpenChange={deleteModal.onOpenChange}>
+      <Modal backdrop={"blur"} isOpen={deleteModal.isOpen} onOpenChange={deleteModal.onOpenChange}>
         <ModalContent>
           {(onClose) => (
             <>

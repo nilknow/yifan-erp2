@@ -1,13 +1,5 @@
 'use client'
 import {
-  Button,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  Select,
-  SelectItem,
   Table,
   TableBody,
   TableCell,
@@ -15,10 +7,9 @@ import {
   TableHeader,
   TableRow,
   Tooltip,
-  useDisclosure
 } from "@nextui-org/react";
-import React, {Suspense, useEffect, useState} from "react";
-import {DeleteIcon, PlusFilledIcon, SearchIcon} from "@nextui-org/shared-icons";
+import React, {useEffect, useState} from "react";
+import {SearchIcon} from "@nextui-org/shared-icons";
 import {Input} from "@nextui-org/input";
 import Material from "@/app/dto/material";
 import {useSearchParams} from "next/navigation";
@@ -26,6 +17,7 @@ import ProductMaterialRel from "@/app/dto/productMaterialRel";
 import Res from "@/app/dto/res";
 import AddMaterialModalButton from "@/app/lib/bom/info/addMaterialModalButton";
 import DeleteModalDeleteIcon from "@/app/lib/bom/info/deleteMaterialModalButton";
+import myFetch from "@/app/myFetch";
 
 
 export default function Page() {
@@ -36,7 +28,7 @@ export default function Page() {
   const productId = searchParams.get('productId');
 
   useEffect(() => {
-    fetch(`/api/bom/info?productId=${productId}`)
+    myFetch(`/api/bom/info?productId=${productId}`)
       .then((res) => res.json())
       .then((data) => {
         setSortedProductMaterialRels(data)
@@ -44,7 +36,7 @@ export default function Page() {
   }, [])
 
   useEffect(() => {
-    fetch('/api/material/list')
+    myFetch('/api/material/list')
       .then((res) => res.json())
       .then((data: Res<Material[]>) => {
         if (data.successCode !== "success") {
@@ -79,7 +71,7 @@ export default function Page() {
           <TableColumn>物料数量</TableColumn>
           <TableColumn>操作</TableColumn>
         </TableHeader>
-        <TableBody emptyContent={"该产品目前没有BOM，请点击右上角\"添加物料\"按钮添加BOM需要的物料"}>
+        <TableBody emptyContent={"该成品目前没有BOM，请点击右上角\"添加物料\"按钮添加BOM需要的物料"}>
           {sortedProductMaterialRels.map((materialInfo) => (
             <TableRow key={materialInfo.material.id}>
               <TableCell>{materialInfo.material.serialNum}</TableCell>

@@ -1,5 +1,6 @@
+'use client'
 import {
-  Autocomplete, AutocompleteItem,
+  Autocomplete,
   Button,
   Modal,
   ModalBody,
@@ -15,14 +16,15 @@ import {Input} from "@nextui-org/input";
 import React, {useEffect} from "react";
 import Material from "@/app/dto/material";
 import Res from "@/app/dto/res";
+import myFetch from "@/app/myFetch";
 
-export default function AddModalButton() {
+export default function MaterialAddModalButton() {
   const modal = useDisclosure();
   const [materialTypes, setMaterialTypes] = React.useState<string[]>([]);
   const [selectedMaterialType, setSelectedMaterialType] = React.useState<string>("");
 
   useEffect(() => {
-    fetch('/api/material/list')
+    myFetch('/api/material/list')
       .then((res) => res.json())
       .then((data: Res<Material[]>) => {
         if ("success" === data.successCode) {
@@ -43,7 +45,7 @@ export default function AddModalButton() {
     let count = formData.get("count");
     let inventoryCountAlert = formData.get("inventoryCountAlert");
 
-    fetch('/api/material?source=button', {
+    myFetch('/api/material?source=button', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -72,7 +74,7 @@ export default function AddModalButton() {
       <Button size={"sm"} radius={"full"} onPress={modal.onOpen} color="default" endContent={<PlusFilledIcon/>}>
         添加物料
       </Button>
-      <Modal isOpen={modal.isOpen} onOpenChange={modal.onOpenChange}>
+      <Modal backdrop={"blur"} isOpen={modal.isOpen} onOpenChange={modal.onOpenChange}>
         <ModalContent>
           {(onClose) => (
             <>

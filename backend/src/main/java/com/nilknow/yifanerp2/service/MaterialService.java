@@ -4,12 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nilknow.yifanerp2.config.security.UserIdHolder;
 import com.nilknow.yifanerp2.entity.ActionLog;
+import com.nilknow.yifanerp2.entity.LoginUser;
 import com.nilknow.yifanerp2.entity.Material;
 import com.nilknow.yifanerp2.exception.ResException;
 import com.nilknow.yifanerp2.repository.LoginUserRepository;
 import com.nilknow.yifanerp2.repository.MaterialRepository;
 import jakarta.annotation.Resource;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -18,6 +20,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class MaterialService {
     private static final String TO_ADD_KEY = "toAdd";
     private static final String TO_DELETE_KEY = "toDelete";
@@ -148,9 +151,35 @@ public class MaterialService {
     public void fullUpdate(List<Material> newList) {
         Map<String, List<Material>> preview = fullUpdatePreview(newList);
 
-        materialRepository.saveAll(preview.get(TO_ADD_KEY));
-        materialRepository.deleteAll(preview.get(TO_DELETE_KEY));
-        this.updateAllByNameAndCategory(preview.get(TO_UPDATE_KEY));
+        List<Material> toAdds = preview.get(TO_ADD_KEY);
+
+        LoginUser user = loginUserRepository.findById(UserIdHolder.get()).get();
+        Date now = new Date();
+        String eventType = "add";
+        String source = "batch";
+        UUID batchId = UUID.randomUUID();
+        List<ActionLog> actionLogs = toAdds.stream().map(x ->
+                {
+                    try {
+                        return new ActionLog()
+                                .setUser(user)
+                                .setTimestamp(now)
+                                .setEventType(eventType)
+                                .setSource(source)
+                                .setBatchId(batchId)
+                                .setDescription("添加新物料 " + x.getSerialNum() + " " + x.getName() + " " + x.getCount() + " " + x.getInventoryCountAlert())
+                                .setAdditionalInfo(objectMapper.writeValueAsString(x))
+                                .setTableName("material");
+                    } catch (JsonProcessingException e) {
+                        log.error("无法处理数据为JSON, material " + x);
+                        throw new RuntimeException(e);
+                    }
+                }
+        ).toList();
+        materialRepository.saveAll(toAdds);
+        actionLogService.saveAll(actionLogs);
+//        materialRepository.deleteAll(preview.get(TO_DELETE_KEY));
+//        this.updateAllByNameAndCategory(preview.get(TO_UPDATE_KEY));
     }
 
     private void updateAllByNameAndCategory(List<Material> materials) {
@@ -164,22 +193,22 @@ public class MaterialService {
     }
 
     @Transactional
-    public void delete(Long id,String source) throws JsonProcessingException, ResException {
+    public void delete(Long id, String source) throws JsonProcessingException, ResException {
         Optional<Material> toDelete = materialRepository.findById(id);
         if (toDelete.isEmpty()) {
             throw new ResException("The material you want to delete doesn't really exist");
         }
         materialRepository.deleteById(id);
 
-        ActionLog actionLog=new ActionLog();
-        actionLog.setEventType("delete");
-        actionLog.setAdditionalInfo(objectMapper.writeValueAsString(toDelete.get()));
-        actionLog.setDescription("删除物料");
-        actionLog.setSource(source);
+        ActionLog actionLog = new ActionLog();
         actionLog.setUser(loginUserRepository.findById(UserIdHolder.get()).get());
-        actionLog.setTableName("material");
         actionLog.setTimestamp(new Date());
+        actionLog.setEventType("delete");
+        actionLog.setSource(source);
         actionLog.setBatchId(UUID.randomUUID());
+        actionLog.setDescription("删除物料");
+        actionLog.setAdditionalInfo(objectMapper.writeValueAsString(toDelete.get()));
+        actionLog.setTableName("material");
         actionLogService.save(actionLog);
     }
 

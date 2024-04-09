@@ -1,6 +1,6 @@
 ## 命名表
-* 产品：Product
-* 分类：Category 产品分类
+* 成品：Product
+* 分类：Category 成品分类
 * Warehouse：仓库
 * Supplier：供应商
 * Customer：客户
@@ -9,7 +9,7 @@
 * Transaction：交易
 * Material: BOM中的物料
 * Material Type
-* Unit: 物料或者产品的单位
+* Unit: 物料或者成品的单位
 
 ## development keyword
 * pg_stat_statements

@@ -2,6 +2,7 @@
 
 import {useRouter} from "next/navigation";
 import {Image} from "@nextui-org/react";
+import myFetch from "@/app/myFetch";
 
 export default function TopNavBar() {
   let router = useRouter();
@@ -9,7 +10,7 @@ export default function TopNavBar() {
   //fix it
   async function logoutHandler(e:any) {
     e.preventDefault()
-    await fetch('/api/logout', {
+    await myFetch('/api/logout', {
       method: 'POST',
     }).then(()=>{
       router.push('/')

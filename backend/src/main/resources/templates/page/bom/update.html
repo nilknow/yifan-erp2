@@ -17,7 +17,7 @@
 <body>
 <div th:replace="~{common/common :: navbar}"></div>
 <div id="container">
-    <h2><span th:text="${'产品：  '+product.name}"></span></h2>
+    <h2><span th:text="${'成品：  '+product.name}"></span></h2>
     <form th:action="@{/bom/material/add}" method="post">
         <input type="hidden" name="productId" th:value="${product.id}"/>
         <select id="materialType" onchange="listMaterialsByType(this)">

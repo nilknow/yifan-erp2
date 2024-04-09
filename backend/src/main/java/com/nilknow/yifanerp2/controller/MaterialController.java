@@ -34,7 +34,7 @@ public class MaterialController {
     private ActionLogService actionLogService;
 
     @GetMapping("/list")
-    public Res<List<Material>> list(String name) throws JsonProcessingException {
+    public Res<List<Material>> list(@RequestParam(required = false) String name) throws JsonProcessingException {
         List<Material> materials;
         if (StringUtils.hasText(name)) {
             materials = materialService.findAllByNameLike(name);
@@ -44,7 +44,7 @@ public class MaterialController {
         return new Res<List<Material>>().success(materials);
     }
 
-    @GetMapping("/template")
+    @GetMapping("/excel/template")
     public void template(HttpServletResponse response) throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
@@ -65,6 +65,29 @@ public class MaterialController {
                     new Material("NO_A_1", "物料1", "物料品类2", 32L, 10L)
             ));
             wb.write(response.getOutputStream());
+        } catch (Exception e) {
+            // 重置response
+            response.reset();
+            response.setContentType("application/json");
+            response.setCharacterEncoding("utf-8");
+            Map<String, String> map = new HashMap<>();
+            map.put("status", "failure");
+            map.put("message", "下载文件失败" + e.getMessage());
+            response.getWriter().println(map.get("message"));
+        }
+    }
+
+    @GetMapping("/excel/export")
+    public void export(HttpServletResponse response) throws IOException {
+        try {
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setCharacterEncoding("utf-8");
+            String fileName = URLEncoder.encode("物料库存", StandardCharsets.UTF_8).replaceAll("\\+", "%20");
+            response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
+            // 这里需要设置不关闭流
+
+            List<Material> materials = materialService.findAll();
+            ExcelUtil.exportMaterials(response.getOutputStream(), materials);
         } catch (Exception e) {
             // 重置response
             response.reset();
@@ -113,6 +136,30 @@ public class MaterialController {
             }
             return new Res<String>().success("success");
         }
+    }
+
+    @PostMapping("/batch/json")
+    public Res<String> batchAdd(@RequestBody Map<String,List<Material>> toAddMap) {
+        if (excelHandling) {
+            return new Res<String>().fail("目前有别的批量上传进行中，可能是您的同事在操作。请稍后重试");
+        } else {
+            excelHandling = true;
+            try {
+                List<Material> materials = toAddMap.get("toAdd");
+                materialService.fullUpdate(materials);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            } finally {
+                excelHandling = false;
+            }
+            return new Res<String>().success("success");
+        }
+    }
+
+    @PostMapping("/batch/preview")
+    public Res<Map<String, List<Material>>> batchAddPreview(MultipartFile file) throws Exception {
+        List<Material> materials = ExcelUtil.getMaterials(file.getInputStream());
+        return new Res<Map<String, List<Material>>>().success(materialService.fullUpdatePreview(materials));
     }
 
     @GetMapping("/action_log/list")

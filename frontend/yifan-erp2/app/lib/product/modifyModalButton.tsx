@@ -4,6 +4,7 @@ import Material from "@/app/dto/material";
 import {EditIcon} from "@nextui-org/shared-icons";
 import {Input} from "@nextui-org/input";
 import Product from "@/app/dto/product";
+import myFetch from "@/app/myFetch";
 
 export default function ModifyModalEditIcon(product: Product) {
   const modifyModal = useDisclosure();
@@ -19,7 +20,7 @@ export default function ModifyModalEditIcon(product: Product) {
     const description=formData.get('description')
     const unit=formData.get('unit')
 
-    fetch(`/api/product`, {
+    myFetch(`/api/product`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -49,20 +50,20 @@ export default function ModifyModalEditIcon(product: Product) {
   return (
     <>
       <EditIcon onClick={modifyModal.onOpen}/>
-      <Modal isOpen={modifyModal.isOpen} onOpenChange={modifyModal.onOpenChange}>
+      <Modal backdrop={"blur"} isOpen={modifyModal.isOpen} onOpenChange={modifyModal.onOpenChange}>
         <ModalContent>
           {(onClose) => (
             <>
               <form onSubmit={(e) => modify(e, product)}>
-                <ModalHeader className="flex flex-col gap-1">修改产品</ModalHeader>
+                <ModalHeader className="flex flex-col gap-1">修改成品</ModalHeader>
                 <ModalBody>
-                  <Input label={"产品编号"} name={"serialNum"} defaultValue={product.serialNum}/>
-                  <Input label={"产品名称"} name={"name"} defaultValue={product.name}/>
-                  <Input label={"产品描述"} name={"description"} defaultValue={product.description}/>
-                  <Input label={"产品分类"} name={"categoryName"} defaultValue={product.category.name}/>
-                  <Input label={"产品库存"} name={"count"} type={"number"}
+                  <Input label={"成品编号"} name={"serialNum"} defaultValue={product.serialNum}/>
+                  <Input label={"成品名称"} name={"name"} defaultValue={product.name}/>
+                  <Input label={"成品描述"} name={"description"} defaultValue={product.description}/>
+                  <Input label={"成品分类"} name={"categoryName"} defaultValue={product.category.name}/>
+                  <Input label={"成品库存"} name={"count"} type={"number"}
                          defaultValue={product.count.toString()}/>
-                  <Input label={"产品单位"} name={"unit"} defaultValue={product.unit}/>
+                  <Input label={"成品单位"} name={"unit"} defaultValue={product.unit}/>
                 </ModalBody>
                 <ModalFooter>
                   <Button type={"submit"}>确定</Button>

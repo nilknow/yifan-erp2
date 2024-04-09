@@ -3,11 +3,12 @@ import Res from "@/app/dto/res";
 import {useEffect, useState} from "react";
 import {Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from "@nextui-org/react";
 import ActionLogDto from "@/app/dto/actionLogDto";
+import myFetch from "@/app/myFetch";
 
 export default function Page() {
   const [actionLogDtos, setActionLogDtos] = useState<ActionLogDto[]>([]);
   useEffect(() => {
-    fetch("/api/material/action_log/list")
+    myFetch("/api/material/action_log/list")
       .then(res => res.json())
       .then((data: Res<ActionLogDto[]>) => {
         if (data.successCode === 'success') {

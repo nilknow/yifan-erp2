@@ -17,6 +17,7 @@ import {useSearchParams} from "next/navigation";
 import ProductMaterialRel from "@/app/dto/productMaterialRel";
 import Material from "@/app/dto/material";
 import Res from "@/app/dto/res";
+import myFetch from "@/app/myFetch";
 
 export default function AddMaterialModalButton() {
   const modal = useDisclosure();
@@ -28,7 +29,7 @@ export default function AddMaterialModalButton() {
   const [materials, setMaterials] = useState<Material[]>([]);
 
   useEffect(() => {
-    fetch(`/api/bom/info?productId=${productId}`)
+    myFetch(`/api/bom/info?productId=${productId}`)
       .then((res) => res.json())
       .then((data) => {
         setSortedProductMaterialRels(data)
@@ -36,7 +37,7 @@ export default function AddMaterialModalButton() {
   }, [])
 
   useEffect(() => {
-    fetch('/api/material/list')
+    myFetch('/api/material/list')
       .then((res) => res.json())
       .then((data: Res<Material[]>) => {
         if (data.successCode !== "success") {
@@ -61,7 +62,7 @@ export default function AddMaterialModalButton() {
       productId,
       materialCount
     };
-    const response = await fetch('/api/bom/add', {
+    const response = await myFetch('/api/bom/add', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -86,7 +87,7 @@ export default function AddMaterialModalButton() {
       <Button onPress={modal.onOpen} color="default" endContent={<PlusFilledIcon/>}>
         添加物料
       </Button>
-      <Modal isOpen={modal.isOpen} onOpenChange={modal.onOpenChange}>
+      <Modal backdrop={"blur"} isOpen={modal.isOpen} onOpenChange={modal.onOpenChange}>
         <ModalContent>
           {(onClose) => (
             <>

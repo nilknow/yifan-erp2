@@ -1,10 +1,10 @@
 import React from "react";
-import MaterialTable from "@/app/lib/material/materialTable";
+import MaterialTable from "../lib/material/materialTable";
 
 export default function Page() {
   return (
-    <div>
-      <MaterialTable></MaterialTable>
+    <div className={"mx-4"}>
+      <MaterialTable>{<></>}</MaterialTable>
     </div>
   )
 }

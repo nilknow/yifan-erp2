@@ -30,7 +30,7 @@ public class BomController {
         List<Product> products = productService.findAllOrderByUpdateTimeDesc();
         model.addAttribute("products", products);
         if (products.isEmpty()) {
-            model.addAttribute("prompt", "您必须首先创建一个产品才能够进行bom管理");
+            model.addAttribute("prompt", "您必须首先创建一个成品才能够进行bom管理");
         }
         return "page/bom/index";
     }

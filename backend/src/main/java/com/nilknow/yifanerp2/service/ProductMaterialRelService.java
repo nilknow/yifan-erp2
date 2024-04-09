@@ -34,7 +34,7 @@ public class ProductMaterialRelService {
     public List<ProductMaterialRel> add(Long productId, Long materialId, Long materialCount) throws Exception {
         Optional<Product> product = productRepository.findById(productId);
         if (product.isEmpty()) {
-            throw new ResException("产品不存在，无法修改BOM");
+            throw new ResException("成品不存在，无法修改BOM");
         }
         Optional<Material> material = materialRepository.findById(materialId);
         if (material.isEmpty()) {

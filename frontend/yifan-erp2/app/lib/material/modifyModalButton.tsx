@@ -1,8 +1,10 @@
+'use client'
 import {Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure} from "@nextui-org/react";
 import React from "react";
 import Material from "@/app/dto/material";
 import {EditIcon} from "@nextui-org/shared-icons";
 import {Input} from "@nextui-org/input";
+import myFetch from "@/app/myFetch";
 
 export default function ModifyModalEditIcon(material: Material) {
   const modifyModal = useDisclosure();
@@ -17,7 +19,7 @@ export default function ModifyModalEditIcon(material: Material) {
     const count = formData.get('count')
     const inventoryCountAlert = formData.get('inventoryCountAlert')
 
-    fetch(`/api/material?source=button`, {
+    myFetch(`/api/material?source=button`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -46,7 +48,7 @@ export default function ModifyModalEditIcon(material: Material) {
   return (
     <>
       <EditIcon onClick={modifyModal.onOpen}/>
-      <Modal isOpen={modifyModal.isOpen} onOpenChange={modifyModal.onOpenChange}>
+      <Modal backdrop={"blur"} isOpen={modifyModal.isOpen} onOpenChange={modifyModal.onOpenChange}>
         <ModalContent>
           {(onClose) => (
             <>

@@ -5,7 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>创建产品</title>
+    <title>创建成品</title>
     <link th:href="@{/my/common.css}" rel="stylesheet">
     <link th:href="@{/my/popup.css}" rel="stylesheet">
 </head>
@@ -16,7 +16,7 @@
         <table>
             <thead>
             <tr>
-                <th>产品名</th>
+                <th>成品名</th>
                 <th>单位</th>
                 <th>数目</th>
                 <th>分类</th>
@@ -30,7 +30,7 @@
                 <td>
                     <div class="flex-row">
                         <select th:field="*{category.id}">
-                            <option value="" disabled selected>请选择产品分类</option>
+                            <option value="" disabled selected>请选择成品分类</option>
                             <option th:each="category : ${categories}" th:value="${category.id}"
                                     th:text="${category.name}"></option>
                         </select>

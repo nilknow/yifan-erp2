@@ -1,7 +1,9 @@
+'use client'
 import {DeleteIcon} from "@nextui-org/shared-icons";
 import React from "react";
 import {Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure} from "@nextui-org/react";
 import Material from "@/app/dto/material";
+import myFetch from "@/app/myFetch";
 
 export default function DeleteModalDeleteIcon(material: Material) {
   const deleteModal = useDisclosure();
@@ -9,7 +11,7 @@ export default function DeleteModalDeleteIcon(material: Material) {
   function remove(e: React.FormEvent<HTMLFormElement>, materialId: number) {
     e.preventDefault()
 
-    fetch(`/api/material?materialId=${materialId}&source=button`, {
+    myFetch(`/api/material?materialId=${materialId}&source=button`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json"
@@ -29,7 +31,7 @@ export default function DeleteModalDeleteIcon(material: Material) {
   return (
     <>
       <DeleteIcon onClick={deleteModal.onOpen}/>
-      <Modal isOpen={deleteModal.isOpen} onOpenChange={deleteModal.onOpenChange}>
+      <Modal backdrop={"blur"} isOpen={deleteModal.isOpen} onOpenChange={deleteModal.onOpenChange}>
         <ModalContent>
           {(onClose) => (
             <>

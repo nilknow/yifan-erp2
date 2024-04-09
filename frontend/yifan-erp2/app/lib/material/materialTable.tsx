@@ -1,27 +1,18 @@
 'use client'
-import React, {useEffect, useState} from "react";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableColumn,
-  TableRow,
-  TableCell, Button, Tooltip, useDisclosure, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter
-} from "@nextui-org/react";
-import {DeleteIcon, EditIcon, SearchIcon} from "@nextui-org/shared-icons";
-import {Input} from "@nextui-org/input";
-import Material from "@/app/dto/material";
-import DeleteModalDeleteIcon from "@/app/lib/material/deleteModalDeleteIcon";
+import {Button, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip} from "@nextui-org/react";
 import ModifyModalEditIcon from "@/app/lib/material/modifyModalButton";
-import AddModalButton from "@/app/lib/material/addModalButton";
+import DeleteModalDeleteIcon from "@/app/lib/material/deleteModalDeleteIcon";
+import React, {useEffect, useState} from "react";
+import Material from "@/app/dto/material";
 import Res from "@/app/dto/res";
-import Product from "@/app/dto/product";
-import BatchAddModalButton from "@/app/lib/material/batchAddModalButton";
+import {Input} from "@nextui-org/input";
+import {SearchIcon} from "@nextui-org/shared-icons";
+import myFetch from "@/app/myFetch";
 
-export default function MaterialTable() {
+export default function MaterialTable({children}: { children: React.ReactNode }){
   const [sortedMaterials, setSortedMaterials] = useState<Material[]>([]);
   useEffect(() => {
-    fetch('/api/material/list')
+    myFetch('/api/material/list')
       .then((res) => res.json())
       .then((data:Res<Material[]>) => {
         if("success" === data.successCode){
@@ -32,6 +23,7 @@ export default function MaterialTable() {
       })
   }, [])
 
+
   async function search(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
@@ -39,7 +31,7 @@ export default function MaterialTable() {
     if (name === null) {
       return
     }
-    const response = await fetch(`/api/material/list?name=${name}`)
+    const response = await myFetch(`/api/material/list?name=${name}`)
     let data:Res<Material[]> = await response.json()
     if("success" === data.successCode){
       setSortedMaterials(data.body)
@@ -52,7 +44,7 @@ export default function MaterialTable() {
     e.preventDefault()
 
     let name = e.currentTarget.value;
-    const response = await fetch(`/api/material/list?name=${name}`);
+    const response = await myFetch(`/api/material/list?name=${name}`);
     let data:Res<Material[]> = await response.json()
     if("success" === data.successCode){
       setSortedMaterials(data.body)
@@ -62,7 +54,7 @@ export default function MaterialTable() {
   }
 
   return (
-    <div className={"mx-4"}>
+    <>
       <div>
         <form onSubmit={search}>
           <div className="flex justify-between gap-3 items-end">
@@ -99,8 +91,9 @@ export default function MaterialTable() {
               }
             />
             <div className="flex gap-3">
-              <AddModalButton></AddModalButton>
-              <BatchAddModalButton></BatchAddModalButton>
+              {children}
+              <Button size={"sm"} radius={"full"} color="default"
+                      onClick={() => window.location.href = '/api/material/excel/export'}>批量导出</Button>
             </div>
           </div>
         </form>
@@ -108,27 +101,9 @@ export default function MaterialTable() {
       <br/>
       <Table removeWrapper isStriped aria-label="material list table">
         <TableHeader>
-          <TableColumn allowsSorting>编号
-            <div className="arrow-box">
-              <div className="arrow-up"></div>
-              <div className="arrow-between"></div>
-              <div className="arrow-down"></div>
-            </div>
-          </TableColumn>
-          <TableColumn allowsSorting>物料名
-            <div className="arrow-box">
-              <div className="arrow-up"></div>
-              <div className="arrow-between"></div>
-              <div className="arrow-down"></div>
-            </div>
-          </TableColumn>
-          <TableColumn allowsSorting>分类
-            <div className="arrow-box">
-              <div className="arrow-up"></div>
-              <div className="arrow-between"></div>
-              <div className="arrow-down"></div>
-            </div>
-          </TableColumn>
+          <TableColumn allowsSorting>编号</TableColumn>
+          <TableColumn allowsSorting>物料名</TableColumn>
+          <TableColumn allowsSorting>分类</TableColumn>
           <TableColumn>库存数量</TableColumn>
           <TableColumn>库存预警</TableColumn>
           <TableColumn>修改</TableColumn>
@@ -161,28 +136,6 @@ export default function MaterialTable() {
           ))}
         </TableBody>
       </Table>
-      <form action="#" id="full-update-popup" className="popup hidden">
-        <div id="to-add-table"></div>
-        <div id="to-delete-table"></div>
-        <div id="to-update-table"></div>
-        <button type="submit" id="full-update-submit-btn" className="warn">Submit</button>
-        <button type="button" id="full-update-cancel-btn">Cancel</button>
-      </form>
-      <form action="#" id="popup" className="popup hidden">
-        <h2>FBI WARNING!!!</h2>
-        You sure you want to clean all material data? You cannot undo it after cleaning.
-        <br/>
-        <button id="remove-all-btn" className="warn">确认</button>
-        <button id="remove-all-cancel-btn">取消</button>
-      </form>
-
-      <form action="#" id="remove-one-popup" className="popup hidden">
-        <h2>FBI WARNING!!!</h2>
-        You sure you want to clean this material data? You cannot undo it after cleaning.
-        <br/>
-        <button id="remove-one-btn" className="warn">确认</button>
-        <button id="remove-one-cancel-btn">取消</button>
-      </form>
-    </div>
+    </>
   )
 }

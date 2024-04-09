@@ -1,23 +1,23 @@
 'use client'
-import {Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip} from "@nextui-org/react";
+import {Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from "@nextui-org/react";
 import React, {useEffect} from "react";
 import Product from "@/app/dto/product";
 import Res from "@/app/dto/res";
 import {Input} from "@nextui-org/input";
 import {SearchIcon} from "@nextui-org/shared-icons";
-import AddModalButton from "@/app/lib/product/addModalButton";
+import myFetch from "@/app/myFetch";
 
 
 export default function ProductList() {
   const [products, setProducts] = React.useState<Product[]>([]);
   useEffect(() => {
-    fetch('/api/product/list')
+    myFetch('/api/product/list')
       .then(response => response.json())
       .then((data: Res<Product[]>) => {
         if ("success" === data.successCode) {
           setProducts(data.body);
         } else {
-          alert("获取产品列表失败，请稍后重试")
+          alert("获取成品列表失败，请稍后重试")
         }
       })
   }, [])
@@ -29,7 +29,7 @@ export default function ProductList() {
     if (name === null) {
       return
     }
-    let response = await fetch(`/api/product/list?name=${name}`)
+    let response = await myFetch(`/api/product/list?name=${name}`)
     let data: Res<Product[]> = await response.json()
     if ("success" === data.successCode) {
       setProducts(data.body)
@@ -42,7 +42,7 @@ export default function ProductList() {
     e.preventDefault()
 
     let name = e.currentTarget.value;
-    const response = await fetch(`/api/product/list?name=${name}`);
+    const response = await myFetch(`/api/product/list?name=${name}`);
     const data = await response.json()
     if ("success" === data.successCode) {
       setProducts(data.body)
@@ -82,7 +82,7 @@ export default function ProductList() {
                   "!cursor-text",
                 ],
               }}
-              placeholder="输入产品名称..."
+              placeholder="输入成品名称..."
               startContent={
                 <SearchIcon
                   className="text-black/50 mb-0.5 dark:text-white/90 text-slate-400 pointer-events-none flex-shrink-0"/>
@@ -94,12 +94,12 @@ export default function ProductList() {
       <br/>
       <Table isStriped>
         <TableHeader>
-          <TableColumn>产品编号</TableColumn>
-          <TableColumn>产品名称</TableColumn>
-          <TableColumn>产品描述</TableColumn>
-          <TableColumn>产品分类</TableColumn>
-          <TableColumn>产品库存</TableColumn>
-          <TableColumn>产品单位</TableColumn>
+          <TableColumn>成品编号</TableColumn>
+          <TableColumn>成品名称</TableColumn>
+          <TableColumn>成品描述</TableColumn>
+          <TableColumn>成品分类</TableColumn>
+          <TableColumn>成品库存</TableColumn>
+          <TableColumn>成品单位</TableColumn>
         </TableHeader>
         <TableBody>
           {products.map(product => (
