@@ -31,7 +31,12 @@ CREATE TABLE IF NOT EXISTS public.alert_email
 (
     id bigserial NOT NULL,
     address character varying(64) COLLATE pg_catalog."default" NOT NULL,
-    CONSTRAINT alert_email_pk PRIMARY KEY (id)
+    company_id bigint,
+    CONSTRAINT alert_email_pk PRIMARY KEY (id),
+    CONSTRAINT alert_email_company_id_fkey FOREIGN KEY (company_id)
+        REFERENCES public.company (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
 )
     WITH (
         OIDS = FALSE
@@ -45,6 +50,11 @@ CREATE TABLE IF NOT EXISTS public.authority
 (
     id bigserial NOT NULL,
     name character varying(32) COLLATE pg_catalog."default" NOT NULL,
+    company_id bigint,
+    CONSTRAINT fk_company_id FOREIGN KEY (company_id)
+        REFERENCES public.company (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
     CONSTRAINT authority_pk PRIMARY KEY (id),
     CONSTRAINT authority_name_uk2 UNIQUE (name)
 )
@@ -83,7 +93,7 @@ CREATE TABLE IF NOT EXISTS public.bug
     company_id bigint,
     CONSTRAINT bug_pk PRIMARY KEY (id),
     CONSTRAINT fk_company_id FOREIGN KEY (company_id)
-        REFERENCES yifan_erp_test.company (id) MATCH SIMPLE
+        REFERENCES public.company (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
 )
@@ -104,7 +114,7 @@ CREATE TABLE IF NOT EXISTS public.category
     CONSTRAINT category_name_uk UNIQUE (name, company_id)
         DEFERRABLE,
     CONSTRAINT fk_company_id FOREIGN KEY (company_id)
-        REFERENCES yifan_erp_test.company (id) MATCH SIMPLE
+        REFERENCES public.company (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
 )
@@ -126,7 +136,7 @@ CREATE TABLE IF NOT EXISTS public.login_user
     CONSTRAINT login_user_pk PRIMARY KEY (id),
     CONSTRAINT login_user_username_uk2 UNIQUE (username),
     CONSTRAINT fk_company_id FOREIGN KEY (company_id)
-        REFERENCES yifan_erp_test.company (id) MATCH SIMPLE
+        REFERENCES public.company (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
 )
@@ -171,11 +181,19 @@ CREATE TABLE IF NOT EXISTS public.material
     category character varying(64) COLLATE pg_catalog."default" NOT NULL,
     update_timestamp timestamp without time zone DEFAULT now(),
     company_id bigint,
+    serial_num character varying(36) COLLATE pg_catalog."default",
+    create_user bigint,
+    update_user bigint,
     CONSTRAINT material_pk PRIMARY KEY (id),
     CONSTRAINT material_name_category_uk UNIQUE (name, category, company_id)
         DEFERRABLE,
-    CONSTRAINT fk_company_id FOREIGN KEY (company_id)
-        REFERENCES yifan_erp_test.company (id) MATCH SIMPLE
+    CONSTRAINT uk_material_serial_num UNIQUE (serial_num),
+    CONSTRAINT material_create_user_fk FOREIGN KEY (create_user)
+        REFERENCES public.login_user (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT material_update_user_fk FOREIGN KEY (update_user)
+        REFERENCES public.login_user (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
 )
@@ -196,14 +214,26 @@ CREATE TABLE IF NOT EXISTS public.product
     unit character varying COLLATE pg_catalog."default" NOT NULL,
     update_timestamp timestamp without time zone NOT NULL DEFAULT now(),
     company_id bigint,
+    serial_num character varying(36) COLLATE pg_catalog."default",
+    create_user bigint,
+    update_user bigint,
     CONSTRAINT product_pk PRIMARY KEY (id),
     CONSTRAINT product_name_category_uk UNIQUE (name, category_id),
+    CONSTRAINT uk_product_serial_num UNIQUE (serial_num),
     CONSTRAINT fk_company_id FOREIGN KEY (company_id)
         REFERENCES yifan_erp_test.company (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION,
     CONSTRAINT product_category_id_fk FOREIGN KEY (category_id)
         REFERENCES public.category (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT product_create_user_fk FOREIGN KEY (create_user)
+        REFERENCES public.login_user (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT product_update_user_fk FOREIGN KEY (update_user)
+        REFERENCES public.login_user (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
 )
@@ -221,6 +251,8 @@ CREATE TABLE IF NOT EXISTS public.product_material_rel
     product_id bigint NOT NULL,
     material_id bigint NOT NULL,
     material_count bigint NOT NULL,
+    create_user bigint,
+    update_user bigint,
     CONSTRAINT product_material_rel_pk PRIMARY KEY (id),
     CONSTRAINT product_material_rel_pk2 UNIQUE (product_id, material_id),
     CONSTRAINT product_material_rel_material_id_fk FOREIGN KEY (material_id)
@@ -229,6 +261,14 @@ CREATE TABLE IF NOT EXISTS public.product_material_rel
         ON DELETE NO ACTION,
     CONSTRAINT product_material_rel_product_id_fk FOREIGN KEY (product_id)
         REFERENCES public.product (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT product_material_rel_create_user_fk FOREIGN KEY (create_user)
+        REFERENCES public.login_user (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT product_material_rel_update_user_fk FOREIGN KEY (update_user)
+        REFERENCES public.login_user (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
 )
@@ -288,6 +328,30 @@ CREATE TABLE IF NOT EXISTS public.suggestion
 ALTER TABLE IF EXISTS public.suggestion
     OWNER to postgres;
 
+CREATE TABLE IF NOT EXISTS public.action_log
+(
+    id bigserial NOT NULL,
+    batch_id uuid,
+    event_type character varying(36) COLLATE pg_catalog."default" NOT NULL,
+    "timestamp" timestamp without time zone NOT NULL,
+    user_id bigint,
+    table_name character varying(36) COLLATE pg_catalog."default" NOT NULL,
+    source character varying(36) COLLATE pg_catalog."default" NOT NULL,
+    description character varying(256) COLLATE pg_catalog."default" NOT NULL,
+    additional_info jsonb,
+    CONSTRAINT action_log_pkey PRIMARY KEY (id),
+    CONSTRAINT action_log_user_id_fkey FOREIGN KEY (user_id)
+        REFERENCES public.login_user (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+    WITH (
+        OIDS = FALSE
+    )
+    TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.action_log
+    OWNER to postgres;
 
 -- trigger
 CREATE OR REPLACE FUNCTION public.add_alert_row()
