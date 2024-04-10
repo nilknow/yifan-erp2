@@ -4,14 +4,18 @@ import {Button, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow}
 import {FormEvent, useEffect, useState} from "react";
 import Bug from "@/app/dto/bug";
 import myFetch from "@/app/myFetch";
+import Res from "@/app/dto/res";
 
 export default function Page() {
   const [sortedBugs, setSortedBugs] = useState<Bug[]>([]);
+
   useEffect(() => {
     myFetch('/api/bug/list')
       .then((res) => res.json())
-      .then((data) => {
-        setSortedBugs(data)
+      .then((data:Res<Bug[]>) => {
+        if("success"==data.successCode){
+          setSortedBugs(data.body)
+        }
       })
   }, [])
 
@@ -62,13 +66,14 @@ export default function Page() {
             <TableColumn>feedback</TableColumn>
           </TableHeader>
           <TableBody emptyContent={"目前没有任何bug反馈，您可以通过本页面表单进行提交"}>
-            {sortedBugs.map((bug) => (
-              <TableRow key={bug.id}>
-                <TableCell>{bug.createTime.toString()}</TableCell>
-                <TableCell>{bug.content}</TableCell>
-                <TableCell>{bug.feedback}</TableCell>
-              </TableRow>
-            ))}
+            {sortedBugs
+              ? sortedBugs.map((bug) => (
+                <TableRow key={bug.id}>
+                  <TableCell>{bug.createTime.toString()}</TableCell>
+                  <TableCell>{bug.content}</TableCell>
+                  <TableCell>{bug.feedback}</TableCell>
+                </TableRow>))
+              : <></>}
           </TableBody>
         </Table>
       </div>

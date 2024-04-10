@@ -122,7 +122,9 @@ export default function Page() {
                   </Tooltip>
                   <Tooltip content="修改BOM">
                     <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                      <EditIcon/>
+                      <Link href={"/bom/info?productId=" + product.id}>
+                        <EditIcon/>
+                      </Link>
                     </span>
                   </Tooltip>
                   <Tooltip color={"danger"} content="删除BOM">
