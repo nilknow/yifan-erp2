@@ -5,7 +5,7 @@ const nextConfig = {
     //     BACKEND_URL: ''
     // },
     //todo uncomment when build
-    // output: "export",
+    output: "export",
     distDir: 'dist',
     trailingSlash: true,
     // async rewrites() {
