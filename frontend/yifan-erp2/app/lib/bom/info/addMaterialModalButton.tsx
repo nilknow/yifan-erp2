@@ -72,7 +72,8 @@ export default function AddMaterialModalButton() {
     const data = await response.json()
     const successCode = data["successCode"]
     if ("success" === successCode) {
-      setSortedProductMaterialRels(data["body"]);
+      // temp solution
+      window.location.reload();
     } else {
       alert(data["msg"])
     }

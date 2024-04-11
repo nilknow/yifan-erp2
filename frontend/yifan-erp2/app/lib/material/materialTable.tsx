@@ -1,5 +1,18 @@
 'use client'
-import {Button, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip} from "@nextui-org/react";
+import {
+  Button,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger, getKeyValue, Select, SelectItem,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+  Tooltip
+} from "@nextui-org/react";
 import ModifyModalEditIcon from "@/app/lib/material/modifyModalButton";
 import DeleteModalDeleteIcon from "@/app/lib/material/deleteModalDeleteIcon";
 import React, {useEffect, useState} from "react";
@@ -8,59 +21,85 @@ import Res from "@/app/dto/res";
 import {Input} from "@nextui-org/input";
 import {SearchIcon} from "@nextui-org/shared-icons";
 import myFetch from "@/app/myFetch";
+import {AsyncListData, useAsyncList} from "@react-stately/data";
 
-export default function MaterialTable({children}: { children: React.ReactNode }){
+export default function MaterialTable({children}: { children: React.ReactNode }) {
   const [sortedMaterials, setSortedMaterials] = useState<Material[]>([]);
+  const [filteredSortedMaterials, setFilteredSortedMaterials] = useState<Material[]>([]);
+  const [materialTypes, setMaterialTypes] = React.useState<string[]>([]);
+  const [selectedType, setSelectedType] = React.useState<string>('');
   useEffect(() => {
     myFetch('/api/material/list')
       .then((res) => res.json())
-      .then((data:Res<Material[]>) => {
-        if("success" === data.successCode){
+      .then((data: Res<Material[]>) => {
+        if ("success" === data.successCode) {
           setSortedMaterials(data.body)
-        }else{
+          setMaterialTypes(Array.from(new Set(data.body.map(material => material.category))))
+        } else {
           alert("查询失败，请稍后重试")
         }
       })
   }, [])
 
+  useEffect(() => {
+    if (selectedType !== '') {
+      setFilteredSortedMaterials(sortedMaterials.filter((m: Material) => m.category === selectedType));
+    } else {
+      setFilteredSortedMaterials(sortedMaterials)
+    }
+  }, [selectedType, sortedMaterials])
 
-  async function search(e: React.FormEvent<HTMLFormElement>) {
+  let list:AsyncListData<Material> = useAsyncList({
+    async load({signal, filterText}) {
+      let res = await myFetch(`/api/material/list?name=${filterText}`)
+      let json: Res<Material[]> = await res.json();
+      return {
+        items: json.body,
+      };
+    },
+
+    async sort({items, sortDescriptor}) {
+      return {
+        items: items.sort((a, b) => {
+          // @ts-ignore
+          let first = a[sortDescriptor.column];
+          // @ts-ignore
+          let second = b[sortDescriptor.column];
+          let cmp = (parseInt(first) || first) < (parseInt(second) || second) ? -1 : 1;
+
+          if (sortDescriptor.direction === "descending") {
+            cmp *= -1;
+          }
+
+          return cmp;
+        }),
+      };
+    },
+  });
+
+
+  // @ts-ignore
+  async function search(e: React.FormEvent<HTMLFormElement>, list) {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
     const name = formData.get('name')
     if (name === null) {
+      list.setFilterText("")
       return
-    }
-    const response = await myFetch(`/api/material/list?name=${name}`)
-    let data:Res<Material[]> = await response.json()
-    if("success" === data.successCode){
-      setSortedMaterials(data.body)
-    }else{
-      alert("查询失败，请稍后重试")
+    } else {
+      list.setFilterText(name)
     }
   }
 
-  async function keyUpSearch(e: React.KeyboardEvent<HTMLInputElement>) {
-    e.preventDefault()
-
-    let name = e.currentTarget.value;
-    const response = await myFetch(`/api/material/list?name=${name}`);
-    let data:Res<Material[]> = await response.json()
-    if("success" === data.successCode){
-      setSortedMaterials(data.body)
-    }else{
-      alert("查询失败，请稍后重试")
-    }
-  }
-
+  // @ts-ignore
   return (
     <>
       <div>
-        <form onSubmit={search}>
+        <form>
           <div className="flex justify-between gap-3 items-end">
             <Input
               type="text" name="name" size={"sm"}
-              onKeyUp={keyUpSearch}
+              onKeyUp={(e) => list.setFilterText(e.currentTarget.value)}
               isClearable
               radius="lg"
               classNames={{
@@ -99,41 +138,64 @@ export default function MaterialTable({children}: { children: React.ReactNode })
         </form>
       </div>
       <br/>
-      <Table removeWrapper isStriped aria-label="material list table">
+      <Table
+        removeWrapper isStriped aria-label="material list table"
+        sortDescriptor={list.sortDescriptor}
+        onSortChange={list.sort}
+      >
         <TableHeader>
-          <TableColumn allowsSorting>编号</TableColumn>
-          <TableColumn allowsSorting>物料名</TableColumn>
-          <TableColumn allowsSorting>分类</TableColumn>
+          <TableColumn allowsSorting key={"serialNum"}>编号</TableColumn>
+          <TableColumn allowsSorting key={"name"}>物料名</TableColumn>
+          <TableColumn allowsSorting key={"category"}>
+            分类
+            {/*<Select*/}
+            {/*  size={"sm"}*/}
+            {/*  label="分类"*/}
+            {/*  className={"mx-0 px-0"}*/}
+            {/*  onChange={(e) => setSelectedType(e.target.value)}*/}
+            {/*>*/}
+            {/*  <SelectItem key={""} value={""}>*/}
+            {/*    {"全部"}*/}
+            {/*  </SelectItem>*/}
+            {/*  {materialTypes.map((type) => (*/}
+            {/*    <SelectItem key={type} value={type}>*/}
+            {/*      {type}*/}
+            {/*    </SelectItem>*/}
+            {/*  ))}*/}
+            {/*</Select>*/}
+          </TableColumn>
           <TableColumn>库存数量</TableColumn>
           <TableColumn>库存预警</TableColumn>
           <TableColumn>修改</TableColumn>
         </TableHeader>
         <TableBody
-          // emptyContent={"请添加物料，目前还没有任何物料"}
+          items={list.items}
         >
-          {sortedMaterials.map((material) => (
-            <TableRow key={material.id}>
-              <TableCell>{material.serialNum}</TableCell>
-              <TableCell>{material.name}</TableCell>
-              <TableCell>{material.category}</TableCell>
-              <TableCell>{material.count}</TableCell>
-              <TableCell>{material.inventoryCountAlert}</TableCell>
-              <TableCell>
-                <div className="relative flex items-center gap-2">
-                  <Tooltip content="修改物料">
-                    <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                      <ModifyModalEditIcon  {...material}/>
-                    </span>
-                  </Tooltip>
-                  <Tooltip color={"danger"} content="删除物料">
-                    <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                      <DeleteModalDeleteIcon {...material}/>
-                    </span>
-                  </Tooltip>
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
+          {(material: Material) => {
+            return (
+              <TableRow key={material.id}>
+                <TableCell>{material.serialNum}</TableCell>
+                <TableCell>{material.name}</TableCell>
+                <TableCell>{material.category}</TableCell>
+                <TableCell>{material.count}</TableCell>
+                <TableCell>{material.inventoryCountAlert}</TableCell>
+                <TableCell>
+                  <div className="relative flex items-center gap-2">
+                    <Tooltip content="修改物料">
+                      <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                        <ModifyModalEditIcon  {...material}/>
+                      </span>
+                    </Tooltip>
+                    <Tooltip color={"danger"} content="删除物料">
+                      <span className="text-lg text-danger cursor-pointer active:opacity-50">
+                        <DeleteModalDeleteIcon {...material}/>
+                      </span>
+                    </Tooltip>
+                  </div>
+                </TableCell>
+              </TableRow>
+            )
+          }}
         </TableBody>
       </Table>
     </>
