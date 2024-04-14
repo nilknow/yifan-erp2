@@ -252,7 +252,6 @@ public class MaterialService {
         logMap.put("old", objectMapper.readValue(objectMapper.writeValueAsString(savedMaterial), Material.class));
         actionLog.setDescription("修改旧物料 "
                 + savedMaterial.getSerialNum() + " "
-                + savedMaterial.getSerialNum() + " "
                 + savedMaterial.getName() + " "
                 + savedMaterial.getCount() + " "
                 + savedMaterial.getCategory());
@@ -260,7 +259,6 @@ public class MaterialService {
         materialRepository.save(material);
         logMap.put("new", material);
         actionLog.setDescription(actionLog.getDescription() + " 为 "
-                + savedMaterial.getSerialNum() + " "
                 + material.getSerialNum() + " "
                 + material.getName() + " "
                 + material.getCount() + " "
