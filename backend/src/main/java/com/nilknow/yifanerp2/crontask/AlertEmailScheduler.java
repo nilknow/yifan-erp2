@@ -31,10 +31,8 @@ public class AlertEmailScheduler {
         for (Alert a : alerts) {
             sb.append(a.getContent()).append("\n");
         }
-        List<String> addresses = jdbcTemplate.queryForList("select address from alert_email limit 1",String.class);
-        for (String address : addresses) {
-            mailService.send(address, "库存预警", sb.toString());
-        }
+        String addresses = jdbcTemplate.queryForObject("select address from alert_email limit 1",String.class);
+        mailService.send(addresses, "库存预警", sb.toString());
         alertService.markSent(alerts);
     }
 }

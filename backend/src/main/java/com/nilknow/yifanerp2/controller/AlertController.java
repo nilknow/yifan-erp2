@@ -36,7 +36,7 @@ public class AlertController {
     }
 
     @PostMapping("/email")
-    public Res<String> changeEmail(@ModelAttribute Email email) {
+    public Res<String> changeEmail(@RequestBody Email email) {
         Long companyId = TenantContextHolder.get();
         Long emailId = jdbcTemplate.queryForObject(
                 "select id from alert_email where company_id=? limit 1",

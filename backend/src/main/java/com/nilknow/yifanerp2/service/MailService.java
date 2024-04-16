@@ -11,7 +11,7 @@ import java.util.Properties;
 @Service
 @Slf4j
 public class MailService {
-    public void send(String toEmail, String subject, String body) {
+    public void send(String toEmails, String subject, String body) {
         // 邮件发送者的用户名和密码
         final String username = "494939649@qq.com";
         final String password = "klzualuffrqjbgje";
@@ -37,7 +37,7 @@ public class MailService {
             // 创建邮件消息对象
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(fromEmail));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmails));
             message.setSubject(subject);
             message.setText(body);
 
