@@ -146,24 +146,7 @@ export default function MaterialTable({children}: { children: React.ReactNode })
         <TableHeader>
           <TableColumn allowsSorting key={"serialNum"}>编号</TableColumn>
           <TableColumn allowsSorting key={"name"}>物料名</TableColumn>
-          <TableColumn allowsSorting key={"category"}>
-            分类
-            {/*<Select*/}
-            {/*  size={"sm"}*/}
-            {/*  label="分类"*/}
-            {/*  className={"mx-0 px-0"}*/}
-            {/*  onChange={(e) => setSelectedType(e.target.value)}*/}
-            {/*>*/}
-            {/*  <SelectItem key={""} value={""}>*/}
-            {/*    {"全部"}*/}
-            {/*  </SelectItem>*/}
-            {/*  {materialTypes.map((type) => (*/}
-            {/*    <SelectItem key={type} value={type}>*/}
-            {/*      {type}*/}
-            {/*    </SelectItem>*/}
-            {/*  ))}*/}
-            {/*</Select>*/}
-          </TableColumn>
+          <TableColumn allowsSorting key={"category"}>分类</TableColumn>
           <TableColumn>库存数量</TableColumn>
           <TableColumn>库存预警</TableColumn>
           <TableColumn>修改</TableColumn>
