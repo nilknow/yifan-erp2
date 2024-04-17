@@ -4,7 +4,7 @@ import {
   Dropdown,
   DropdownItem,
   DropdownMenu,
-  DropdownTrigger, getKeyValue, Select, SelectItem,
+  DropdownTrigger, getKeyValue, Popover, PopoverContent, PopoverTrigger, Select, SelectItem,
   Table,
   TableBody,
   TableCell,
@@ -49,7 +49,7 @@ export default function MaterialTable({children}: { children: React.ReactNode })
     }
   }, [selectedType, sortedMaterials])
 
-  let list:AsyncListData<Material> = useAsyncList({
+  let list: AsyncListData<Material> = useAsyncList({
     async load({signal, filterText}) {
       let res = await myFetch(`/api/material/list?name=${filterText}`)
       let json: Res<Material[]> = await res.json();
@@ -160,7 +160,19 @@ export default function MaterialTable({children}: { children: React.ReactNode })
                 <TableCell>{material.serialNum}</TableCell>
                 <TableCell>{material.name}</TableCell>
                 <TableCell>{material.category}</TableCell>
-                <TableCell>{material.count}</TableCell>
+                <TableCell
+                  className={material.count <= material.inventoryCountAlert ? "text-[#f31260]" : ""}
+                >
+                  {material.count <= material.inventoryCountAlert
+                    ? (
+                      <Tooltip content={`库存数量达到库存预警下限: ${material.inventoryCountAlert}`}>
+                        <span>{material.count}</span>
+                      </Tooltip>
+                    )
+                    :
+                    <span>{material.count}</span>
+                  }
+                </TableCell>
                 <TableCell>{material.inventoryCountAlert}</TableCell>
                 <TableCell>
                   <div className="relative flex items-center gap-2">
