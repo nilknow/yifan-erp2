@@ -1,14 +1,14 @@
 'use client'
-import Res from "@/app/dto/res";
-import {useEffect, useState} from "react";
 import {Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from "@nextui-org/react";
 import ActionLogDto from "@/app/dto/actionLogDto";
+import {useEffect, useState} from "react";
 import myFetch from "@/app/myFetch";
+import Res from "@/app/dto/res";
 
 export default function Page() {
   const [actionLogDtos, setActionLogDtos] = useState<ActionLogDto[]>([]);
   useEffect(() => {
-    myFetch("/api/material/action_log/list")
+    myFetch("/api/order/action_log/list")
       .then(res => res.json())
       .then((data: Res<ActionLogDto[]>) => {
         if (data.successCode === 'success') {
@@ -18,6 +18,7 @@ export default function Page() {
         }
       })
   },[])
+
   return (
     <div>
       <Table>

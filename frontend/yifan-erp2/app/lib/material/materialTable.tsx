@@ -139,7 +139,9 @@ export default function MaterialTable({children}: { children: React.ReactNode })
       </div>
       <br/>
       <Table
-        removeWrapper isStriped aria-label="material list table"
+        removeWrapper
+        isStriped
+        aria-label="material list table"
         sortDescriptor={list.sortDescriptor}
         onSortChange={list.sort}
       >

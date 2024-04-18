@@ -96,10 +96,6 @@ public class MaterialService {
         return materialRepository.findById(id);
     }
 
-    public void save(Material material) {
-        materialRepository.save(material);
-    }
-
     /**
      * @see MaterialService#fullUpdate(List) preview for full update
      */

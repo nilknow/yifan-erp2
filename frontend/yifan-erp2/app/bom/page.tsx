@@ -100,7 +100,10 @@ export default function Page() {
         </form>
       </div>
       <br/>
-      <Table isStriped>
+      <Table
+        isStriped
+        removeWrapper
+      >
         <TableHeader>
           <TableColumn>BOM编号</TableColumn>
           <TableColumn>成品名</TableColumn>

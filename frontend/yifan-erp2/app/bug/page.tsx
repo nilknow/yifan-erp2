@@ -59,7 +59,10 @@ export default function Page() {
         </div>
       </form>
       <div className={"mt-4"}>
-        <Table isStriped>
+        <Table
+          isStriped
+          removeWrapper
+        >
           <TableHeader>
             <TableColumn>time</TableColumn>
             <TableColumn>content</TableColumn>

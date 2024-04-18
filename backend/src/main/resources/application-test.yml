@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:postgresql://nilknow.com:5432/erp_test?currentSchema=public
-  jpa:
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true
+#  jpa:
+#    properties:
+#      hibernate:
+#        show_sql: true
+#        format_sql: true

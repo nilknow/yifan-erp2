@@ -98,7 +98,10 @@ export default function ManagableProductList() {
         </form>
       </div>
       <br/>
-      <Table isStriped>
+      <Table
+        isStriped
+        removeWrapper
+      >
         <TableHeader>
           <TableColumn>成品编号</TableColumn>
           <TableColumn>成品名称</TableColumn>

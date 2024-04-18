@@ -11,6 +11,8 @@ export default function Home() {
         // {path: "/product/create", label: "添加成品"},
         // {path: "/product/plan", label: "生产计划（开发中，暂时不可用）"},
         {path: "/product/management", label: "成品管理"},
+        {path: "/product/order", label: "订单管理"},
+        {path: "/product/order/history", label: "订单历史记录"},
         // {path: "/product/list", label: "成品出库"},
         // {path: "/product/list", label: "成品售后"},
         {path: "/bom", label: "BOM管理"}
