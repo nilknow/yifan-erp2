@@ -68,85 +68,6 @@ public class ProductController {
         return new Res<Product>().success(product);
     }
 
-    @GetMapping("/add/plan")
-    public String addPlan(Model model) {
-        model.addAttribute("productPlan", new ProductPlan());
-        return "page/product/add-plan";
-    }
-
-    @GetMapping("/do/add-plan")
-    public String doAddPlan(@ModelAttribute ProductPlan productPlan) {
-        Optional<Product> productOpt = productRepository.findByName(productPlan.getProduct().getName());
-        if (productOpt.isEmpty()) {
-            return "/page/product/error/no-such-product.html";
-        }
-        productPlan.setProduct(productOpt.get());
-        productPlanRepository.save(productPlan);
-        return "redirect:add-plan";
-    }
-
-    @PostMapping("/do/add")
-    public String doAdd(@ModelAttribute Product p) {
-        productService.add(p);
-        return "redirect:list";
-    }
-
-    @PostMapping("produce")
-    public String produce(@RequestParam("id") Long id, @RequestParam("count") Long count) {
-        List<Material> notEnoughMaterials = productService.produce(id, count);
-        if (!notEnoughMaterials.isEmpty()) {
-            return "/page/product/error/material-not-enough";
-        }
-        return "redirect:list";
-    }
-
-    @PostMapping("/out")
-    public String out(@RequestParam(value = "id", required = true) Long id, @RequestParam(value = "count", required = true) Long count) {
-        if (count <= 0) {
-            return "redirect:list";
-        }
-        boolean canOut = productService.checkOut(id, count);
-        if (!canOut) {
-            return "/page/product/error/product-count-not-enough";
-        } else {
-            productService.out(id, count);
-        }
-        return "redirect:list";
-    }
-
-    @PostMapping("/remove")
-    public String remove(@RequestParam Long productId) {
-        if (productId != null && productId > 0) {
-            productService.remove(productId);
-        }
-        return "redirect:list";
-    }
-
-    @PostMapping("/remove-all")
-    public String removeAll() {
-        productService.removeAll();
-        return "redirect:list";
-    }
-
-    @PostMapping("/excel/add")
-    public synchronized String excelAdd(MultipartFile file) {
-        if (excelHandling) {
-            return "/page/product/error/excel_style_not_correct";
-        } else {
-            excelHandling = true;
-            try {
-                InputStream is = file.getInputStream();
-                List<Product> products = ExcelUtil.getProducts(is, new HashSet<>(categoryRepository.findAll()));
-                productService.saveAll(products);
-            } catch (Exception e) {
-                return "/page/product/error/excel_style_not_correct";
-            } finally {
-                excelHandling = false;
-            }
-            return "redirect:list";
-        }
-    }
-
     /**
      * 下载excel模板
      */
@@ -215,13 +136,6 @@ public class ProductController {
         } else {
             return new Res<List<Product>>().success(productService.findAll());
         }
-    }
-
-    @GetMapping("/plan")
-    public String plan(Model model) {
-        List<ProductPlan> productPlans = productPlanRepository.findAll();
-        model.addAttribute("productPlans", productPlans);
-        return "page/product/plan";
     }
 
 }

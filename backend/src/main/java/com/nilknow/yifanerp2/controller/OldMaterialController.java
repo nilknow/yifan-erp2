@@ -41,14 +41,6 @@ public class OldMaterialController {
         return new ModelAndView("/page/error-file-not-chosen");
     }
 
-    @PostMapping("/do-add")
-    public String doAll(@ModelAttribute Material material,@RequestParam(defaultValue = "old") String source)
-            throws ResException, JsonProcessingException {
-        materialService.add(material, source);
-        return "redirect:list";
-    }
-
-
     @GetMapping("/add")
     public String add(Model model) {
         model.addAttribute("material", new Material());
@@ -73,16 +65,6 @@ public class OldMaterialController {
         Optional<Material> materialOpt = materialService.findById(id);
         model.addAttribute("material", materialOpt.orElse(new Material()));
         return "page/material/update";
-    }
-
-    @PostMapping("do-update")
-    public String doUpdate(@ModelAttribute Material material) {
-        if (materialService.findById(material.getId()).isEmpty()) {
-            log.error("ID不正确，无法修改该物料");
-            return "redirect:list";
-        }
-        materialService.save(material);
-        return "redirect:list";
     }
 
     /**

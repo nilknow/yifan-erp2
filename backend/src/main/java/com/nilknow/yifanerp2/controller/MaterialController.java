@@ -164,16 +164,7 @@ public class MaterialController {
 
     @GetMapping("/action_log/list")
     public Res<List<ActionLogDto>> actionLogList() {
-        List<ActionLog> actionLogs = actionLogService.listByTableName("material");
-        List<ActionLogDto> dtoList = actionLogs.stream().map(x -> new ActionLogDto()
-                .setId(x.getId())
-                .setBatchId(x.getBatchId())
-                .setTimestamp(x.getTimestamp())
-                .setEventType(x.getEventType())
-                .setUsername(x.getUser().getUsername())
-                .setAdditionalInfo(x.getAdditionalInfo())
-                .setDescription(x.getDescription())
-        ).toList();
-        return new Res<List<ActionLogDto>>().success(dtoList);
+        List<ActionLogDto> actionLogs = actionLogService.listByTableName("material");
+        return new Res<List<ActionLogDto>>().success(actionLogs);
     }
 }

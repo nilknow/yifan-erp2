@@ -1,9 +1,9 @@
 CREATE TABLE IF NOT EXISTS public.alert
 (
-    id bigserial NOT NULL,
-    content character varying(4000) COLLATE pg_catalog."default" NOT NULL,
-    state integer NOT NULL DEFAULT 0,
-    email_sent integer NOT NULL DEFAULT 0,
+    id         bigserial                                            NOT NULL,
+    content    character varying(4000) COLLATE pg_catalog."default" NOT NULL,
+    state      integer                                              NOT NULL DEFAULT 0,
+    email_sent integer                                              NOT NULL DEFAULT 0,
     company_id bigint,
     CONSTRAINT fk_company_id FOREIGN KEY (company_id)
         REFERENCES yifan_erp_test.company (id) MATCH SIMPLE
@@ -29,8 +29,8 @@ COMMENT ON COLUMN public.alert.email_sent
 
 CREATE TABLE IF NOT EXISTS public.alert_email
 (
-    id bigserial NOT NULL,
-    address character varying(64) COLLATE pg_catalog."default" NOT NULL,
+    id         bigserial                                          NOT NULL,
+    address    character varying(64) COLLATE pg_catalog."default" NOT NULL,
     company_id bigint,
     CONSTRAINT alert_email_pk PRIMARY KEY (id),
     CONSTRAINT alert_email_company_id_fkey FOREIGN KEY (company_id)
@@ -48,8 +48,8 @@ ALTER TABLE IF EXISTS public.alert_email
 
 CREATE TABLE IF NOT EXISTS public.authority
 (
-    id bigserial NOT NULL,
-    name character varying(32) COLLATE pg_catalog."default" NOT NULL,
+    id         bigserial                                          NOT NULL,
+    name       character varying(32) COLLATE pg_catalog."default" NOT NULL,
     company_id bigint,
     CONSTRAINT fk_company_id FOREIGN KEY (company_id)
         REFERENCES public.company (id) MATCH SIMPLE
@@ -68,8 +68,8 @@ ALTER TABLE IF EXISTS public.authority
 
 CREATE TABLE IF NOT EXISTS public.company
 (
-    id bigserial NOT NULL,
-    name character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    id          bigserial                                           NOT NULL,
+    name        character varying(100) COLLATE pg_catalog."default" NOT NULL,
     update_time timestamp without time zone,
     CONSTRAINT company_pkey PRIMARY KEY (id),
     CONSTRAINT company_name_key UNIQUE (name)
@@ -84,13 +84,13 @@ ALTER TABLE IF EXISTS public.company
 
 CREATE TABLE IF NOT EXISTS public.bug
 (
-    id bigserial NOT NULL,
-    content character varying(4000) COLLATE pg_catalog."default" NOT NULL DEFAULT ''::character varying,
-    priority character(4) COLLATE pg_catalog."default" NOT NULL DEFAULT '一般'::bpchar,
-    email character varying(40) COLLATE pg_catalog."default",
-    phone character varying(20) COLLATE pg_catalog."default",
-    create_time timestamp without time zone NOT NULL,
-    company_id bigint,
+    id          bigserial                                            NOT NULL,
+    content     character varying(4000) COLLATE pg_catalog."default" NOT NULL DEFAULT ''::character varying,
+    priority    character(4) COLLATE pg_catalog."default"            NOT NULL DEFAULT '一般'::bpchar,
+    email       character varying(40) COLLATE pg_catalog."default",
+    phone       character varying(20) COLLATE pg_catalog."default",
+    create_time timestamp without time zone                          NOT NULL,
+    company_id  bigint,
     CONSTRAINT bug_pk PRIMARY KEY (id),
     CONSTRAINT fk_company_id FOREIGN KEY (company_id)
         REFERENCES public.company (id) MATCH SIMPLE
@@ -107,8 +107,8 @@ ALTER TABLE IF EXISTS public.bug
 
 CREATE TABLE IF NOT EXISTS public.category
 (
-    id bigserial NOT NULL,
-    name character varying(16) COLLATE pg_catalog."default" NOT NULL,
+    id         bigserial                                          NOT NULL,
+    name       character varying(16) COLLATE pg_catalog."default" NOT NULL,
     company_id bigint,
     CONSTRAINT category_pk PRIMARY KEY (id),
     CONSTRAINT category_name_uk UNIQUE (name, company_id)
@@ -128,11 +128,11 @@ ALTER TABLE IF EXISTS public.category
 
 CREATE TABLE IF NOT EXISTS public.login_user
 (
-    id bigserial NOT NULL,
-    username character varying COLLATE pg_catalog."default" NOT NULL,
-    password character(68) COLLATE pg_catalog."default" NOT NULL,
+    id          bigserial                                      NOT NULL,
+    username    character varying COLLATE pg_catalog."default" NOT NULL,
+    password    character(68) COLLATE pg_catalog."default"     NOT NULL,
     update_time timestamp without time zone DEFAULT now(),
-    company_id bigint,
+    company_id  bigint,
     CONSTRAINT login_user_pk PRIMARY KEY (id),
     CONSTRAINT login_user_username_uk2 UNIQUE (username),
     CONSTRAINT fk_company_id FOREIGN KEY (company_id)
@@ -150,9 +150,9 @@ ALTER TABLE IF EXISTS public.login_user
 
 CREATE TABLE IF NOT EXISTS public.login_user_authority_rel
 (
-    id bigserial NOT NULL,
-    login_user_id bigint NOT NULL,
-    authority_id bigint NOT NULL,
+    id            bigserial NOT NULL,
+    login_user_id bigint    NOT NULL,
+    authority_id  bigint    NOT NULL,
     CONSTRAINT login_user_authority_rel_pk PRIMARY KEY (id),
     CONSTRAINT login_user_authority_rel_pk2 UNIQUE (login_user_id, authority_id),
     CONSTRAINT login_user_authority_rel_authority_id_fk FOREIGN KEY (authority_id)
@@ -174,16 +174,16 @@ ALTER TABLE IF EXISTS public.login_user_authority_rel
 
 CREATE TABLE IF NOT EXISTS public.material
 (
-    id bigserial NOT NULL,
-    name character varying(64) COLLATE pg_catalog."default" NOT NULL,
-    count bigint NOT NULL,
-    inventory_count_alert bigint NOT NULL,
-    category character varying(64) COLLATE pg_catalog."default" NOT NULL,
-    update_timestamp timestamp without time zone DEFAULT now(),
-    company_id bigint,
-    serial_num character varying(36) COLLATE pg_catalog."default",
-    create_user bigint,
-    update_user bigint,
+    id                    bigserial                                          NOT NULL,
+    name                  character varying(64) COLLATE pg_catalog."default" NOT NULL,
+    count                 bigint                                             NOT NULL,
+    inventory_count_alert bigint                                             NOT NULL,
+    category              character varying(64) COLLATE pg_catalog."default" NOT NULL,
+    update_timestamp      timestamp without time zone DEFAULT now(),
+    company_id            bigint,
+    serial_num            character varying(36) COLLATE pg_catalog."default",
+    create_user           bigint,
+    update_user           bigint,
     CONSTRAINT material_pk PRIMARY KEY (id),
     CONSTRAINT material_name_category_uk UNIQUE (name, category, company_id)
         DEFERRABLE,
@@ -207,16 +207,16 @@ ALTER TABLE IF EXISTS public.material
 
 CREATE TABLE IF NOT EXISTS public.product
 (
-    id bigserial NOT NULL,
-    name character varying(64) COLLATE pg_catalog."default" NOT NULL,
-    count bigint NOT NULL DEFAULT 0,
-    category_id bigint NOT NULL,
-    unit character varying COLLATE pg_catalog."default" NOT NULL,
-    update_timestamp timestamp without time zone NOT NULL DEFAULT now(),
-    company_id bigint,
-    serial_num character varying(36) COLLATE pg_catalog."default",
-    create_user bigint,
-    update_user bigint,
+    id               bigserial                                          NOT NULL,
+    name             character varying(64) COLLATE pg_catalog."default" NOT NULL,
+    count            bigint                                             NOT NULL DEFAULT 0,
+    category_id      bigint                                             NOT NULL,
+    unit             character varying COLLATE pg_catalog."default"     NOT NULL,
+    update_timestamp timestamp without time zone                        NOT NULL DEFAULT now(),
+    company_id       bigint,
+    serial_num       character varying(36) COLLATE pg_catalog."default",
+    create_user      bigint,
+    update_user      bigint,
     CONSTRAINT product_pk PRIMARY KEY (id),
     CONSTRAINT product_name_category_uk UNIQUE (name, category_id),
     CONSTRAINT uk_product_serial_num UNIQUE (serial_num),
@@ -247,12 +247,12 @@ ALTER TABLE IF EXISTS public.product
 
 CREATE TABLE IF NOT EXISTS public.product_material_rel
 (
-    id bigserial NOT NULL,
-    product_id bigint NOT NULL,
-    material_id bigint NOT NULL,
-    material_count bigint NOT NULL,
-    create_user bigint,
-    update_user bigint,
+    id             bigserial NOT NULL,
+    product_id     bigint    NOT NULL,
+    material_id    bigint    NOT NULL,
+    material_count bigint    NOT NULL,
+    create_user    bigint,
+    update_user    bigint,
     CONSTRAINT product_material_rel_pk PRIMARY KEY (id),
     CONSTRAINT product_material_rel_pk2 UNIQUE (product_id, material_id),
     CONSTRAINT product_material_rel_material_id_fk FOREIGN KEY (material_id)
@@ -282,10 +282,10 @@ ALTER TABLE IF EXISTS public.product_material_rel
 
 CREATE TABLE IF NOT EXISTS public.product_plan
 (
-    id bigserial NOT NULL,
-    product_id bigint NOT NULL,
-    count bigint NOT NULL DEFAULT 0,
-    unit character varying(12) COLLATE pg_catalog."default" NOT NULL,
+    id         bigserial                                          NOT NULL,
+    product_id bigint                                             NOT NULL,
+    count      bigint                                             NOT NULL DEFAULT 0,
+    unit       character varying(12) COLLATE pg_catalog."default" NOT NULL,
     company_id bigint,
     CONSTRAINT product_plan_pk PRIMARY KEY (id),
     CONSTRAINT fk_company_id FOREIGN KEY (company_id)
@@ -307,13 +307,13 @@ ALTER TABLE IF EXISTS public.product_plan
 
 CREATE TABLE IF NOT EXISTS public.suggestion
 (
-    id bigserial NOT NULL,
-    content character varying(4000) COLLATE pg_catalog."default" NOT NULL DEFAULT ''::character varying,
-    email character(40) COLLATE pg_catalog."default",
-    phone character(20) COLLATE pg_catalog."default",
-    create_time timestamp without time zone NOT NULL DEFAULT now(),
-    solved integer NOT NULL DEFAULT 0,
-    company_id bigint,
+    id          bigserial                                            NOT NULL,
+    content     character varying(4000) COLLATE pg_catalog."default" NOT NULL DEFAULT ''::character varying,
+    email       character(40) COLLATE pg_catalog."default",
+    phone       character(20) COLLATE pg_catalog."default",
+    create_time timestamp without time zone                          NOT NULL DEFAULT now(),
+    solved      integer                                              NOT NULL DEFAULT 0,
+    company_id  bigint,
     CONSTRAINT suggestion_pk PRIMARY KEY (id),
     CONSTRAINT fk_company_id FOREIGN KEY (company_id)
         REFERENCES yifan_erp_test.company (id) MATCH SIMPLE
@@ -330,14 +330,14 @@ ALTER TABLE IF EXISTS public.suggestion
 
 CREATE TABLE IF NOT EXISTS public.action_log
 (
-    id bigserial NOT NULL,
-    batch_id uuid,
-    event_type character varying(36) COLLATE pg_catalog."default" NOT NULL,
-    "timestamp" timestamp without time zone NOT NULL,
-    user_id bigint,
-    table_name character varying(36) COLLATE pg_catalog."default" NOT NULL,
-    source character varying(36) COLLATE pg_catalog."default" NOT NULL,
-    description character varying(256) COLLATE pg_catalog."default" NOT NULL,
+    id              bigserial                                           NOT NULL,
+    batch_id        uuid,
+    event_type      character varying(36) COLLATE pg_catalog."default"  NOT NULL,
+    "timestamp"     timestamp without time zone                         NOT NULL,
+    user_id         bigint,
+    table_name      character varying(36) COLLATE pg_catalog."default"  NOT NULL,
+    source          character varying(36) COLLATE pg_catalog."default"  NOT NULL,
+    description     character varying(256) COLLATE pg_catalog."default" NOT NULL,
     additional_info jsonb,
     CONSTRAINT action_log_pkey PRIMARY KEY (id),
     CONSTRAINT action_log_user_id_fkey FOREIGN KEY (user_id)
@@ -353,17 +353,44 @@ CREATE TABLE IF NOT EXISTS public.action_log
 ALTER TABLE IF EXISTS public.action_log
     OWNER to postgres;
 
+CREATE TABLE delivery
+(
+    id          BIGSERIAL PRIMARY KEY,
+    serial_num  VARCHAR(255) UNIQUE     default null,
+    state       varchar(16)    NOT NULL DEFAULT 'planning',
+    price       NUMERIC(10, 2) NOT NULL, -- Allows for decimals with 10 total digits and 2 decimal places
+    note        varchar(255),
+    plan_date   DATE,
+    create_date TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    update_date TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE "order"
+(
+    id                  BIGSERIAL PRIMARY KEY,
+    serial_num          VARCHAR(255)                   NOT NULL UNIQUE,
+    product_id          BIGINT REFERENCES product (id) NOT NULL,
+    count               INTEGER                        NOT NULL,
+    produce_days_take   INTEGER,
+    delivery_serial_num varchar REFERENCES delivery (serial_num),
+    customer            VARCHAR(255),
+    note                VARCHAR(255),
+    create_time         TIMESTAMP                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    update_time         TIMESTAMP                      NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 -- trigger
 CREATE OR REPLACE FUNCTION public.add_alert_row()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE NOT LEAKPROOF
-AS $BODY$
+AS
+$BODY$
 
 BEGIN
     IF NEW.inventory_count_alert is not null and NEW.inventory_count_alert >= NEW.count THEN
-        INSERT INTO Alert (content) VALUES ('物料 '||NEW.name||' 库存不足，请添加库存');
+        INSERT INTO Alert (content) VALUES ('物料 ' || NEW.name || ' 库存不足，请添加库存');
     END IF;
     RETURN NEW;
 END
@@ -377,7 +404,8 @@ CREATE OR REPLACE FUNCTION public.bom_update()
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE NOT LEAKPROOF
-AS $BODY$
+AS
+$BODY$
 BEGIN
     IF TG_OP = 'DELETE' THEN
         -- Handle DELETE operation
@@ -386,8 +414,9 @@ BEGIN
         SET update_timestamp = now()
         WHERE id = OLD.product_id;
     ELSE
-        update public.Product set update_timestamp=now()
-        where id=NEW.product_id;
+        update public.Product
+        set update_timestamp=now()
+        where id = NEW.product_id;
     end if;
     RETURN NEW;
 END
@@ -401,7 +430,8 @@ CREATE OR REPLACE FUNCTION public.update_material_timestamp()
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE NOT LEAKPROOF
-AS $BODY$
+AS
+$BODY$
 BEGIN
     NEW.update_timestamp := NOW();
     RETURN NEW;
@@ -416,7 +446,8 @@ CREATE OR REPLACE FUNCTION public.update_timestamp_function()
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE NOT LEAKPROOF
-AS $BODY$
+AS
+$BODY$
 
 BEGIN
     NEW.update_timestamp = NOW();
