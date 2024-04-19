@@ -92,4 +92,23 @@ public class OrderService {
     public List<Order> list() {
         return orderRepository.findAllByOrderByUpdateTimeDesc();
     }
+
+    public void delete(Long id, String source) throws ResException, JsonProcessingException {
+        Optional<Order> toDelete = orderRepository.findById(id);
+        if (toDelete.isEmpty()) {
+            throw new ResException("The material you want to delete doesn't really exist");
+        }
+        orderRepository.deleteById(id);
+
+        ActionLog actionLog = new ActionLog();
+        actionLog.setUser(loginUserRepository.findById(UserIdHolder.get()).get());
+        actionLog.setTimestamp(new Date());
+        actionLog.setEventType("delete");
+        actionLog.setSource(source);
+        actionLog.setBatchId(UUID.randomUUID());
+        actionLog.setDescription("删除订单");
+        actionLog.setAdditionalInfo(objectMapper.writeValueAsString(toDelete.get()));
+        actionLog.setTableName("order");
+        actionLogService.save(actionLog);
+    }
 }

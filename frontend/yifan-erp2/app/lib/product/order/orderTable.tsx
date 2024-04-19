@@ -1,11 +1,13 @@
 'use client'
-import {Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from "@nextui-org/react";
+import {Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip} from "@nextui-org/react";
 import React, {useEffect} from "react";
 import Order from "@/app/dto/order";
 import Res from "@/app/dto/res";
 import myFetch from "@/app/myFetch";
 import AddModalButton from "@/app/lib/product/order/addModalButton";
 import {DeliveryState} from "@/app/dto/delivery";
+import DeleteModalDeleteIcon from "@/app/lib/product/order/deleteModalDeleteIcon";
+import ModifyModalEditIcon from "@/app/lib/product/order/modifyModalButton";
 
 export default function OrderTable() {
   const [orders, setOrders] = React.useState<Order[]>([])
@@ -60,6 +62,7 @@ export default function OrderTable() {
           <TableColumn>客户名称</TableColumn>
           <TableColumn>快递单号</TableColumn>
           <TableColumn>备注</TableColumn>
+          <TableColumn>修改</TableColumn>
         </TableHeader>
         <TableBody>
           {orders.map((order:Order) => (
@@ -76,6 +79,20 @@ export default function OrderTable() {
               <TableCell>{order.customer}</TableCell>
               <TableCell>{order.orderSerialNum}</TableCell>
               <TableCell>{order.note}</TableCell>
+              <TableCell>
+                <div className="relative flex items-center gap-2">
+                  <Tooltip content="修改订单">
+                      <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                        <ModifyModalEditIcon  {...order}/>
+                      </span>
+                  </Tooltip>
+                  <Tooltip color={"danger"} content="删除订单">
+                      <span className="text-lg text-danger cursor-pointer active:opacity-50">
+                        <DeleteModalDeleteIcon {...order}/>
+                      </span>
+                  </Tooltip>
+                </div>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
