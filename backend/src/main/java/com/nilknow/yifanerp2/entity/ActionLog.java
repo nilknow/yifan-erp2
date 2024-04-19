@@ -1,8 +1,8 @@
 package com.nilknow.yifanerp2.entity;
 
-import com.nilknow.yifanerp2.repository.converter.JsonbConverter;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
@@ -15,9 +15,8 @@ import java.util.UUID;
 @Data
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 @Accessors(chain = true)
-@Table(name="action_log")
+@Table(name = "action_log")
 public class ActionLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,4 +45,36 @@ public class ActionLog {
     private String additionalInfo;
 
     private String description;
+
+    public ActionLog(UUID batchId,
+                     String eventType,
+                     Date timestamp,
+                     LoginUser user,
+                     String tableName,
+                     String source,
+                     String additionalInfo,
+                     String description) {
+        this.batchId = batchId;
+        this.eventType = eventType;
+        this.timestamp = timestamp;
+        this.user = user;
+        this.tableName = tableName;
+        this.source = source;
+        this.additionalInfo = additionalInfo;
+        this.description = description;
+    }
+
+    public static ActionLog add(String tableName, String source, Object obj, String desc,
+                                LoginUser loginUser) throws JsonProcessingException {
+        return new ActionLog(
+                UUID.randomUUID(),
+                "add",
+                new Date(),
+                loginUser,
+                tableName,
+                source,
+                new ObjectMapper().writeValueAsString(obj),
+                desc
+        );
+    }
 }
