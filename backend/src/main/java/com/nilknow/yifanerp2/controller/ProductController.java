@@ -47,7 +47,7 @@ public class ProductController {
     @GetMapping("/add")
     public String add(Model model) {
         model.addAttribute("product", new Product());
-        return "page/product/add";
+        return "page/product/save";
     }
 
     @PostMapping
@@ -71,7 +71,7 @@ public class ProductController {
     @GetMapping("/add/plan")
     public String addPlan(Model model) {
         model.addAttribute("productPlan", new ProductPlan());
-        return "page/product/add-plan";
+        return "page/product/save-plan";
     }
 
     @GetMapping("/do/add-plan")
@@ -82,7 +82,7 @@ public class ProductController {
         }
         productPlan.setProduct(productOpt.get());
         productPlanRepository.save(productPlan);
-        return "redirect:add-plan";
+        return "redirect:save-plan";
     }
 
     @PostMapping("/do/add")

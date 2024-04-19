@@ -28,7 +28,7 @@ export default function Page() {
       priority: e.currentTarget.priority.value,
     };
 
-    const response = await myFetch('/api/bug/add', {
+    const response = await myFetch('/api/bug/save', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(formData)

@@ -44,7 +44,7 @@ public class OldMaterialController {
     @PostMapping("/do-add")
     public String doAll(@ModelAttribute Material material,@RequestParam(defaultValue = "old") String source)
             throws ResException, JsonProcessingException {
-        materialService.add(material, source);
+        materialService.save(material, source);
         return "redirect:list";
     }
 
@@ -52,7 +52,7 @@ public class OldMaterialController {
     @GetMapping("/add")
     public String add(Model model) {
         model.addAttribute("material", new Material());
-        return "page/material/add";
+        return "page/material/save";
     }
 
     @PostMapping("/do-remove/{id}")

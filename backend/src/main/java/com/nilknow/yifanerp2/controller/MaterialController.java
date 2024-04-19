@@ -44,6 +44,23 @@ public class MaterialController {
         return new Res<List<Material>>().success(materials);
     }
 
+    @GetMapping
+    public Res<List<Material>> listAll(@RequestParam(required = false) String name) throws JsonProcessingException {
+        List<Material> materials;
+        if (StringUtils.hasText(name)) {
+            materials = materialService.findAllByNameLike(name);
+        } else {
+            materials = materialService.findAll();
+        }
+        return new Res<List<Material>>().success(materials);
+    }
+
+    @GetMapping("/category")
+    public Res<List<String>> listCategory(){
+        List<String> categories = materialService.findDistinctCategories();
+        return new Res<List<String>>().success(categories);
+    }
+
     @GetMapping("/excel/template")
     public void template(HttpServletResponse response) throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
@@ -116,7 +133,7 @@ public class MaterialController {
 
     @PostMapping
     public Res<Material> add(@RequestBody Material material, @RequestParam String source) throws Exception {
-        materialService.add(material, source);
+        materialService.save(material, source);
         return new Res<Material>().success(material);
     }
 

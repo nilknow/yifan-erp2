@@ -12,6 +12,6 @@ public class MaterialPageController {
     @GetMapping("/add")
     public String add(Model model) {
         model.addAttribute("material", new Material());
-        return "page/material/add";
+        return "page/material/save";
     }
 }

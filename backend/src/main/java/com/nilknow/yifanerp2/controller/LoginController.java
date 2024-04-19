@@ -1,6 +1,8 @@
 package com.nilknow.yifanerp2.controller;
 
+import com.nilknow.yifanerp2.config.security.TenantContextHolder;
 import com.nilknow.yifanerp2.entity.LoginUser;
+import com.nilknow.yifanerp2.service.CompanyService;
 import com.nilknow.yifanerp2.service.LoginUserService;
 import com.nilknow.yifanerp2.util.JwtUtil;
 import jakarta.annotation.Resource;
@@ -9,11 +11,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
@@ -23,14 +27,16 @@ import java.util.Optional;
 public class LoginController {
     @Resource
     private LoginUserService loginUserService;
+    @Resource
+    private CompanyService companyService;
 
     @PostMapping
     public LoginResp login(@RequestBody LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response) {
-        String companyId = request.getHeader("Company-ID");
+        Long companyId = getAndSetCompanyId(request);
         String username = loginDTO.getUsername();
         String password = loginDTO.getPassword();
         //todo parameter validation
-        Optional<LoginUser> user = loginUserService.authenticate(username, password, Long.valueOf(companyId));
+        Optional<LoginUser> user = loginUserService.authenticate(username, password, companyId);
         if (user.isPresent()) {
             String token = jwtToken(String.valueOf(user.get().getId()), companyId);
             // Create a new cookie with the updated value
@@ -48,6 +54,25 @@ public class LoginController {
         }
     }
 
+
+
+    private Long getAndSetCompanyId(HttpServletRequest request) {
+        String domainName = request.getServerName();
+        if (!StringUtils.hasText(domainName)) {
+            return null;
+        }
+        String[] domainNameParts = domainName.split("\\.");
+        if (domainNameParts.length < 2) {
+            return null;
+        }
+        String prefix = domainNameParts[0];
+        Long companyId = companyService.getCompanyIdByDomainPrefix(prefix);
+        if (companyId != null) {
+            TenantContextHolder.set(companyId);
+        }
+        return companyId;
+    }
+
     @Data
     private static class LoginDTO {
         private String username;
@@ -61,8 +86,8 @@ public class LoginController {
         private String token;
     }
 
-    private String jwtToken(String username, String companyId) {
-        String jwtToken = JwtUtil.generateToken(username, Long.valueOf(companyId));
+    private String jwtToken(String username, Long companyId) {
+        String jwtToken = JwtUtil.generateToken(username, companyId);
         return "Bearer " + jwtToken;
     }
 }
