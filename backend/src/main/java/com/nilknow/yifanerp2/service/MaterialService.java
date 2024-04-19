@@ -39,7 +39,49 @@ public class MaterialService {
     }
 
     @Transactional
-    public void add(Material material, String source) throws ResException, JsonProcessingException {
+    public void save(Material material, String source) throws ResException, JsonProcessingException {
+        saveValidate(material);
+
+        Material oldMaterial = objectMapper.readValue(objectMapper.writeValueAsString(material), Material.class);
+        materialRepository.save(material);
+
+        saveActionLog(material, source, oldMaterial);
+    }
+
+    private void saveActionLog(Material material, String source, Material oldMaterial) throws JsonProcessingException {
+        ActionLog actionLog;
+        if (material.getId() == null) {
+            actionLog = ActionLog.add(
+                    "material",
+                    source,
+                    material,
+                    "添加新的物料" + material.getName()
+                            + " " + material.getCount() + " " + material.getCategory(),
+                    loginUserRepository.findById(UserIdHolder.get()).get()
+            );
+        } else {
+            HashMap<String, Material> logMap = new HashMap<>();
+            logMap.put("old", oldMaterial);
+            logMap.put("new", material);
+
+            actionLog = new ActionLog(
+                    UUID.randomUUID(),
+                    "update",
+                    new Date(),
+                    loginUserRepository.findById(UserIdHolder.get()).get(),
+                    "material",
+                    source,
+                    objectMapper.writeValueAsString(logMap),
+                    "修改旧物料" + oldMaterial.getName()
+                            + " " + oldMaterial.getCount() + " " + oldMaterial.getCategory()
+                            + " 为 " + material.getName()
+                            + " " + material.getCount() + " " + material.getCategory()
+            );
+        }
+        actionLogService.save(actionLog);
+    }
+
+    private void saveValidate(Material material) throws ResException {
         if (!StringUtils.hasText(material.getSerialNum())) {
             throw new ResException("serialNum shouldn't be empty");
         }
@@ -63,33 +105,6 @@ public class MaterialService {
         if (sameNameSameCategory) {
             throw new ResException("same name already exists in this category");
         }
-
-        ActionLog actionLog = new ActionLog();
-        HashMap<String, Material> logMap = new HashMap<>();
-        if (actionLog.getId() == null) {
-            actionLog.setEventType("add");
-            actionLog.setAdditionalInfo(objectMapper.writeValueAsString(material));
-            actionLog.setDescription("添加新的物料" + material.getName() + " " + material.getCount() + " " + material.getCategory());
-        } else {
-            actionLog.setEventType("update");
-            logMap.put("old", objectMapper.readValue(objectMapper.writeValueAsString(material), Material.class));
-            actionLog.setDescription("修改旧物料" + material.getName() + " " + material.getCount() + " " + material.getCategory());
-        }
-        materialRepository.save(material);
-        if (actionLog.getId() != null) {
-            logMap.put("new", material);
-            actionLog.setAdditionalInfo(objectMapper.writeValueAsString(logMap));
-            actionLog.setDescription(actionLog.getDescription()
-                    + " 为 " + material.getName() + " " + material.getCount() + " " + material.getCategory());
-        }
-
-        actionLog.setSource(source);
-        actionLog.setUser(loginUserRepository.findById(UserIdHolder.get()).get());
-        actionLog.setTableName("material");
-        actionLog.setTimestamp(new Date());
-        actionLog.setBatchId(UUID.randomUUID());
-
-        actionLogService.save(actionLog);
     }
 
     public Optional<Material> findById(Long id) {
@@ -151,7 +166,7 @@ public class MaterialService {
 
         LoginUser user = loginUserRepository.findById(UserIdHolder.get()).get();
         Date now = new Date();
-        String eventType = "add";
+        String eventType = "save";
         String source = "batch";
         UUID batchId = UUID.randomUUID();
         List<ActionLog> actionLogs = toAdds.stream().map(x ->
@@ -298,5 +313,9 @@ public class MaterialService {
         if (!materials.get(0).getId().equals(material.getId())) {
             throw new ResException("分类下已经有重复的物料名");
         }
+    }
+
+    public List<String> findDistinctCategories() {
+        return materialRepository.findDistinctCategories();
     }
 }

@@ -44,12 +44,6 @@ public class ProductController {
         this.productRepository = productRepository;
     }
 
-    @GetMapping("/add")
-    public String add(Model model) {
-        model.addAttribute("product", new Product());
-        return "page/product/add";
-    }
-
     @PostMapping
     public Res<List<Product>> create(@RequestBody ProductDto product) throws ResException {
         productService.create(product);

@@ -1,3 +1,4 @@
+'use client'
 import NavBox from "@/app/lib/index/NavBox";
 
 export default function Home() {
@@ -36,6 +37,7 @@ export default function Home() {
       <NavBox title={"66进销存"} links={[
         // {path: "/documentation", label: "成品文档"},
         // {path: "/release", label: "更新记录"},
+        {path: "/admin", label: "系统管理员"},
         {path: "/suggestion", label: "更新建议"},
         {path: "/bug", label: "点这里可以提交bug！！！"}
       ]}></NavBox>

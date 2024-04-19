@@ -41,11 +41,6 @@ public class OldMaterialController {
         return new ModelAndView("/page/error-file-not-chosen");
     }
 
-    @GetMapping("/add")
-    public String add(Model model) {
-        model.addAttribute("material", new Material());
-        return "page/material/add";
-    }
 
     @PostMapping("/do-remove/{id}")
     @ResponseBody

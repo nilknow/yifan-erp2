@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServletRequestWrapper;
 import java.util.*;
 
 /**
- * We need this to make HttpServletRequest mutable to add new header
+ * We need this to make HttpServletRequest mutable to save new header
  */
 final class MutableHttpServletRequest extends HttpServletRequestWrapper {
     private final Map<String, String> headers;
@@ -37,10 +37,10 @@ final class MutableHttpServletRequest extends HttpServletRequestWrapper {
         // create a set of the custom header names
         Set<String> set = new HashSet<>(headers.keySet());
 
-        // now add the headers from the wrapped request object
+        // now save the headers from the wrapped request object
         Enumeration<String> e = ((HttpServletRequest) getRequest()).getHeaderNames();
         while (e.hasMoreElements()) {
-            // add the names of the request headers into the list
+            // save the names of the request headers into the list
             String n = e.nextElement();
             set.add(n);
         }
@@ -55,7 +55,7 @@ final class MutableHttpServletRequest extends HttpServletRequestWrapper {
         Optional.ofNullable(headers.get(name)).ifPresent(set::add);
         Enumeration<String> e = ((HttpServletRequest) getRequest()).getHeaders(name);
         while (e.hasMoreElements()) {
-            // add the names of the request headers into the list
+            // save the names of the request headers into the list
             String n = e.nextElement();
             set.add(n);
         }

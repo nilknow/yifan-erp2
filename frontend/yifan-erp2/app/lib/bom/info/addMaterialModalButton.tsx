@@ -62,7 +62,7 @@ export default function AddMaterialModalButton() {
       productId,
       materialCount
     };
-    const response = await myFetch('/api/bom/add', {
+    const response = await myFetch('/api/bom/save', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
