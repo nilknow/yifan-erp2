@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 
 import java.util.Date;
 
@@ -21,6 +20,8 @@ public class Route {
 
     @Column(unique = true)
     private String path;
+
+    private String name;
 
     @ManyToOne
     @JoinColumn(name = "parent_id")

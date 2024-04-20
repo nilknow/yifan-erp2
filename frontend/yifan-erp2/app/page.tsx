@@ -1,13 +1,18 @@
 'use client'
 import NavBox from "@/app/lib/index/NavBox";
-import TopNavBar from "@/app/lib/TopNavBar";
+import Image from 'next/image';
 
 export default function Home() {
   return (
     <main>
-      <a href={"/"}>
-        <img src={"/66_long.png"} className={"w-8 h-8 m-5"} loading={"eager"}/>
-      </a>
+      <div className={"flex items-center"}>
+        <a href={"/"}>
+          <img src={"/66_long.png"} className={"w-8 h-8 m-5"} loading={"eager"}/>
+        </a>
+        <a href={"/search"}>
+          <Image alt="Search Icon" src={"/search.svg"}  width={24} height={24} />
+        </a>
+      </div>
       <NavBox title={"成品管理"} links={[
         {path: "/product", label: "查看"},
         // {path: "/product/create", label: "添加成品"},
