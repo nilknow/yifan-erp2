@@ -42,8 +42,8 @@ public class RoleService {
 
     private void buildRole(Role role) {
         role.setCompanyId(TenantContextHolder.get());
-        role.setCreatedAt(new Date());
-        role.setUpdatedAt(new Date());
+        role.setCreateTime(new Date());
+        role.setUpdateTime(new Date());
     }
 
     private void createValidate(Role role) throws ResException {

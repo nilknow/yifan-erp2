@@ -27,10 +27,10 @@ public class Role {
   @Column(name = "description", length = 200)
   private String description;
 
-  @Column(name = "created_at", nullable = false, updatable = false)
-  private Date createdAt;
+  @Column(nullable = false, updatable = false)
+  private Date createTime;
 
-  @Column(name = "updated_at", nullable = false)
-  private Date updatedAt;
+  @Column(nullable = false)
+  private Date updateTime;
 
 }

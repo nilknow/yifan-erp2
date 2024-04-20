@@ -39,6 +39,9 @@ public class AdminController {
         private String name;
     }
 
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class UserDto {
         private String username;
         private String password;
