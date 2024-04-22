@@ -12,6 +12,7 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.data.domain.Sort;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,12 +35,13 @@ public class MaterialController {
     private ActionLogService actionLogService;
 
     @GetMapping("/list")
-    public Res<List<Material>> list(@RequestParam(required = false) String name) throws JsonProcessingException {
+    public Res<List<Material>> list(@RequestParam(required = false) String name,
+                                    @RequestParam(required = false) String[] sort) throws JsonProcessingException {
         List<Material> materials;
         if (StringUtils.hasText(name)) {
             materials = materialService.findAllByNameLike(name);
         } else {
-            materials = materialService.findAll();
+            materials = materialService.findAll(sort);
         }
         return new Res<List<Material>>().success(materials);
     }

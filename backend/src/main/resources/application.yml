@@ -8,3 +8,7 @@ spring:
       max-lifetime: 60000
       connection-timeout: 30000
       idle-timeout: 60000
+  data:
+    rest:
+      base-path: /api
+      defaultPageSize: 20

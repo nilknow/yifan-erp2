@@ -6,11 +6,12 @@ import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import java.util.List;
 import java.util.Map;
 
-
+@RepositoryRestResource
 public interface MaterialRepository extends JpaRepository<Material, Long> {
     @Query(nativeQuery = true, value = "select distinct category from material")
     List<String> findDistinctCategories();

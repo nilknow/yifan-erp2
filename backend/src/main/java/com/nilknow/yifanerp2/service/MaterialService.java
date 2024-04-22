@@ -12,6 +12,7 @@ import com.nilknow.yifanerp2.repository.MaterialRepository;
 import jakarta.annotation.Resource;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -35,7 +36,43 @@ public class MaterialService {
     private LoginUserRepository loginUserRepository;
 
     public List<Material> findAll() {
-        return materialRepository.findAllByOrderByUpdateTimestampDesc();
+        Sort sort = Sort.by(
+                Sort.Order.desc("updateTimestamp")
+        );
+        return materialRepository.findAll(sort);
+    }
+
+    public List<Material> findAll(String[] sorts) {
+        if (sorts == null) {
+            return materialRepository.findAllByOrderByUpdateTimestampDesc();
+        }
+        if (Arrays.stream(sorts).noneMatch(StringUtils::hasText)) {
+            return materialRepository.findAllByOrderByUpdateTimestampDesc();
+        }
+
+        List<Sort.Order> orders = new ArrayList<>();
+        for (String s : sorts) {
+            if (!StringUtils.hasText(s)) {
+                continue;
+            }
+            String[] parts = s.split(",");
+            if (parts.length == 1) {
+                continue;
+            }
+            if (!StringUtils.hasText(parts[1])) {
+                continue;
+            }
+            if ("updateTimestamp".equals(parts[0].trim())) {
+                continue;
+            }
+            Sort.Direction direction = Sort.Direction.valueOf(parts[1].trim().toUpperCase());
+            orders.add(new Sort.Order(direction, parts[0]));
+        }
+        if (orders.isEmpty()) {
+            return materialRepository.findAllByOrderByUpdateTimestampDesc();
+        }
+        Sort sort = Sort.by(orders);
+        return materialRepository.findAll(sort);
     }
 
     @Transactional

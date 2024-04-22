@@ -21,15 +21,24 @@ import Res from "@/app/dto/res";
 import {Input} from "@nextui-org/input";
 import {SearchIcon} from "@nextui-org/shared-icons";
 import myFetch from "@/app/myFetch";
-import {AsyncListData, useAsyncList} from "@react-stately/data";
 
 export default function MaterialTable({children}: { children: React.ReactNode }) {
   const [sortedMaterials, setSortedMaterials] = useState<Material[]>([]);
-  const [filteredSortedMaterials, setFilteredSortedMaterials] = useState<Material[]>([]);
   const [materialTypes, setMaterialTypes] = React.useState<string[]>([]);
   const [selectedType, setSelectedType] = React.useState<string>('');
+  const [updateTimeOrder, setUpdateTimeOrder] = React.useState<string>('desc')
+  const [serialNumOrder, setSerialNumOrder] = React.useState<string>('')
+  const [nameOrder, setNameOrder] = React.useState<string>('')
+  const [categoryOrder, setCategoryOrder] = React.useState<string>('')
+  const [nameFilter, setNameFilter] = React.useState<string>('')
+
   useEffect(() => {
-    myFetch('/api/material/list')
+    console.log("effected>>>>>>>>")
+    myFetch(`/api/material/list?name=${nameFilter}
+    &sort=updateTimestamp,${updateTimeOrder}
+    &sort=serialNum,${serialNumOrder}
+    &sort=name,${nameOrder}
+    &sort=category,${categoryOrder}`)
       .then((res) => res.json())
       .then((data: Res<Material[]>) => {
         if ("success" === data.successCode) {
@@ -39,59 +48,71 @@ export default function MaterialTable({children}: { children: React.ReactNode })
           alert("查询失败，请稍后重试")
         }
       })
-  }, [])
+  }, [selectedType,updateTimeOrder,serialNumOrder,nameOrder,categoryOrder,nameFilter])
 
-  useEffect(() => {
-    if (selectedType !== '') {
-      setFilteredSortedMaterials(sortedMaterials.filter((m: Material) => m.category === selectedType));
+  function serialNumClickHandler(){
+    if (serialNumOrder) {
+      if (serialNumOrder === 'desc') {
+        setSerialNumOrder('asc');
+      } else {
+        setSerialNumOrder('desc');
+      }
     } else {
-      setFilteredSortedMaterials(sortedMaterials)
-    }
-  }, [selectedType, sortedMaterials])
-
-  let list: AsyncListData<Material> = useAsyncList({
-    async load({signal, filterText}) {
-      let res = await myFetch(`/api/material/list?name=${filterText}`)
-      let json: Res<Material[]> = await res.json();
-      return {
-        items: json.body,
-      };
-    },
-
-    async sort({items, sortDescriptor}) {
-      return {
-        items: items.sort((a, b) => {
-          // @ts-ignore
-          let first = a[sortDescriptor.column];
-          // @ts-ignore
-          let second = b[sortDescriptor.column];
-          let cmp = (parseInt(first) || first) < (parseInt(second) || second) ? -1 : 1;
-
-          if (sortDescriptor.direction === "descending") {
-            cmp *= -1;
-          }
-
-          return cmp;
-        }),
-      };
-    },
-  });
-
-
-  // @ts-ignore
-  async function search(e: React.FormEvent<HTMLFormElement>, list) {
-    e.preventDefault()
-    const formData = new FormData(e.currentTarget)
-    const name = formData.get('name')
-    if (name === null) {
-      list.setFilterText("")
-      return
-    } else {
-      list.setFilterText(name)
+      setSerialNumOrder('asc');
     }
   }
 
-  // @ts-ignore
+  function nameClickHandler(){
+    if (nameOrder) {
+      if (nameOrder === 'desc') {
+        setNameOrder('asc');
+      } else {
+        setNameOrder('desc');
+      }
+    } else {
+      setNameOrder('asc');
+    }
+  }
+
+  function categoryClickHandler(){
+    if (categoryOrder) {
+      if (categoryOrder === 'desc') {
+        setCategoryOrder('asc');
+      } else {
+        setCategoryOrder('desc');
+      }
+    } else {
+      setCategoryOrder('asc');
+    }
+  }
+
+  const columns = [
+    {
+      key: "serialNum",
+      label: "编号",
+    },
+    {
+      key: "name",
+      label: "物料名",
+    },
+    {
+      key: "category",
+      label: "分类",
+    },
+    {
+      key: "count",
+      label: "库存数量",
+    },
+    {
+      key: "inventoryCountAlert",
+      label: "库存预警",
+    },
+    {
+      key: "modify",
+      label: "修改",
+    },
+  ];
+
   return (
     <>
       <div>
@@ -99,7 +120,6 @@ export default function MaterialTable({children}: { children: React.ReactNode })
           <div className="flex justify-between gap-3 items-end">
             <Input
               type="text" name="name" size={"sm"}
-              onKeyUp={(e) => list.setFilterText(e.currentTarget.value)}
               isClearable
               radius="lg"
               classNames={{
@@ -139,20 +159,20 @@ export default function MaterialTable({children}: { children: React.ReactNode })
       </div>
       <br/>
       <Table
-        removeWrapper isStriped aria-label="material list table"
-        sortDescriptor={list.sortDescriptor}
-        onSortChange={list.sort}
+        removeWrapper
+        isStriped
+        aria-label="material list table"
       >
         <TableHeader>
-          <TableColumn allowsSorting key={"serialNum"}>编号</TableColumn>
-          <TableColumn allowsSorting key={"name"}>物料名</TableColumn>
-          <TableColumn allowsSorting key={"category"}>分类</TableColumn>
+          <TableColumn allowsSorting key={"serialNum"} onClick={serialNumClickHandler}>编号</TableColumn>
+          <TableColumn allowsSorting key={"name"} onClick={nameClickHandler}>物料名</TableColumn>
+          <TableColumn allowsSorting key={"category"} onClick={categoryClickHandler}>分类</TableColumn>
           <TableColumn>库存数量</TableColumn>
           <TableColumn>库存预警</TableColumn>
           <TableColumn>修改</TableColumn>
         </TableHeader>
         <TableBody
-          items={list.items}
+          items={sortedMaterials}
         >
           {(material: Material) => {
             return (
