@@ -8,6 +8,8 @@ import jakarta.annotation.Resource;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,20 +31,29 @@ public class AlertController {
     @GetMapping("/email")
     public Res<String> email() {
         Long companyId = TenantContextHolder.get();
-        String address = jdbcTemplate.queryForObject(
-                "select address from alert_email where company_id=? limit 1",
-                String.class, companyId).trim();
-        return new Res<String>().success(address);
+        List<String> address = jdbcTemplate.queryForList(
+                "select address from alert_email where company_id=?",
+                String.class, companyId);
+        if (CollectionUtils.isEmpty(address)) {
+            return new Res<String>().success("");
+        } else {
+            return new Res<String>().success(address.get(0).trim());
+        }
     }
 
     @PostMapping("/email")
     public Res<String> changeEmail(@RequestBody Email email) {
         Long companyId = TenantContextHolder.get();
-        Long emailId = jdbcTemplate.queryForObject(
-                "select id from alert_email where company_id=? limit 1",
-                Long.class, companyId);
-        jdbcTemplate.update("update alert_email set address=? where id=?",
-                email.address, emailId);
+        List<String> address = jdbcTemplate.queryForList(
+                "select address from alert_email where company_id=?",
+                String.class, companyId);
+        if (CollectionUtils.isEmpty(address)) {
+            jdbcTemplate.update("insert into alert_email (address,company_id) values (?,?)",
+                    email.address.replaceAll("，",","),companyId);
+        } else {
+            jdbcTemplate.update("update alert_email set address=? where company_id=?",
+                    email.address.replaceAll("，",","),companyId);
+        }
         return new Res<String>().success("success");
     }
 

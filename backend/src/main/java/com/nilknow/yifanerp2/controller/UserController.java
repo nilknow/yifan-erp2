@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/user")
-public class LoginUserController {
+public class UserController {
     @Resource
     private LoginUserService loginUserService;
 

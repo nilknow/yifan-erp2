@@ -1,21 +1,23 @@
 'use client'
 import {
   Button,
-  Link, Select, SelectItem, Spacer,
+  Link, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Select, SelectItem, Spacer,
   Table,
   TableBody,
   TableCell,
   TableColumn,
   TableHeader,
   TableRow,
-  Tooltip
+  Tooltip, useDisclosure
 } from "@nextui-org/react";
 import Alert from "@/app/dto/alert";
 import Res from "@/app/dto/res";
-import React, {useEffect, useState} from "react";
+import React, {FormEvent, useEffect, useState} from "react";
 import myFetch from "@/app/myFetch";
 import EmailAddressModifyModalButton from "@/app/lib/alert/emailAddressModifyModalButton";
 import MaterialAddModalButton from "@/app/lib/material/addModalButton";
+import {PlusFilledIcon} from "@nextui-org/shared-icons";
+import {Input} from "@nextui-org/input";
 
 export default function Page() {
   const stateMap: Record<number, string> = {
@@ -25,6 +27,7 @@ export default function Page() {
   };
   const [emailAddress, setEmailAddress] = useState<string>('')
   const [alerts, setAlerts] = useState<Alert[]>([])
+  const modal = useDisclosure();
 
 
   useEffect(() => {
@@ -32,7 +35,11 @@ export default function Page() {
       .then(resp => resp.json())
       .then((data: Res<string>) => {
         if ("success" === data.successCode) {
-          setEmailAddress(data.body)
+          if (data.body == "") {
+            modal.onOpen()
+          } else {
+            setEmailAddress(data.body)
+          }
         } else {
           alert(data.msg)
         }
@@ -57,6 +64,26 @@ export default function Page() {
     }).then(resp => resp.json())
       .then((data: Res<Alert[]>) => {
         if ("success" !== data.successCode) {
+          alert(data.msg)
+        }
+      })
+  }
+
+  async function alertEmailHandler(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const formData = {
+      address: e.currentTarget.address.value,
+    };
+    const response = await myFetch('/api/alert/email', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(formData)
+    })
+      .then((resp)=>resp.json())
+      .then((data:Res<string|null>)=>{
+        if (data.successCode == "success") {
+          window.location.reload()
+        }else{
           alert(data.msg)
         }
       })
@@ -98,6 +125,30 @@ export default function Page() {
           ))}
         </TableBody>
       </Table>
+
+      <Modal backdrop={"blur"} isOpen={modal.isOpen} onOpenChange={modal.onOpenChange}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <form onSubmit={alertEmailHandler}>
+                <ModalHeader className="flex flex-col gap-1">设置预警邮箱（逗号分隔）</ModalHeader>
+                <ModalBody>
+                  <Input type={"string"} name={"address"} defaultValue={""}
+                         label={"邮箱地址"}/>
+                </ModalBody>
+                <ModalFooter>
+                  <Button color="default" variant="light" onPress={onClose}>
+                    取消
+                  </Button>
+                  <Button type="submit" color="default" onPress={onClose}>
+                    添加
+                  </Button>
+                </ModalFooter>
+              </form>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   )
 }
