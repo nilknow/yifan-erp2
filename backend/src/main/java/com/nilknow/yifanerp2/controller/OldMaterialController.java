@@ -31,8 +31,6 @@ import java.util.Optional;
 @RequestMapping("/material")
 @Slf4j
 public class OldMaterialController {
-    private boolean excelHandling = false;
-
     @Resource
     private MaterialService materialService;
 

@@ -1,5 +1,6 @@
 package com.nilknow.yifanerp2.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,5 +23,6 @@ public class Authority {
             joinColumns = @JoinColumn(name = "authority_id"),
             inverseJoinColumns = @JoinColumn(name = "login_user_id")
     )
+    @JsonIgnore
     private List<LoginUser> loginUsers;
 }

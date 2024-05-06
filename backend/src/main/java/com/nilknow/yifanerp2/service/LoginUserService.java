@@ -28,4 +28,8 @@ public class LoginUserService {
             return Optional.empty();
         }
     }
+
+    public Optional<LoginUser> findById(Long userId) {
+        return loginUserRepository.findById(userId);
+    }
 }

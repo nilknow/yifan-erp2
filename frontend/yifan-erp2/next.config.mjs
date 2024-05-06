@@ -19,6 +19,8 @@ const nextConfig = {
     //         ]
     //         : []
     // }
+    //todo uncomment when build
+    images: { unoptimized: true },
     async headers() {
         return [
             {

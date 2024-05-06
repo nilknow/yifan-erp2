@@ -22,8 +22,8 @@ function canPassValidation(pathname: string): boolean {
     pathname.endsWith('.css')
     || pathname.endsWith('.png')
     || pathname.endsWith('.ico')
-    || pathname.endsWith('jpg')
-    || pathname.endsWith('txt')
+    || pathname.endsWith('.jpg')
+    || pathname.endsWith('.txt')
   ) {
     return true
   } else if (pathname.startsWith('/api/login') || pathname.startsWith("/login") || pathname.startsWith("/api/logout")) {

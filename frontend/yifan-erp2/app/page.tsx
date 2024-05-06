@@ -1,8 +1,29 @@
 'use client'
 import NavBox from "@/app/lib/index/NavBox";
 import Image from 'next/image';
+import {useEffect} from "react";
+import myFetch from "@/app/myFetch";
+import Res from "@/app/dto/res";
+import LoginUser from "@/app/dto/loginUser";
 
 export default function Home() {
+  useEffect(()=>{
+      myFetch("/api/user/info")
+        .then(resp => resp.json())
+        .then((data: Res<LoginUser>) => {
+          if ("success" === data.successCode) {
+          } else {
+            alert(data.msg)
+          }
+        })
+    },[]
+  )
+
+  function logoutHandler(){
+    myFetch("/api/logout")
+    window.location.reload()
+  }
+
   return (
     <main>
       <div className={"flex items-center"}>
@@ -11,6 +32,9 @@ export default function Home() {
         </a>
         <a href={"/search"}>
           <Image alt="Search Icon" src={"/search.svg"}  width={24} height={24} />
+        </a>
+        <a onClick={logoutHandler}>
+          <Image alt={"Log Out"} src={"/logout.png"} width={24} height={24}/>
         </a>
       </div>
       <NavBox title={"成品管理"} links={[
