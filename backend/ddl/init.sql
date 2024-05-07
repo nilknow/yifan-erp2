@@ -172,6 +172,30 @@ CREATE TABLE IF NOT EXISTS public.login_user_authority_rel
 ALTER TABLE IF EXISTS public.login_user_authority_rel
     OWNER to postgres;
 
+CREATE TABLE IF NOT EXISTS public.login_user_route_rel
+(
+    id            bigserial NOT NULL,
+    login_user_id bigint    NOT NULL,
+    route_id  bigint    NOT NULL,
+    CONSTRAINT login_user_route_rel_pk PRIMARY KEY (id),
+    CONSTRAINT login_user_route_rel_pk2 UNIQUE (login_user_id, route_id),
+    CONSTRAINT login_user_route_rel_route_id_fk FOREIGN KEY (route_id)
+        REFERENCES public.route (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT login_user_route_rel_login_user_id_fk FOREIGN KEY (login_user_id)
+        REFERENCES public.login_user (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+    WITH (
+        OIDS = FALSE
+    )
+    TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.login_user_route_rel
+    OWNER to postgres;
+
 CREATE TABLE IF NOT EXISTS public.material
 (
     id                    bigserial                                          NOT NULL,

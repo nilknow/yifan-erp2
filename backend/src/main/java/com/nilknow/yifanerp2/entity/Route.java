@@ -1,5 +1,6 @@
 package com.nilknow.yifanerp2.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,8 +28,10 @@ public class Route {
     @JoinColumn(name = "parent_id")
     private Route parent;
 
+    @JsonIgnore
     private Date createTime;
 
+    @JsonIgnore
     private Date updateTime;
 
 }

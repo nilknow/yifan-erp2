@@ -27,6 +27,14 @@ public class LoginUser {
             inverseJoinColumns = @JoinColumn(name = "authority_id")
     )
     private List<Authority> authorities;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name="login_user_route_rel",
+            joinColumns = @JoinColumn(name = "login_user_id"),
+            inverseJoinColumns = @JoinColumn(name = "route_id")
+    )
+    @JsonIgnore
+    private List<Route> routes;
     @ManyToOne
     @JoinColumn(name = "company_id")
     private Company company;

@@ -92,8 +92,6 @@ export default function Page() {
   return (
     <div className={"mx-4"}>
       <div className={"flex mb-3"}>
-        <MaterialAddModalButton></MaterialAddModalButton>
-        <Spacer x={2}/>
         <EmailAddressModifyModalButton></EmailAddressModifyModalButton>
         <Spacer x={2}/>
         <p>预警邮件会发送到：{emailAddress}</p>
