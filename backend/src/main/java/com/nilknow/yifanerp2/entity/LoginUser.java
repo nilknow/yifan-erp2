@@ -39,4 +39,5 @@ public class LoginUser {
     @JoinColumn(name = "company_id")
     private Company company;
     private Date update_time;
+    private Integer passwordChanged;
 }

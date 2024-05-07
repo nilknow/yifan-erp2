@@ -11,11 +11,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -29,15 +27,20 @@ public class LoginController {
     private LoginUserService loginUserService;
     @Resource
     private CompanyService companyService;
+    @Resource
+    private BCryptPasswordEncoder passwordEncoder;
 
     @PostMapping
-    public LoginResp login(@RequestBody LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response) {
+    public Res<String> login(@RequestBody LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response) {
         Long companyId = getAndSetCompanyId(request);
         String username = loginDTO.getUsername();
         String password = loginDTO.getPassword();
         //todo parameter validation
         Optional<LoginUser> user = loginUserService.authenticate(username, password, companyId);
         if (user.isPresent()) {
+            if (user.get().getPasswordChanged()==0) {
+                return new Res<String>().fail("still default password");
+            }
             String token = jwtToken(String.valueOf(user.get().getId()), companyId);
             // Create a new cookie with the updated value
             Cookie cookie = new Cookie("Authorization", URLEncoder.encode(token, StandardCharsets.UTF_8));
@@ -48,12 +51,32 @@ public class LoginController {
 
             // Add the cookie to the response
             response.addCookie(cookie);
-            return new LoginResp(true, token);
+            return new Res<String>().success(token);
         } else {
-            return new LoginResp(false, "");
+            return new Res<String>().fail("不存在该用户或者密码错误");
         }
     }
 
+    @PostMapping("/reset")
+    public Res<String> reset(@RequestBody ResetDto resetDto,HttpServletRequest request) throws Exception {
+        Long companyId = getAndSetCompanyId(request);
+        String username = resetDto.getUsername();
+        String password = resetDto.getPassword();
+        String newPassword = resetDto.getNewPassword();
+        if (!StringUtils.hasText(newPassword)) {
+            throw new Exception("新密码不能为空白");
+        }
+        Optional<LoginUser> userOpt = loginUserService.authenticate(username, password, companyId);
+        if (userOpt.isPresent()) {
+            LoginUser loginUser = userOpt.get();
+            loginUser.setPassword("{bcrypt}" + passwordEncoder.encode(newPassword));
+            loginUser.setPasswordChanged(1);
+            loginUserService.save(loginUser);
+            return new Res<String>().success("");
+        } else {
+            return new Res<String>().fail("不存在该用户或者密码错误");
+        }
+    }
 
 
     private Long getAndSetCompanyId(HttpServletRequest request) {
@@ -74,16 +97,16 @@ public class LoginController {
     }
 
     @Data
-    private static class LoginDTO {
+    public static class LoginDTO {
         private String username;
         private String password;
     }
 
     @Data
-    @AllArgsConstructor
-    public static class LoginResp {
-        private Boolean success;
-        private String token;
+    public static class ResetDto{
+        private String username;
+        private String password;
+        private String newPassword;
     }
 
     private String jwtToken(String username, Long companyId) {
